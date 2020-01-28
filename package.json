@@ -1,26 +1,31 @@
 {
   "name": "masters-information-portal",
-  "version": "0.1.0",
-  "description": "DJSCE Master's Information Portal",
+  "version": "1.0.0",
+  "description": "",
   "main": "index.js",
-  "author": "DJ Unicode",
-  "license": "MIT",
-  "private": false,
-  "scripts": {
-    "start": "node index.js",
-    "start:dev": "nodemon index.js"
-  },
-  "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.19.1",
-    "nodemon": "^2.0.2"
-  },
   "dependencies": {
-    "bcrypt": "^3.0.7",
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
     "lodash": "^4.17.15",
-    "mongoose": "^5.8.6",
-    "morgan": "^1.9.1"
-  }
+    "mongoose": "^5.8.10",
+    "morgan": "^1.9.1",
+    "validator": "^12.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yash-chad/masters-information-portal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yash-chad/masters-information-portal/issues"
+  },
+  "homepage": "https://github.com/yash-chad/masters-information-portal#readme"
 }

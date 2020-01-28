@@ -1,23 +1,45 @@
 const mongoose = require('mongoose');
+const validator = require("validator")
 
-// Note: This is rough, needs to be edited later.
-
+//This is not the final Schema ,The relations with other schemas are yet to be established!
 const userSchema = new mongoose.Schema({
+  name: {
+    type : String,
+    required : true,
+    trim : true
+  },
   username: {
     type: String,
     required: true,
+    trim:true //Trims spaces before & after
+  },
+  email:{
+    type:String,
+    unique:true,
+    required:true,
+    trim:true,
+    lowercase:true,   
+    validate(value){
+        if(!validator.isEmail(value)){
+            throw new Error("Email is Invalid")  
+        }
+    }
   },
   password: {
     type: String,
     required: true,
+    validate(value){
+      if(value.length <= 7){
+        throw new Error("Password is too short!")
+      }
+    }
   },
-  email: {
-    type: String,
-    required: true,
+  dateOfGrad : {
+    type : Date
   },
-
-  name: String,
-  sap_id: String,
+  sap_id: {
+    type : String
+  }
 });
 
 const User = mongoose.model('User', userSchema);
