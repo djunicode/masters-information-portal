@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 
-const { userRouter } = require('./controllers');
+const userRouter = require('./controllers/user');
 
 // --- App config
 
