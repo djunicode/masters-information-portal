@@ -15,7 +15,7 @@ app.use(express.static('./static/'));
 
 // --- Routes
 
-app.use('/', userRouter);
+app.use('/api/user', userRouter);
 
 // ---
 

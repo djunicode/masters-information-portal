@@ -34,11 +34,8 @@ const userSchema = new mongoose.Schema({
       }
     }
   },
-  dateOfGrad : {
+  graduationDate : {
     type : Date
-  },
-  sap_id: {
-    type : String
   }
 });
 

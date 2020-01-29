@@ -5,7 +5,7 @@ const router = express.Router();
 
 // --- Routes
 
-router.get('/user', (req, res) => res.send('Hello World!'));
+router.get('/', (req, res) => res.send('Hello World!'));
 // post
 // put
 // delete
