@@ -1,75 +1,69 @@
-const   express     = require('express'),
-        Forum       = require('../models/forum'),
-        router      = express.Router();
+const express = require('express');
+const Forum = require('../models/forum');
+const router = express.Router();
 
         //FIND ALL
-        router.get('/', async (request,response)=>{            
-            await Forum.find({},(error,allForums)=>{
-                if(error)
-                {
-                    console.log(error);
-                    response.redirect('/');
-                }
-                else
-                {
-                    response.send(allForums);
-                }
-            });
+        router.get('/', async (req,res)=>{   
+            try
+            {
+                let allForums = await Forum.find({});
+                return res.send(allForums);
+            }         
+            catch(err)
+            {
+                return res.status(500).json(err);
+            }    
+
         });
 
         //CREATE 
-        router.post('/', async (request,response)=>{            
-             await Forum.create(request.body,(error,newForum)=>{
-                if(error)
-                {
-                    console.log(error);
-                    response.redirect('/api/forum');
-                }
-                else if(!error)
-                {
-                     console.log(newForum);
-                    response.send(newForum);
-                }
-            })
+        router.post('/', async (req,res)=>{            
+            try
+            {
+                let newForum = await Forum.create(req.body);
+                return res.json(newForum);
+            }
+            catch(err)
+            {
+                return res.status(500).json(err);
+            }            
         });
         //FIND BY ID
-        router.get("/:id",async function(request, response){            
-            await Forum.findById(request.params.id,(error, foundForum)=>{
-                if(error)
-                {
-                    console.log(err);
-                } else 
-                {                    
-                    response.send(foundForum);
-                }
-            });
+        router.get('/:id',async (req, res)=>{  
+            try
+            {
+                let foundForum  = await Forum.findById(req.params.id);
+                return res.json(foundForum);
+            }          
+            catch(err)
+            {
+                return res.status(500).json(err);
+            }
         });
 
 
         //UPDATE
-        router.put("/:id",async (request,response)=>{
-            await Forum.findByIdAndUpdate(request.params.id,request.body,(error,forum)=>{
-                if(error)
-                {
-                    console.log(err);
-                    response.redirect("/api/forum");
-                }
-                else
-                {
-                    response.send(forum);
-                }
-            });    
+        router.put('/:id',async (req,res)=>{
+            try
+            {
+                let forum = await Forum.findByIdAndUpdate(req.params.id,req.body);
+                return res.json(forum);
+            }
+            catch(err)
+            {
+                return res.status(500).json(err);
+            }
         });
 
         //DESTROY
-        router.delete("/:id",(request,response)=>{
-        Forum.findByIdAndDelete(request.params.id,(error)=>{
+        router.delete('/:id',(req,res)=>{
+        Forum.findByIdAndDelete(req.params.id,(error)=>{
             if(error)
             {
                 console.log(error);
             }
             else
-            response.redirect("/api/forum");
+            res.redirect("/api/forum");
         });
      });
 
