@@ -12,14 +12,16 @@ const TagSchema = new mongoose.Schema({
     default: false,
   },
   //* Alternate Versions for the tag, Eg Artificial Intelligence can be alt as AI or ai or A.I.
-  alt: {
+  slug: {
     type: [String],
   },
 });
 
-//! NOTE : This is done this way becuase for some reason the deafult function was nto run for alt if given in schema ,
-//! Also note that explicit function is used rather than arrow function, because arrow fn would get an empty object for 'this'
-TagSchema.path('alt').default(function() {
+//! NOTE : This is done this way becuase for some reason the deafult
+//! function was not run for slug if given in schema.
+//! Also note that explicit function is used rather than arrow function,
+//! because arrow fn would get an empty object for 'this'.
+TagSchema.path('slug').default(function() {
   return [this.name.replace(/\s/g, '').toLowerCase()];
 });
 

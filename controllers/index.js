@@ -1,7 +1,7 @@
 const userRouter = require('./user');
-const TagRouter = require('./tag');
+const tagRouter = require('./tag');
 
 module.exports = {
   userRouter,
-  TagRouter,
+  tagRouter,
 };

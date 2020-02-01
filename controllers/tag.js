@@ -3,7 +3,7 @@ const Tag = require('../models/tag');
 
 const router = express.Router();
 
-router.post('/new', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const temp = await Tag.create(req.body);
     res.status(201).send({ tag: temp });
