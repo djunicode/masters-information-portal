@@ -69,7 +69,18 @@ export default function LoginPage(){
     	<div>
     		<div className={classes.root}>
         		<AppBar position="static">
-		        <Tabs value={value} variant="fullWidth" onChange={handleTabChange} aria-label="simple tabs example">
+		        <Tabs 
+		        	value={value} 
+		        	TabIndicatorProps={{
+					    style: {
+					      backgroundColor: "#FFFFFF",
+					      height: '5px'
+					    }
+					}} 
+					variant="fullWidth" 
+					onChange={handleTabChange} 
+					aria-label="simple tabs example"
+				>
 		          <Tab label="Log In" {...a11yProps(0)} />
 		          <Tab label="Sign Up" {...a11yProps(1)} />
 		        </Tabs>
