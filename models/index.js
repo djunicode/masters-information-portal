@@ -1,6 +1,9 @@
-const User      = require('./user'),
-      Forum     = require('./forum');
+const User = require('./user');
+const Tag = require('./tag');
+const Forum = require('./forum');
 
 module.exports = {
-  User,Forum
+  User,
+  Tag,
+  Forum,
 };
