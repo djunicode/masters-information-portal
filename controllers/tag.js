@@ -19,27 +19,14 @@ router.post('/', async (req, res) => {
 
 
 
-// @route:get "/tag" || "/tag?isSchool=xyz"
-// @desc:Get all tags if no query
-// get only school tags if url: "/tags?isSchool=true"
+// @route:get "/tag" || "/tag?anyQuery=xyz
+// @desc:Get all tags if no query ,else get filtered data.
+
 router.get("/tag", async (req, res) => {
   try {
-      const isSchool = req.query.isSchool
-      // 
-      if (isSchool) {
-          if (isSchool == "true") {
-              const tag = await Tag.find({ isSchool: true })
-              res.status(200).json({tag})
-          }
-          else {
-              const tag = await Tag.find({ isSchool: false })
-              res.status(200).json({tag})
-          }
-      }
-      else {
-          const tag=await Tag.find({})
-          res.status(200).json({tag})
-      }
+      // If no match ,then empty array would be returned..
+      const data = await Tag.find(req.query)
+      res.status(200).json(data)
   }
   catch (err) {
       res.status(500).json(err)
