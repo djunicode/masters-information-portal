@@ -34,6 +34,23 @@ router.get("/tag", async (req, res) => {
 })
 
 
+// @route:get "/tag/:slug"
+// @desc:Get tag by slug name
+// Slug:name of tag in lower case and without space in between
+app.get("/tag/:slug",async(req,res)=>{
+  try{
+      const slug=req.params.slug
+      const data=await Tag.findOne({slug:slug})
+      res.status(200).json(data)
+  }
+  catch(err){
+      console.log(err)
+      res.status(401).json(err)
+  }
+})
+
+
+
 // @route:delete "/tag"
 // @desc:Remove Tag by id
 router.delete("/tag/:id",async(req,res)=>{
