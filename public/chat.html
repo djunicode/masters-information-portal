@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Web Sockets</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+    <link href="styles.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div id="chat">
+        <div id="chat-window">
+            <div id="output"> </div>
+        </div>
+        <input id="handle" type="text" placeholder="Handle" />
+        <input id="message" type="text" placeholder="message" />
+        <button id="send" onclick="send()">Send</button>
+    </div>
+    <script>
+        
+    var socket=io.connect('http://localhost:3000');
+    socket.on('updatechat',data=>{
+        console.log(data)
+    })
+
+    const send=()=>{
+        var message=document.getElementById('message').value;
+        handle=document.getElementById('handle').value;
+        btn=document.getElementById('send');
+        output=document.getElementById('output');
+        // Whilst Chatting
+        socket.emit('chat',{
+            message:message,
+            handle:handle
+        })
+    }
+    // Chat display on the output screen
+    socket.on('chat',data=>{
+        console.log(data)
+        output.innerHTML += '<p><strong>' + data.handle + ': </strong>' + data.message + '</p>';
+    })
+// Retrieves previous chat data
+    const prevChat=async ()=>{
+        const resp=await fetch('/ret');
+        const js=await resp.json();
+        console.log(js);
+        js.forEach(element => {
+           output.innerHTML += '<p><strong>' + element.handle + ': </strong>' + element.msg + '</p>'; 
+        });
+        
+    }
+    prevChat();
+    </script>
+     </body>
+</html>

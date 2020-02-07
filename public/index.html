@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    name:<input type='text' id="name" >
+    to:<input type="text" id="to">
+
+    <a href="chat.html"><button id="btn1" onclick="hello()">Submit</button></a>
+    
+
+</body>
+<script>
+
+const hello=async ()=>{
+    
+    const initiator=document.getElementById("name").value
+    const to=document.getElementById("to").value
+    const dataObj={
+        initiator:initiator,
+        to:to
+    }
+    console.log(dataObj)
+
+    const resp=await fetch("/chat",{
+        method: 'post',
+        body: JSON.stringify(dataObj),
+        headers: new Headers({ 
+            'Content-Type': 'application/json'
+        })
+
+  })
+  const da=await resp.json()
+  console.log(da)
+
+  
+
+}
+</script>
+</html>

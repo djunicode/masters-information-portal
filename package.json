@@ -1,26 +1,19 @@
 {
-  "name": "masters-information-portal",
-  "version": "0.1.0",
-  "description": "DJSCE Master's Information Portal",
+  "name": "chatapp",
+  "version": "1.0.0",
+  "description": "",
   "main": "index.js",
-  "author": "DJ Unicode",
-  "license": "MIT",
-  "private": false,
   "scripts": {
-    "start": "node index.js",
-    "start:dev": "nodemon index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.19.1",
-    "nodemon": "^2.0.2"
-  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "bcrypt": "^3.0.7",
+    "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "lodash": "^4.17.15",
-    "mongoose": "^5.8.6",
-    "morgan": "^1.9.1"
+    "mongoose": "^5.8.11",
+    "nodemon": "^2.0.2",
+    "socket.io": "^2.3.0"
   }
 }
