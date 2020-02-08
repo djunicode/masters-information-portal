@@ -11,7 +11,8 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    trim:true //Trims spaces before & after
+    trim:true, //Trims spaces before & after
+    unique: true 
   },
   email:{
     type:String,
@@ -36,7 +37,28 @@ const userSchema = new mongoose.Schema({
   },
   graduationDate : {
     type : Date
-  }
+  },
+  bio : {
+    type : String
+  },
+  currentSchool:{
+    type: mongoose.Schema.Types.ObjectId,
+    required:true,
+    ref:'Tag'
+  },
+  accepts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'Tag'
+  }],
+  rejects :[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'Tag'
+  }],
+  pinnedQuestions: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'Forum'
+  }]
+
 });
 
 const User = mongoose.model('User', userSchema);
