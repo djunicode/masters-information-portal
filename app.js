@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const { userRouter,forumRouter } = require('./controllers');
+const { userRouter,forumRouter,chatRouter } = require('./controllers');
 
 
 // --- App config
@@ -25,6 +25,7 @@ app.use(bodyParser.raw())
 
 app.use('/api/user', userRouter);
 app.use('/api/forum',forumRouter);
+app.use('/api/chat',chatRouter);
 
 // ---
 
