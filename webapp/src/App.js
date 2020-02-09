@@ -1,12 +1,15 @@
 import React from 'react';
 import RootRouter from './Components/router';
 import {MuiThemeProvider,createMuiTheme} from '@material-ui/core';
-import {deepOrange,blue} from '@material-ui/core/colors';
+import {blue} from '@material-ui/core/colors';
 import './App.css';
 
 const theme = createMuiTheme({
   palette: {
-    primary: deepOrange,
+    primary: {
+    	main: '#46BC99',
+    	contrastText: '#fff'
+    },
     secondary: blue,
   },
 });
