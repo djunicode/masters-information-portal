@@ -14,7 +14,7 @@ const app = express();
 // --- Middleware
 
     
-mongoose.connect("mongodb://localhost:27017/masters_portal",{ useNewUrlParser : true }); 
+mongoose.connect("mongodb://localhost:27017/masters_portal",{ useNewUrlParser : true , useUnifiedTopology: true}); 
 app.use(morgan('common'));
 app.use(express.static('./static/'));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -23,7 +23,7 @@ app.use(bodyParser.raw())
 
 // --- Routes
 
-app.use('/api/user', userRouter);
+app.use('/api/users', userRouter);
 app.use('/api/forum',forumRouter);
 
 // ---
