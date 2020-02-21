@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 
 var forumSchema = new mongoose.Schema({
-    question :
-    {
+
         title : String ,
         text : String ,        
         createdAt :  { type : Date, default: Date.now },
@@ -21,8 +20,7 @@ var forumSchema = new mongoose.Schema({
         [{
             type : mongoose.Schema.Types.ObjectId,
             ref : "User"
-    }],
-    },
+        }],
 
     answers :
     [{
