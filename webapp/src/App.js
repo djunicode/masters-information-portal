@@ -1,8 +1,7 @@
 import React from 'react';
 import RootRouter from './Components/router';
-import {MuiThemeProvider,createMuiTheme} from '@material-ui/core';
-import {deepOrange,blue} from '@material-ui/core/colors';
-import './App.css';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core';
+import { deepOrange, blue } from '@material-ui/core/colors';
 
 const theme = createMuiTheme({
   palette: {
@@ -14,9 +13,9 @@ const theme = createMuiTheme({
 function App() {
   return (
     <div className="App">
-		<MuiThemeProvider theme={theme}>
-    		<RootRouter/>
-    	</MuiThemeProvider>
+      <MuiThemeProvider theme={theme}>
+        <RootRouter />
+      </MuiThemeProvider>
     </div>
   );
 }

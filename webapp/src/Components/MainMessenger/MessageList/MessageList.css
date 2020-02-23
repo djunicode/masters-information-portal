@@ -1,0 +1,73 @@
+.message-list-container {
+  padding: 10px;
+  padding-bottom: 70px;
+}
+.name{
+  margin-left: 20px;
+  text-decoration: none;
+  color: black;
+  float: left;
+}
+.icons{
+  float: right;
+}
+/* .message {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.message .bubble-container {
+  font-size: 14px;
+  display: flex;
+}
+
+.message.mine .bubble-container {
+  justify-content: flex-end;
+}
+
+.message.start .bubble-container .bubble {
+  /* margin-top: 10px; */
+  /* border-top-left-radius: 20px;
+}
+
+.message.end .bubble-container .bubble {
+  border-bottom-left-radius: 20px;
+  /* margin-bottom: 10px; */
+/*}
+
+.message.mine {
+  margin-top: 10px;
+  border-top-right-radius: 20px;
+} */
+
+/* .bubble-container .bubble {
+  margin: 1px 0px;
+  background: #f4f4f8;
+  padding: 10px 15px;
+  border-radius: 20px;
+
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+} */
+
+.message.mine{
+  padding: 10px;
+  float: right;
+  width: 700px;
+  background: #007aff;
+  display: block;
+  color: white;
+  border-radius: 20px;
+} 
+.message.received{
+  padding: 10px;
+  float: left;
+  width: 700px;
+  background: whitesmoke;
+  display: block;
+  color:#007aff;
+  border-radius: 20px;
+}
