@@ -1,5 +1,5 @@
 const socket = require('socket.io')
-
+const mongo=require('../../models/chat')
 const io = socket(server);
 
 
