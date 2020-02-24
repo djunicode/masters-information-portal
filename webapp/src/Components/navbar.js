@@ -116,7 +116,7 @@ function NavBar() {
                     <React.Fragment>
                     <NavLink
                             className={classes.link}
-                            to='/'
+                            to='/profile'
                         >
                             <ListItem button>
                             <ListItemIcon>

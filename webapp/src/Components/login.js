@@ -3,11 +3,7 @@ import Register from './register.js';
 import LoginSVGLogo from './loginLogo.js';
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import Box from '@material-ui/core/Box';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import TextField from '@material-ui/core/TextField';
-import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -21,8 +17,11 @@ const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
     maxWidth: 1111,
-    minHeight: 526,
+    minHeight: 440,
     margin: 'auto',
+    marginTop: 20,
+    paddingTop: 10,
+    marginBottom: 20,
     flexGrow: 1
   },
   textf: {
@@ -30,66 +29,17 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function a11yProps(index) {
-  return {
-    id: `full-width-tab-${index}`,
-    'aria-controls': `full-width-tabpanel-${index}`,
-  };
-}
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`full-width-tabpanel-${index}`}
-      aria-labelledby={`full-width-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box p={2}>{children}</Box>}
-    </Typography>
-  );
-}
-
-
 export default function LoginPage(){
 	const classes = useStyles();
-  	const [value, setValue] = React.useState(0);
-  	const handleTabChange = (event, newValue) => {
-    	setValue(newValue);
-	};
 	const [showPassword, setShowPassword] = React.useState(0);
 	function togglePassword(){
 		showPassword===0?setShowPassword(1):setShowPassword(0);
 	}
-	function handleRegisterClick(){
-		setValue(1);
-	}
+	const [register,setRegister] = React.useState(0);
     return (
-    	<div>
-    		<div className={classes.root}>
-        		<AppBar position="static">
-		        <Tabs 
-		        	value={value} 
-		        	TabIndicatorProps={{
-					    style: {
-					      backgroundColor: "#FFFFFF",
-					      height: '5px'
-					    }
-					}} 
-					variant="fullWidth" 
-					onChange={handleTabChange} 
-					aria-label="simple tabs example"
-				>
-		          <Tab label="Log In" {...a11yProps(0)} />
-		          <Tab label="Sign Up" {...a11yProps(1)} />
-		        </Tabs>
-		      </AppBar>
-		      <TabPanel value={value} index={0}>
-		      <Grid container alignItems="center" >
+		<div className={classes.root}>
+    		{register===0?
+		      <Grid container alignItems="center" style={{marginTop: 40}} justify="center">
 		      	<Grid item md={6}>
 		      		<LoginSVGLogo/>
 		      	</Grid>
@@ -168,16 +118,18 @@ export default function LoginPage(){
         		)}
 	        </Formik><br/>	
 	        <Typography>
-	        	New User? <Button onClick={handleRegisterClick}><Typography><b>Register</b></Typography></Button>
+	        	New User? <Button onClick={()=>setRegister(1)}><Typography><b>Register</b></Typography></Button>
 	        </Typography>
 	        </Grid>
 	      </Grid>
-	      </TabPanel>
-	      <TabPanel value={value} index={1}>
-		      <Register/>
-	      </TabPanel>
-	    </div>
-	</div>
+	      :
+	      <React.Fragment>
+	      	<Register/>
+        	<br/><Typography>Already have an account? <Button onClick={()=>setRegister(0)}><b>Sign In</b></Button></Typography>
+	      </React.Fragment>
+
+	  }
+    </div>
     );
 }
 

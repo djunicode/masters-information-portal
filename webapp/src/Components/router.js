@@ -15,6 +15,7 @@ class RootRouter extends React.Component {
                 <Switch>
                     <Route exact path='/' />
                     <Route exact path='/login' component={Login} />
+                    <Route exact path='/profile' />
                 </Switch>
             </Router>
         );
