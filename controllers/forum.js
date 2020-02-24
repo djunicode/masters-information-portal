@@ -6,7 +6,7 @@ const router = express.Router();
         router.get('/', async (req,res)=>{   
             try
             {
-                let allForums = await Forum.find({});
+                let allForums = await Forum.find(req.query);
                 return res.send(allForums);
             }         
             catch(err)
