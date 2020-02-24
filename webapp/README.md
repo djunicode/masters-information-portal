@@ -4,6 +4,7 @@
 	<li>Navbar: Done(Updating needed when new component is added)</li>
 	<li>Router: Done(Updating needed when new component is added)</li>
 	<li>Sign-Up: Done</li>
+	<li>Login: Done</li>
 </ul>
 
 
