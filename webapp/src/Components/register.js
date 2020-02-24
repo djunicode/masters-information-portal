@@ -285,7 +285,7 @@ export default function Register() {
                 onBlur={handleBlur}
             className={classes.textf}
               renderInput={params => (
-                <TextField {...params} name='department' value={values.department} onChange={handleChange}  helperText={touched.department?errors.department:''}  label="Department" margin="normal" variant="filled" fullWidth />
+                <TextField {...params} name='department' value={values.department} onChange={handleChange} error={!!errors.department&&touched.department} helperText={touched.department?errors.department:''}  label="Department" margin="normal" variant="filled" fullWidth />
               )}
             />
           <TextField 
