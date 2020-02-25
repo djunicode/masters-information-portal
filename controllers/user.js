@@ -10,8 +10,14 @@ const bcrypt = require("bcryptjs")
 //Creating a user
 router.post("/",async (req,res)=>{
 
-    const user = new User(req.body);
     try{
+        //Checking for existing user with same credintials
+        const existingUser = await User.find({email:req.body.email})
+        if(existingUser.length>0){
+            throw new Error("Email aldready exists,try logging in!")
+        }
+
+        const user = new User(req.body);
         const token = await user.newAuthToken()    //Generate auth token
         res.status(201).send({user, token})     
         //We also send the token along with the user so to identify which token is the user currently logged in with
@@ -71,7 +77,13 @@ router.get("/me",auth,async (req,res)=>{
 //Endpoint: /api/users/me
 //Route to update current user
 router.patch('/me', auth ,async (req,res) => {
-    console.log("Heree")
+   
+    //Checking if user aldready exists or not
+    const existingUser = await User.find({email:req.body.email})
+    if(!existingUser){
+        return res.status(404).send("User does not exist!")
+    }
+
     const updates  = Object.keys(req.body)      //Returns all the keya as an array
     const allowedUpdates = ["name", 'username',"email", "password", "graduationDate","bio","currentSchool","accepts","rejects","pinnedQuestions"]
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
@@ -95,6 +107,10 @@ router.patch('/me', auth ,async (req,res) => {
 //Route to delete current user
 router.delete('/me', auth, async (req,res) => {
     try {
+        const existingUser = await User.find({email:req.body.email})
+        if(!existingUser){
+            return res.status(404).send("User does not exist!")
+        }
         await req.user.remove()
         res.send("User deleted")
     } catch (error) {
