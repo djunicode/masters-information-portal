@@ -3,7 +3,7 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
-
+const cors=require("cors")
 const { userRouter,forumRouter } = require('./controllers');
 
 
@@ -12,7 +12,9 @@ const { userRouter,forumRouter } = require('./controllers');
 const app = express();
 
 // --- Middleware
-
+app.use(cors({
+    origin:"http://localhost:3000"
+}))
     
 mongoose.connect("mongodb://localhost:27017/masters_portal",{ useNewUrlParser : true }); 
 app.use(morgan('common'));
