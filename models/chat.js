@@ -2,18 +2,27 @@ const mongoose=require('mongoose');
 const Schema=mongoose.Schema;
 
 const MessageSchema=new Schema({
-    initiator:{
+    //initiator
+    sender:
+    {
         type:Schema.Types.ObjectId,
         ref:'User'
     },
-    to:{
+    //to
+    receiver:
+    {
         type:Schema.Types.ObjectId,
         ref:'User'
     },
     message: [{
         // Handle is the Senders name and msg is the actual message
-        handle:String,
-        msg:String
+        //updated to sender 
+        sender:
+        {
+            type:Schema.Types.ObjectId,
+            ref:'User'
+        },
+        messageBody:String
     }]
 })
 
