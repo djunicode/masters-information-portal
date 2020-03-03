@@ -1,6 +1,7 @@
 const express = require('express');
 const Tag = require('../models/tag');
-
+//  winston logger
+const logger=require("../config/logger")
 const router = express.Router();
 
 router.post('/', async (req, res) => {
@@ -8,13 +9,15 @@ router.post('/', async (req, res) => {
     return res.status(400).send({ err: 'Incomplet Fields' });
   }
   try {
+    logger.info("Creating new tag")
     req.body.slug = [req.body.name.replace(/\s/g, '').toLowerCase()];
     const temp = await Tag.create(req.body);
     res.status(201).send({ tag: temp });
-  } catch (e) {
+  } catch (err) {
     // Mongoose Error code
-    if (e.code === 11000) {
-      res.status(400).send({ err: e });
+    logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+    if (err.code === 11000) {
+      res.status(400).send({ err: err });
     } else {
       res.status(500).send({ err: 'Server Error' });
     }
@@ -24,7 +27,9 @@ router.post('/', async (req, res) => {
 // @route:get "/tag" || "/tag?anyQuery=xyz
 // @desc:Get all tags if no query ,else get filtered data.
 
+
 router.get('/:name', async (req, res) => {
+  logger.info("Gettiing tags")
   try {
     // If no match ,then empty array would be returned..
     const data = await Tag.findOne({ name: req.params.name });
@@ -45,6 +50,7 @@ router.get('/:name', async (req, res) => {
 // @desc:Get tag by slug name
 // Slug:name of tag in lower case and without space in between
 router.get('/slug/:slug', async (req, res) => {
+  logger.info("Get tag (slug)")
   try {
     const slug = req.params.slug;
     const data = await Tag.findOne({ slug: { $in: slug } });
@@ -53,14 +59,15 @@ router.get('/slug/:slug', async (req, res) => {
     }
     res.status(200).json(data);
   } catch (err) {
-    console.log(err);
-    res.status(401).json(err);
+    res.status(500).json(err);
   }
 });
 
 // @route:delete "/tag"
 // @desc:Remove Tag by id
+
 router.delete('/:id', async (req, res) => {
+  logger.info("Deleting tag")
   try {
     const deleteTag = await Tag.findByIdAndDelete(req.params.id);
     return res
@@ -74,5 +81,15 @@ router.delete('/:id', async (req, res) => {
     }
   }
 });
+
+ // Error Handler
+router.use(function(err, req, res, next) {
+  //winston logging
+logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+   // render the error page
+res.status(err.status||500).json(err.message)
+})  
+
+
 
 module.exports = router;
