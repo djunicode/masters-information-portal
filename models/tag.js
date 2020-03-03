@@ -16,14 +16,5 @@ const TagSchema = new mongoose.Schema({
     type: [String],
   },
 });
-
-//! NOTE : This is done this way becuase for some reason the deafult
-//! function was not run for slug if given in schema.
-//! Also note that explicit function is used rather than arrow function,
-//! because arrow fn would get an empty object for 'this'.
-TagSchema.path('slug').default(function() {
-  return [this.name.replace(/\s/g, '').toLowerCase()];
-});
-
 const Tag = mongoose.model('Tag', TagSchema);
 module.exports = Tag;

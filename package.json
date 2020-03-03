@@ -8,7 +8,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "start:dev": "nodemon index.js"
+    "start:dev": "nodemon index.js",
+    "test": "mocha"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -21,9 +22,12 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.19.1",
+    "mocha": "^7.1.0",
     "nodemon": "^2.0.2"
   },
   "keywords": []

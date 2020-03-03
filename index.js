@@ -6,4 +6,5 @@ const logger=require("./config/logger")
 
 app.listen(PORT, HOST, () => {
   logger.info(`Server started listening on http://${HOST}:${PORT}`);
+  console.info(`Server started listening on http://${HOST}:${PORT}`);
 });
