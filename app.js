@@ -13,6 +13,8 @@ if (process.env.NODE_ENV == 'test') {
   mongoUri = 'mongodb://localhost:27017/masters_portal_test';
 }
 
+mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
+
 const app = express();
 
 // --- Middleware
@@ -20,7 +22,6 @@ const app = express();
 app.use(cors({
     origin:"http://localhost:3000"
 }))
-mongoose.connect(mongoUri, { useNewUrlParser: true });
 app.use(morgan('common'));
 app.use(express.static('./static/'));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -32,5 +33,6 @@ app.use(bodyParser.raw());
 app.use('/api/user', userRouter);
 app.use('/api/forum', forumRouter);
 app.use('/api/tag', tagRouter);
+
 // ---
 module.exports = app;
