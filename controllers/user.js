@@ -1,6 +1,6 @@
 const express = require('express');
 const { encryptPassword, comparePassword } = require('../infra/encryption');
-const { auth } = require("../infra/jwt/index")
+const { auth } = require("../infra/middleware/auth")
 const User = require("../models/user")
 const router = express.Router();
 const bcrypt = require("bcryptjs")
