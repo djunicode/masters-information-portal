@@ -4,13 +4,17 @@ const { auth } = require("../infra/jwt/index")
 const User = require("../models/user")
 const router = express.Router();
 const bcrypt = require("bcryptjs")
+
+//  winston logger
+const logger=require("../config/logger")
+
 // --- Routes
 
 // Endpoint:  /api/users
 //Creating a user
-router.post("/",async (req,res)=>{
-
+router.post("/",async (req,res,next)=>{
     try{
+        logger.info("Creating new user...")
         //Checking for existing user with same credintials
         const existingUser = await User.find({email:req.body.email})
         if(existingUser.length>0){
@@ -18,18 +22,20 @@ router.post("/",async (req,res)=>{
         }
 
         const user = new User(req.body);
+        logger.info("Generating User Token...")
         const token = await user.newAuthToken()    //Generate auth token
         res.status(201).send({user, token})     
         //We also send the token along with the user so to identify which token is the user currently logged in with
-    }catch(e){
-        res.status(400).send(e)
+    }catch(err){
+        next(err)
     }
 })
 
 //   Endpoint:  /api/users/login
 //Logging in users
-router.post("/login",async (req,res)=>{
+router.post("/login",async (req,res,next)=>{
     try{
+        logger.info("User is signing in...")
         const user = await User.findOne({email:req.body.email})
         if(!user){
             throw new Error("Unable to login")
@@ -44,24 +50,24 @@ router.post("/login",async (req,res)=>{
             user:user,
             token:token    
         })
-    }catch(e){
-        console.log(e)
-        res.status(401).send(e)
+    }catch(err){
+        next(err)
     }
 })
 
 
 //Endpoint: /api/users/logout
 //Route to logout user from his current session
-router.post('/logout', auth, async (req, res) => {
+router.post('/logout', auth, async (req, res,next) => {
     try {
+        logger.info("User is logging out...")
         req.user.tokens = req.user.tokens.filter((token) =>{
-         return token.token !== req.token 
+        return token.token !== req.token 
         })
         await req.user.save()
         res.send("Logged out from current session")
-    } catch (error) {
-        res.status(500).send()
+    } catch (err) {
+        next(err)
     }
 })
 
@@ -69,16 +75,18 @@ router.post('/logout', auth, async (req, res) => {
 
 //Endpoint:  /api/users/me
 //Gives details about the currently logged in user
-router.get("/me",auth,async (req,res)=>{
+router.get("/me",auth,async (req,res,next)=>{
+    logger.info("Getiing info about logged in user...")
     res.send(req.user) 
 })
 
 
 //Endpoint: /api/users/me
 //Route to update current user
-router.patch('/me', auth ,async (req,res) => {
+router.patch('/me', auth ,async (req,res,next) => {
    
     //Checking if user aldready exists or not
+    logger.info("Updating user details...")
     const existingUser = await User.find({email:req.body.email})
     if(!existingUser){
         return res.status(404).send("User does not exist!")
@@ -96,8 +104,8 @@ router.patch('/me', auth ,async (req,res) => {
         updates.forEach((update) => req.user[update] = req.body[update]) 
         await req.user.save()
         res.send(req.user);
-    } catch (error) {
-        res.status(400).send()
+    } catch (err) {
+        next(err)
     }
 
 })
@@ -105,44 +113,56 @@ router.patch('/me', auth ,async (req,res) => {
 
 //Endpoint: /api/users/me
 //Route to delete current user
-router.delete('/me', auth, async (req,res) => {
+router.delete('/me', auth, async (req,res,next) => {
     try {
+        logger.info("Deleting user...")
         const existingUser = await User.find({email:req.body.email})
         if(!existingUser){
             return res.status(404).send("User does not exist!")
         }
         await req.user.remove()
         res.send("User deleted")
-    } catch (error) {
-        res.status(500).send()
+    } catch (err) {
+        next(err)
     }
 })
 
 
 //Endpoint: /api/users/:id
 //Get user by id
-router.get('/:id', async (req,res) => {
+router.get('/:id', async (req,res,next) => {
     try {
+        logger.info("Getting user by id")
         const user = await User.findById(req.params.id)
         res.send(user)
-    } catch (error) {
-        res.status(404).send()
+    } catch (err) {
+        next(err)
     }
 })
 
 
 //Endpoint: /api/users/  ||  /api/users?name=xyz
 //Get details as per filter
-router.get("/", async (req, res) => {
+router.get("/", async (req, res,next) => {
     try {
-        console.log(req.query)
+        logger.info("Getting user details as per query...")
         const data = await User.find(req.query)
         res.status(200).send(data)
     }
     catch (err) {
-        res.status(500).send(err)
+        next(err)
     }
   })
   
+
+// error handler
+router.use(function(err, req, res, next) {
+    //winston logging
+    logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+    // render the error page
+    res.status(err.status||500).json(err.message)
+    })  
+
+
 
 module.exports = router;
