@@ -129,8 +129,11 @@ export default function Register() {
             else if (values.password.length<8){
               errors.password = 'Password is too Short'
             }
-            else if(values.password!==values.password_confirm && values.password_confirm!==''){
-              errors.password = 'Password not matching';
+            if (!values.password_confirm){
+              errors.password_confirm = 'Fill this field';
+            }
+            else if(values.password!==values.password_confirm){
+              errors.password_confirm = 'Password not matching';
             }
             if (!values.fname){
               errors.fname = "Fill this field"
@@ -253,6 +256,8 @@ export default function Register() {
                 onChange={handleChange}
                 onBlur={handleBlur}
             className={classes.textf}
+            error={!!errors.password_confirm&&touched.password_confirm}
+            helperText={touched.password_confirm?errors.password_confirm:''}
           /> 
         </Grid>
       </Grid>
