@@ -42,6 +42,23 @@ function getSteps() {
 
 
 export default function Register() {
+  const [user,setUser] = React.useState({
+    name:'',
+    username:'',
+    email:'',
+    password:'',
+    university:'',
+    department:'',
+    gradDate:'2020-01-01',
+    bio:'',
+    domain: [],
+    tests: [{name:'',date:'2020-01-01',score:''}],
+    facebook: '',
+    twitter: '',
+    linkedIn: '',
+    github: '', 
+    uniApplied: [{name:'',course:'',status:''}]
+  });
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
@@ -103,16 +120,16 @@ export default function Register() {
           <Formik 
           validateOnChange={true}
           initialValues={{
-            name:'',
-            fname:'' ,
-            lname:'',
-            username:'', 
-            email:'',
+            name:user.name,
+            fname:!!user.name?user.name.slice(0,user.name.indexOf(' ')):'' ,
+            lname:!!user.name?user.name.slice(user.name.indexOf(' ')+1,user.name.length):'',
+            username:user.username, 
+            email:user.email,
             password:'',
             password_confirm:'',
-            university: '',
-            department: '',
-            gradDate: '2020-01-01' 
+            university: user.university,
+            department: user.department,
+            gradDate: user.gradDate 
           }}
           validate={values => {
           const errors = {};
@@ -156,38 +173,47 @@ export default function Register() {
             return errors;
           }}
           onSubmit={(values, { setSubmitting }) => {
+            values.name=values.fname+" "+values.lname;
+            user.name=values.name;
+            user.username=values.username;
+            user.email=values.email;
+            user.password=values.password;
+            user.university=values.university;
+            user.department=values.department;
+            user.gradDate=values.gradDate;
+            setUser(user);
             handleOpenMsg();
             setTimeout(() => {
               setSubmitting(false);
               handleNext();
             }, 1000);
-            values.name=values.fname+" "+values.lname;
-            console.log(values);
+            console.log(user);
             //@Backend Submit Function for Sign-Up
         }}
         >
         {({ isSubmitting ,handleChange,handleBlur,values,errors,touched,setFieldValue}) => (
           <Form autoComplete="off">
-          <Snackbar 
-          open={showSuccess} 
-          autoHideDuration={750} 
-          onClose={handleCloseMsg}
-        >
-        <Alert variant="filled" severity="success">
-        Changes Saved!
-      </Alert>
-      </Snackbar>
-          <Grid container>
-            <Grid item md={6}>
-              <Typography variant="h5" style={{paddingTop:40}}> Account </Typography>
-            </Grid>
-            <Grid item md={6}>
-            <Grid container spacing={2} style={{paddingTop:30}}>
+            <Snackbar 
+              open={showSuccess} 
+              autoHideDuration={750} 
+              onClose={handleCloseMsg}
+            >
+              <Alert variant="filled" severity="success">
+                Changes Saved!
+              </Alert>
+            </Snackbar>
+            <Grid container>
+              <Grid item md={6}>
+                <Typography variant="h5" style={{paddingTop:40}}> Account </Typography>
+              </Grid>
+              <Grid item md={6}>
+              <Grid container spacing={2} style={{paddingTop:30}}>
                 <Grid item md={6}>
                   <TextField 
                     name="fname" 
                     label="First Name"
-                variant="filled"
+                    value={values.fname}
+                    variant="filled"
                     onChange={handleChange} 
                     onBlur={handleBlur} 
                     fullWidth
@@ -196,42 +222,45 @@ export default function Register() {
                   /> 
                 </Grid>
                 <Grid item md={6}>
-              <TextField 
-                name="lname" 
-                variant="filled"
-                label="Last Name"
-                 onChange={handleChange} 
-                 onBlur={handleBlur} 
-                 fullWidth
-                 error={!!errors.lname&&touched.lname}
-                 helperText={touched.lname?errors.lname:''}
-               />
-            </Grid> 
-              </Grid> 
+                  <TextField 
+                    name="lname" 
+                    variant="filled"
+                    label="Last Name"
+                    value={values.lname}
+                    onChange={handleChange} 
+                    onBlur={handleBlur} 
+                    fullWidth
+                    error={!!errors.lname&&touched.lname}
+                    helperText={touched.lname?errors.lname:''}
+                   />
+                </Grid> 
+             </Grid> 
           <TextField 
             name="username"
             fullWidth
             variant="filled"
             label="Username" 
+            value={values.username}
             placeholder="Enter your Username"
             className={classes.textf}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={!!errors.username&&touched.username}
-                helperText={touched.username?errors.username:''}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={!!errors.username&&touched.username}
+            helperText={touched.username?errors.username:''}
           /> 
           <TextField 
             name="email"
             type="email" 
             fullWidth
+            value={values.email}
             variant="filled"
             label="Email" 
             placeholder="example@domain.com" 
             className={classes.textf}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={!!errors.email&&touched.email}
-                helperText={touched.email?errors.email:''}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={!!errors.email&&touched.email}
+            helperText={touched.email?errors.email:''}
           /> 
           <TextField 
             name="password"
@@ -240,8 +269,8 @@ export default function Register() {
             fullWidth
             variant="filled" 
             placeholder="Enter your password" 
-                onChange={handleChange}
-                onBlur={handleBlur}
+            onChange={handleChange}
+            onBlur={handleBlur}
             className={classes.textf}
             error={!!errors.password&&touched.password}
             helperText={touched.password?errors.password:'Minimum 8 charecters'}
@@ -253,8 +282,8 @@ export default function Register() {
             fullWidth
             variant="filled" 
             placeholder="Re-Enter your password" 
-                onChange={handleChange}
-                onBlur={handleBlur}
+            onChange={handleChange}
+            onBlur={handleBlur}
             className={classes.textf}
             error={!!errors.password_confirm&&touched.password_confirm}
             helperText={touched.password_confirm?errors.password_confirm:''}
@@ -274,8 +303,9 @@ export default function Register() {
             label="University Name" 
             fullWidth
             placeholder="Enter your MS University name" 
-                onChange={handleChange}
-                onBlur={handleBlur}
+            value={values.university}
+            onChange={handleChange}
+            onBlur={handleBlur}
             className={classes.textf}
             error={!!errors.university&&touched.university}
             helperText={touched.university?errors.university:''}
@@ -283,6 +313,7 @@ export default function Register() {
           <Autocomplete
               freeSolo
               options={departments}
+              value={values.department}
               name="department"
               onChange={(e, value) => {
                 setFieldValue("department", value)
@@ -296,12 +327,12 @@ export default function Register() {
           <TextField 
             name="gradDate" 
             variant="filled"
+            value={values.gradDate}
             type="date"
             label="Graduation Date" 
-            defaultValue="2020-01-01" //Default value is needed here
             fullWidth
-                onChange={handleChange}
-                onBlur={handleBlur}
+            onChange={handleChange}
+            onBlur={handleBlur}
             className={classes.textf}
             error={!!errors.gradDate&&touched.gradDate}
             helperText={touched.gradDate?errors.gradDate:''}
@@ -330,26 +361,46 @@ export default function Register() {
       <Formik 
           validateOnChange={true}
           initialValues={{
-            bio:'',
-            domain: [],
-            tests: [{name:'',date:'2020-01-01',score:''}],
-            facebook: '',
-            twitter: '',
-            linkedIn: '',
-            github: '', 
-            uniApplied: [{name:'',course:'',status:''}],
+            bio:user.bio,
+            domain: user.domain,
+            tests: user.tests,
+            facebook: user.facebook,
+            twitter: user.twitter,
+            linkedIn: user.linkedIn,
+            github: user.github, 
+            uniApplied: user.uniApplied,
             addDomain: '',
           }}
           onSubmit={(values, { setSubmitting }) => {
+            user.bio=values.bio;
+            user.domain=values.domain;
+            user.tests=values.tests;
+            user.facebook=values.facebook;
+            user.twitter=values.twitter;
+            user.linkedIn=values.linkedIn;
+            user.github=values.github;
+            user.uniApplied=values.uniApplied;
+            setUser(user);
+            handleOpenMsg();
             setTimeout(() => {
               setSubmitting(false);
-            }, 1000);
-            console.log(values);
+              handleNext();
+            }, 1000);   
+            console.log(user);
             //@Backend Submit Function for Sign-Up
         }}
         >
         {({ isSubmitting ,handleChange,handleBlur,values,setFieldValue}) => (
       <Form> 
+        <Snackbar 
+              open={showSuccess} 
+              autoHideDuration={750} 
+              onClose={handleCloseMsg}
+            >
+              <Alert variant="filled" severity="success">
+                Changes Saved!
+              </Alert>
+            </Snackbar>
         <Grid container className={classes.container}>
             <Grid item xs={6}>
               <Typography variant="h5"> Biography </Typography>
@@ -358,13 +409,14 @@ export default function Register() {
           <TextField 
             name="bio"
             label="Bio"
+            value={values.bio}
             placeholder="Describe Yourself"
             fullWidth
             multiline
             rows={4}
             variant="filled"
-                onChange={handleChange}
-                onBlur={handleBlur}
+            onChange={handleChange}
+            onBlur={handleBlur}
             />
           </Grid>
         </Grid>
@@ -377,11 +429,11 @@ export default function Register() {
               <TextField 
                 name='addDomain'
                 value={values.addDomain}
-            label="Domains"
-            placeholder="eg:Machine Learning, IOT"
-            fullWidth
-            variant="filled"
-            helperText="Press enter after adding each domain" 
+                label="Domains"
+                placeholder="eg:Machine Learning, IOT"
+                fullWidth
+                variant="filled"
+                helperText="Press enter after adding each domain" 
                 onChange={handleChange}
                 onBlur={handleBlur}
                 onKeyPress={(event) => {
@@ -513,16 +565,17 @@ export default function Register() {
               label="Facebook"
               fullWidth
               variant="filled"
+              value={values.facebook}
               placeholder="Your Facebook Profile URL" 
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+              onChange={handleChange}
+              onBlur={handleBlur}
               InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <FacebookIcon />
-                      </InputAdornment>
-                    ),
-                  }}
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <FacebookIcon />
+                    </InputAdornment>
+                  ),
+                }}
             /> 
           </div><br/>
           <div>
@@ -531,16 +584,17 @@ export default function Register() {
               label="Twitter"
               fullWidth
               variant="filled"
+              value={values.twitter}
               placeholder="Your Twitter Profile URL" 
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+              onChange={handleChange}
+              onBlur={handleBlur}
               InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <TwitterIcon />
-                      </InputAdornment>
-                    ),
-                  }}
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <TwitterIcon />
+                  </InputAdornment>
+                ),
+              }}
             /> 
           </div><br/>
               <div>
@@ -548,17 +602,18 @@ export default function Register() {
               name="github" 
               label="Github"
               fullWidth
+              value={values.github}
               variant="filled"
               placeholder="Your Github Profile URL" 
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+              onChange={handleChange}
+              onBlur={handleBlur}
               InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <GitHubIcon />
-                      </InputAdornment>
-                    ),
-                  }}
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <GitHubIcon />
+                  </InputAdornment>
+                ),
+              }}
             /> 
           </div><br/>
           <div>
@@ -567,16 +622,17 @@ export default function Register() {
               label="LinkedIn"
               variant="filled"
               fullWidth
+              value={values.linkedIn}
               placeholder="Your LinkedIn Profile URL" 
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+              onChange={handleChange}
+              onBlur={handleBlur}
               InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LinkedInIcon />
-                      </InputAdornment>
-                    ),
-                  }}
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LinkedInIcon />
+                  </InputAdornment>
+                ),
+              }}
             /> 
           </div>
         </Grid>
@@ -679,22 +735,30 @@ export default function Register() {
         </Grid>
         <Divider/><br/>
         <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
-                Back
-              </Button>
-      <Button 
-        type="submit" 
-        disabled={isSubmitting} 
-        variant="contained" 
-        color="primary"
-      >
-        Sign Up
-      </Button>
-    </Form>
+          Back
+        </Button>
+        <Button 
+          type="submit" 
+          disabled={isSubmitting} 
+          variant="contained" 
+          color="primary"
+        >
+          Save Changes
+        </Button>
+        <br/><br/>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{width:295,height:42,borderRadius:25}}
+        >
+          Register
+        </Button>
+      </Form>
     )}
-        </Formik>
-    </div>
-        }
-      	 </Box>
-    </div>
+    </Formik>
+  </div>
+  }
+  </Box>
+  </div>
   );
 }
