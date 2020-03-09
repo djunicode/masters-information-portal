@@ -24,11 +24,11 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 const useStyles = makeStyles(theme => ({
   textf: {
-  	marginTop: 20
+    marginTop: 20
   },
   box: {
-  	marginLeft: 55,
-  	marginRight: 55,
+    marginLeft: 55,
+    marginRight: 55,
   },
   container: {
     paddingTop: 40,
@@ -94,29 +94,29 @@ export default function Register() {
   
   return (
     <div className="App" style={{paddingTop:'45px'}}>
-    	<Typography variant="h4" className={classes.header}><b>Register</b></Typography>
-	    <div align="center">
-		    <Stepper activeStep={activeStep} style={{width:500}}>
-		        {steps.map((label, index) => {
-		          const stepProps = {};
-		          const labelProps = {};
-		          if (isStepOptional(index)) {
-		            labelProps.optional = <Typography variant="caption">Optional</Typography>;
-		          }
-		          if (isStepSkipped(index)) {
-		            stepProps.completed = false;
-		          }
-		          return (
-		            <Step key={label} {...stepProps}>
-		              <StepLabel {...labelProps}>{label}</StepLabel>
-		            </Step>
-		          );
-		        })}
-		      </Stepper>
-	      </div>
-	      <Divider/>
-	      <Box className={classes.box}>
-    		{activeStep===0?
+      <Typography variant="h4" className={classes.header}><b>Register</b></Typography>
+      <div align="center">
+        <Stepper activeStep={activeStep} style={{width:500}}>
+            {steps.map((label, index) => {
+              const stepProps = {};
+              const labelProps = {};
+              if (isStepOptional(index)) {
+                labelProps.optional = <Typography variant="caption">Optional</Typography>;
+              }
+              if (isStepSkipped(index)) {
+                stepProps.completed = false;
+              }
+              return (
+                <Step key={label} {...stepProps}>
+                  <StepLabel {...labelProps}>{label}</StepLabel>
+                </Step>
+              );
+            })}
+          </Stepper>
+        </div>
+        <Divider/>
+        <Box className={classes.box}>
+        {activeStep===0?
           <Formik 
           validateOnChange={true}
           initialValues={{
@@ -313,7 +313,7 @@ export default function Register() {
           <Autocomplete
               freeSolo
               options={departments}
-              value={values.department}
+              defaultValue={values.department}
               name="department"
               onChange={(e, value) => {
                 setFieldValue("department", value)
