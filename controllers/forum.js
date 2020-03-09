@@ -1,7 +1,10 @@
 const express = require('express');
 const Forum = require('../models/forum');
+const logger = require("../config/logger");
+const { auth } = require('../infra/middleware/auth');
+const { owner } = require('../infra/middleware/forumAuth');
 const router = express.Router();
-const logger=require("../config/logger")
+
         //FIND ALL
         router.get('/', async (req,res)=>{   
             try
@@ -18,7 +21,7 @@ const logger=require("../config/logger")
         });
 
         //CREATE 
-        router.post('/', async (req,res,next)=>{            
+        router.post('/',auth, async (req,res,next)=>{            
             try
             {
                 logger.info("Creating forum post")
@@ -46,11 +49,11 @@ const logger=require("../config/logger")
 
 
         //UPDATE
-        router.put('/:id',async (req,res,next)=>{
+        router.put('/:id',auth,owner,async (req,res,next)=>{
             try
             {
                 logger.info("Updating forum post")
-                let forum = await Forum.findByIdAndUpdate(req.params.id,req.body);
+                let forum = await Forum.findByIdAndUpdate(req.params.id,req.body,{new:true});
                 return res.json(forum);
             }
             catch(err)
@@ -60,7 +63,7 @@ const logger=require("../config/logger")
         });
 
         //DESTROY
-        router.delete('/:id',(req,res,next)=>{
+        router.delete('/:id',auth,owner,(req,res,next)=>{
             logger.info("Deleting forum post")
         Forum.findByIdAndDelete(req.params.id,(error)=>{
             if(error)
