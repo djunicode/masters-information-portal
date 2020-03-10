@@ -22,7 +22,9 @@ router.post("/",async (req,res)=>{
         res.status(201).send({user, token})     
         //We also send the token along with the user so to identify which token is the user currently logged in with
     }catch(e){
-        res.status(400).send(e)
+        res.status(400).json({
+            error:"User creation Failed"
+        })
     }
 })
 
@@ -46,7 +48,9 @@ router.post("/login",async (req,res)=>{
         })
     }catch(e){
         console.log(e)
-        res.status(401).send(e)
+        res.status(401).json({
+            error:"Failed to Login"
+        })
     }
 })
 
@@ -61,7 +65,9 @@ router.post('/logout', auth, async (req, res) => {
         await req.user.save()
         res.send("Logged out from current session")
     } catch (error) {
-        res.status(500).send()
+        res.status(500).send({
+            error:"Failed to Logout"
+        })
     }
 })
 
