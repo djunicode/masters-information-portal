@@ -73,7 +73,7 @@ const userSchema = new mongoose.Schema({
 const SALT = process.env.SALT || 'djUnicode';
 userSchema.methods.newAuthToken = async function(){
     const user  = this
-    const token =  jwt.sign({ _id: user.id.toString() },SALT, {expiresIn: "7 days"})
+    const token =  jwt.sign({ _id: user.id.toString() },SALT, {expiresIn: "1d"})
     user.tokens = user.tokens.concat({ token })
     await user.save()
     return token
