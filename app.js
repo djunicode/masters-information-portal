@@ -2,14 +2,15 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const path = require('path');
+const logger = require('./config/logger');
 
-const cors=require("cors")
-const { userRouter,forumRouter,tagRouter } = require('./controllers');
+const cors = require('cors');
+const { userRouter, forumRouter, tagRouter } = require('./controllers');
 
 // --- App config
+
 let mongoUri = 'mongodb://localhost:27017/masters_portal';
-if (process.env.NODE_ENV == 'test') {
+if (process.env.NODE_ENV === 'test') {
   mongoUri = 'mongodb://localhost:27017/masters_portal_test';
 }
 
@@ -20,8 +21,8 @@ const app = express();
 // --- Middleware
 
 app.use(cors({
-    origin:"http://localhost:3000"
-}))
+  origin: 'http://localhost:3000',
+}));
 app.use(morgan('common'));
 app.use(express.static('./static/'));
 app.use(bodyParser.urlencoded({ extended: true }));
