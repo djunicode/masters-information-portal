@@ -77,10 +77,10 @@ function updated(model, doc) {
 /**
  * Logs the deletion of a document
  * @param {String} model - Model which is used
- * @param {String} id - Document ID which is deleted
+ * @param {String} doc - Document which is deleted
  */
-function deleted(model, id) {
-  logger.info(`Deleted ${model} of id ${id}`);
+function deleted(model, doc) {
+  logger.info(`Deleted ${model} of id ${doc._id}`);
 }
 
 // -----

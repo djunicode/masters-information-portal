@@ -9,13 +9,6 @@ const { userRouter, forumRouter, tagRouter } = require('./controllers');
 
 // --- App config
 
-let mongoUri = 'mongodb://localhost:27017/masters_portal';
-if (process.env.NODE_ENV === 'test') {
-  mongoUri = 'mongodb://localhost:27017/masters_portal_test';
-}
-
-mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
-
 const app = express();
 
 // --- Middleware
@@ -34,6 +27,15 @@ app.use(bodyParser.raw());
 app.use('/api/user', userRouter);
 app.use('/api/forum', forumRouter);
 app.use('/api/tag', tagRouter);
+
+app.use((err, req, res, next) => {
+  if (err.name === 'ValidationError') {
+    return res.status(400).json(err.errors);
+  }
+
+  logger.error(err);
+  return res.status(500).json(err);
+});
 
 // ---
 module.exports = app;
