@@ -79,6 +79,16 @@ userSchema.methods.newAuthToken = async function(){
     return token
 }
 
+//To send only specific data to user
+userSchema.methods.getPublicProfile = function(){
+  const user  = this
+  const userObject = user.toObject()
+
+  delete userObject.password
+  delete userObject.tokens
+  return userObject
+}
+
 //Hashes the password before saving
 userSchema.pre('save',encryptPassword)
 

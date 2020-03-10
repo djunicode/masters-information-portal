@@ -19,7 +19,7 @@ router.post("/",async (req,res)=>{
 
         const user = new User(req.body);
         const token = await user.newAuthToken()    //Generate auth token
-        res.status(201).send({user, token})     
+        res.status(201).send({user: user.getPublicProfile(), token})     
         //We also send the token along with the user so to identify which token is the user currently logged in with
     }catch(e){
         res.status(400).json({
@@ -43,7 +43,7 @@ router.post("/login",async (req,res)=>{
         //If email and password are correct,it generates a new token and appends it to the tokens array
         const token = await user.newAuthToken()
         res.send({
-            user:user,
+            user:user.getPublicProfile(),
             token:token    
         })
     }catch(e){
@@ -76,7 +76,7 @@ router.post('/logout', auth, async (req, res) => {
 //Endpoint:  /api/users/me
 //Gives details about the currently logged in user
 router.get("/me",auth,async (req,res)=>{
-    res.send(req.user) 
+    res.send(req.user.getPublicProfile()) 
 })
 
 
@@ -101,9 +101,11 @@ router.patch('/me', auth ,async (req,res) => {
     try {        
         updates.forEach((update) => req.user[update] = req.body[update]) 
         await req.user.save()
-        res.send(req.user);
+        res.send(req.user.getPublicProfile() );
     } catch (error) {
-        res.status(400).send()
+        res.status(400).send({
+            error : "User update failed"
+        })
     }
 
 })
@@ -120,7 +122,9 @@ router.delete('/me', auth, async (req,res) => {
         await req.user.remove()
         res.send("User deleted")
     } catch (error) {
-        res.status(500).send()
+        res.status(500).send({
+            error: "Failed to delete user"
+        })
     }
 })
 
@@ -130,7 +134,7 @@ router.delete('/me', auth, async (req,res) => {
 router.get('/:id', async (req,res) => {
     try {
         const user = await User.findById(req.params.id)
-        res.send(user)
+        res.send(user.getPublicProfile())
     } catch (error) {
         res.status(404).send()
     }
@@ -143,7 +147,9 @@ router.get("/", async (req, res) => {
     try {
         console.log(req.query)
         const data = await User.find(req.query)
-        res.status(200).send(data)
+        if(data.length==0)return res.status(404).send()
+        const newArr = data.map(user=> user.getPublicProfile() )
+        res.status(200).send(newArr)
     }
     catch (err) {
         res.status(500).send(err)
