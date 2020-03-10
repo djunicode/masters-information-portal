@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';  
+import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -12,7 +12,7 @@ import Alert from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Divider from '@material-ui/core/Divider';
-import {Formik,Form,FieldArray} from 'formik';
+import { Formik, Form, FieldArray } from 'formik';
 import Stepper from '@material-ui/core/Stepper';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import FacebookIcon from '@material-ui/icons/Facebook';
@@ -23,77 +23,83 @@ import AddIcon from '@material-ui/icons/Add';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 const useStyles = makeStyles(theme => ({
-  textf: {
-    marginTop: 20
-  },
-  box: {
-    marginLeft: 55,
-    marginRight: 55,
-  },
-  container: {
-    paddingTop: 40,
-    paddingBottom: 20,
-  }
+    textf: {
+        marginTop: 20
+    },
+    box: {
+        marginLeft: 55,
+        marginRight: 55,
+    },
+    container: {
+        paddingTop: 40,
+        paddingBottom: 20,
+    }
 }));
 
 function getSteps() {
-  return ['Core Details', 'Other Details',];
+    return ['Core Details', 'Other Details', ];
 }
 
 
 export default function Register() {
-  const [user,setUser] = React.useState({
-    name:'',
-    username:'',
-    email:'',
-    password:'',
-    university:'',
-    department:'',
-    gradDate:'2020-01-01',
-    bio:'',
-    domain: [],
-    tests: [{name:'',date:'2020-01-01',score:''}],
-    facebook: '',
-    twitter: '',
-    linkedIn: '',
-    github: '', 
-    uniApplied: [{name:'',course:'',status:''}]
-  });
-  const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const steps = getSteps();
-  const [skipped, setSkipped] = React.useState(new Set());
-  const isStepOptional = step => {
-    return step === 1;
-  };
-  const isStepSkipped = step => {
-    return skipped.has(step);
-  };
-  const [showSuccess, setShowSuccess] = React.useState(false);
+    const [hasSaved, setHasSaved] = React.useState(false);
+    const [user, setUser] = React.useState({
+        name: '',
+        username: '',
+        email: '',
+        password: '',
+        university: '',
+        department: '',
+        gradDate: '2020-01-01',
+        bio: '',
+        domain: [],
+        tests: [{ name: '', date: '2020-01-01', score: '' }],
+        facebook: '',
+        twitter: '',
+        linkedIn: '',
+        github: '',
+        uniApplied: [{ name: '', course: '', status: '' }]
+    });
+    const classes = useStyles();
+    const [activeStep, setActiveStep] = React.useState(0);
+    const steps = getSteps();
+    const [skipped, setSkipped] = React.useState(new Set());
+    const isStepOptional = step => {
+        return step === 1;
+    };
+    const isStepSkipped = step => {
+        return skipped.has(step);
+    };
+    const [showSuccess, setShowSuccess] = React.useState(false);
     const handleOpenMsg = () => {
-      setShowSuccess(true);
-  };
-  const handleCloseMsg = () => {
-    setShowSuccess(false);
-  };
-  const departments = ["Computers","IT","Mechanical","Bio-Med","Production","Electronics","EXTC","Chemical","Civil","Aeronautical","Mining","Agricultural","Metallurgical"];
-  const handleNext = () => {
-    let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
-      newSkipped = new Set(newSkipped.values());
-      newSkipped.delete(activeStep);
-    }
+        setShowSuccess(true);
+    };
+    const handleCloseMsg = () => {
+        setShowSuccess(false);
+    };
+    const departments = ["Computers", "IT", "Mechanical", "Bio-Med", "Production", "Electronics", "EXTC", "Chemical", "Civil", "Aeronautical", "Mining", "Agricultural", "Metallurgical"];
+    const handleNext = () => {
+        let newSkipped = skipped;
+        if (isStepSkipped(activeStep)) {
+            newSkipped = new Set(newSkipped.values());
+            newSkipped.delete(activeStep);
+        }
 
-    setActiveStep(prevActiveStep => prevActiveStep + 1);
-    setSkipped(newSkipped);
-  };
+        setActiveStep(prevActiveStep => prevActiveStep + 1);
+        setSkipped(newSkipped);
+    };
 
-  const handleBack = () => {
-    setActiveStep(prevActiveStep => prevActiveStep - 1);
-  };
-  
-  return (
-    <div className="App" style={{paddingTop:'45px'}}>
+    const handleBack = () => {
+        if (!hasSaved) {
+            alert("You will loose any changes if you dont save!");
+            setHasSaved(true);
+        } else {
+            setActiveStep(prevActiveStep => prevActiveStep - 1);
+        }
+    };
+
+    return (
+        <div className="App" style={{paddingTop:'45px'}}>
       <Typography variant="h4" className={classes.header}><b>Register</b></Typography>
       <div align="center">
         <Stepper activeStep={activeStep} style={{width:500}}>
@@ -183,6 +189,7 @@ export default function Register() {
             user.gradDate=values.gradDate;
             setUser(user);
             handleOpenMsg();
+            setHasSaved(false);
             setTimeout(() => {
               setSubmitting(false);
               handleNext();
@@ -381,6 +388,7 @@ export default function Register() {
             user.github=values.github;
             user.uniApplied=values.uniApplied;
             setUser(user);
+            setHasSaved(true);
             handleOpenMsg();
             setTimeout(() => {
               setSubmitting(false);
@@ -749,6 +757,7 @@ export default function Register() {
         <Button
           variant="contained"
           color="primary"
+          type="submit"
           style={{width:295,height:42,borderRadius:25}}
         >
           Register
@@ -760,5 +769,5 @@ export default function Register() {
   }
   </Box>
   </div>
-  );
+    );
 }
