@@ -1,3 +1,7 @@
+'use strict';
+
+// TODO: make sense out of the websocket code
+
 const socket = require('socket.io');
 const mongo = require('../models/chat');
 const io = socket(server);
