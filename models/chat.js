@@ -1,31 +1,32 @@
-const mongoose=require('mongoose');
-const Schema=mongoose.Schema;
+'use strict';
 
-const MessageSchema=new Schema({
-    //initiator
-    sender:
-    {
-        type:Schema.Types.ObjectId,
-        ref:'User'
-    },
-    //to
-    receiver:
-    {
-        type:Schema.Types.ObjectId,
-        ref:'User'
-    },
-    message: [{
-        // Handle is the Senders name and msg is the actual message
-        //updated to sender 
-        sender:
-        {
-            type:Schema.Types.ObjectId,
-            ref:'User'
-        },
-        messageBody:String
-    }]
-})
+const mongoose = require('mongoose');
 
-const Message=mongoose.model('message',MessageSchema);
+const messageSchema = new Schema(
+	{
+		//initiator
+		sender: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User',
+		},
+		//to
+		receiver: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User',
+		},
+		message: [
+			{
+				// Handle is the Senders name and msg is the actual message
+				//updated to sender
+				sender: {
+					type: mongoose.Schema.Types.ObjectId,
+					ref: 'User',
+				},
+				messageBody: String,
+			},
+		],
+	},
+	{ timestamps: true }
+);
 
-module.exports={Message};
+module.exports = mongoose.model('Message', messageSchema);

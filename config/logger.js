@@ -1,3 +1,7 @@
+'use strict';
+
+// TODO: review and clean the logger code
+
 const { createLogger, transports, format } = require('winston');
 const path = require('path');
 

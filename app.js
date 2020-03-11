@@ -1,41 +1,54 @@
-const express = require('express');
-const morgan = require('morgan');
-const mongoose = require('mongoose');
+'use strict';
+
+const app = require('express')();
 const bodyParser = require('body-parser');
-const logger = require('./config/logger');
-
 const cors = require('cors');
-const { userRouter, forumRouter, tagRouter } = require('./controllers');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const router = require('./routes/index');
+const { directives, limiter, options } = require('./config/middlewares');
 
-// --- App config
+app.set('json spaces', 2);
 
-const app = express();
-
-// --- Middleware
-
-app.use(cors({
-  origin: 'http://localhost:3000',
-}));
-app.use(morgan('common'));
-app.use(express.static('./static/'));
+// body-parser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(bodyParser.raw());
 
-// --- Routes
+// morgan
+app.use(morgan('dev'));
 
-app.use('/api/user', userRouter);
-app.use('/api/forum', forumRouter);
-app.use('/api/tag', tagRouter);
+// express-rate-limit
+app.use(limiter);
 
-app.use((err, req, res, next) => {
-  if (err.name === 'ValidationError') {
-    return res.status(400).json(err.errors);
-  }
+// helmet
+app.use(helmet());
+app.use(helmet.contentSecurityPolicy({ directives }));
+app.use(helmet.noCache());
 
-  logger.error(err);
-  return res.status(500).json(err);
+// cors
+app.use(cors(options));
+
+// api routes
+app.use('/api', router);
+
+// 404 resource not found
+app.use('*', (req, res, next) => {
+	return res.status(404).send({
+		error: {
+			status: res.statusCode,
+			message: 'Resource not found',
+		},
+	});
 });
 
-// ---
+// custom error handler
+app.use((err, req, res, next) => {
+	return res.status(500 || err.status).send({
+		error: {
+			status: 500 || err.status,
+			message: err.message,
+		},
+	});
+});
+
 module.exports = app;

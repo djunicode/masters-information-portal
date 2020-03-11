@@ -1,30 +1,22 @@
-const mongoose = require('mongoose');
+'use strict';
 
 const app = require('./app');
-const logger = require('./config/logger');
+const { dbConnection } = require('./config/db');
+const { port, host } = require('./config/constants');
+const serverIP = ip.address();
 
-const PORT = process.env.PORT || 8000;
-const HOST = process.env.HOST || 'localhost';
+const main = async () => {
+	await dbConnection();
 
-/**
- * Sets up MongoDB connection first and then listens for connections.
- */
-async function setup() {
-  let mongoUri = 'mongodb://localhost:27017/masters_portal';
-  if (process.env.NODE_ENV === 'test') {
-    mongoUri = 'mongodb://localhost:27017/masters_portal_test';
-  }
+	app.listen(port, host, () => {
+		console.log({
+			status: 'HTTP server listening',
+			port,
+			host: serverIP,
+		});
+	});
+};
 
-  mongoose.set('useCreateIndex', true);
-
-  await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
-  logger.info('MongoDB connected!');
-
-  app.listen(PORT, HOST, () => {
-    logger.info(`Server started listening on http://${HOST}:${PORT}`);
-  });
+if (typeof module !== 'undefined' && !module.parent) {
+	main();
 }
-
-// -----
-
-setup();
