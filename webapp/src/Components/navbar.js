@@ -3,7 +3,7 @@
 //setLoggedIn(0);  if no user logged in
 //I wish to use the above function whenever the user is loggedIn, this will display profile & logout instead of login
 
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import Toolbar from '@material-ui/core/Toolbar';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -48,7 +48,7 @@ const useStyles = makeStyles({
         color: 'black',
         fontFamily: 'Roboto'
     },
-    linkHeader:{
+    linkHeader: {
         textDecoration: 'none',
         color: 'white',
         fontFamily: 'Roboto'
@@ -71,8 +71,7 @@ function NavBar() {
 
         setState({ ...state, [side]: open });
     };
-    const [loggedIn,setLoggedIn]=useState(0);
-
+    const [loggedIn, setLoggedIn] = useState(0);
     const sideList = side => (
         <div
             className={classes.list}
@@ -90,79 +89,79 @@ function NavBar() {
                     to='/'
                 >
                     <ListItem button>
-                    <ListItemIcon>
-                        <HomeIcon/>
-                    </ListItemIcon>
+                        <ListItemIcon>
+                            <HomeIcon />
+                        </ListItemIcon>
                         <ListItemText>Home</ListItemText>
-                     </ListItem>
+                    </ListItem>
                 </NavLink>
                 <Divider />
-                {!loggedIn?
+                {!loggedIn ?
                     <React.Fragment>
                         <NavLink
                             className={classes.link}
                             to='/login'
                         >
                             <ListItem button>
-                            <ListItemIcon>
-                                <AccountCircleIcon/>
-                            </ListItemIcon>
+                                <ListItemIcon>
+                                    <AccountCircleIcon />
+                                </ListItemIcon>
                                 <Typography>Login</Typography>
                             </ListItem>
                         </NavLink>
-                    <Divider />
+                        <Divider />
                     </React.Fragment>
                     :
                     <React.Fragment>
-                    <NavLink
+                        <NavLink
                             className={classes.link}
                             to='/profile'
                         >
                             <ListItem button>
-                            <ListItemIcon>
-                                <AccountCircleIcon/>
-                            </ListItemIcon>
+                                <ListItemIcon>
+                                    <AccountCircleIcon />
+                                </ListItemIcon>
                                 <Typography>Profile</Typography>
                             </ListItem>
                         </NavLink>
-                    <Divider />
+                        <Divider />
                     </React.Fragment>
                 }
                 <NavLink
-                        className={classes.link}
-                        to='/'
-                    >
-                <ListItem button>
+                    className={classes.link}
+                    to='/forum'
+                >
+                    <ListItem button>
                         <ListItemIcon>
-                            <ForumIcon/>
+                            <ForumIcon />
                         </ListItemIcon>
-                            <Typography>Forum</Typography>
-                        </ListItem>
-                    </NavLink>
+                        <Typography>Forum</Typography>
+                    </ListItem>
+                </NavLink>
                 <Divider />
                 <NavLink
-                        className={classes.link}
-                        to='/'
-                    >
-                <ListItem button>
+                    className={classes.link}
+                    to='chat/'
+                >
+                    <ListItem button>
                         <ListItemIcon>
-                            <ChatIcon/>
+                            <ChatIcon />
                         </ListItemIcon>
-                            <Typography>Chat</Typography>
-                        </ListItem>
-                    </NavLink>
+                        <Typography>Chat</Typography>
+                    </ListItem>
+                </NavLink>
                 <Divider />
                 <NavLink
-                        className={classes.link}
-                        to='/'
-                    >
-                <ListItem button>
+                    className={classes.link}
+                    to='/'
+                >
+                    <ListItem button>
                         <ListItemIcon>
-                            <DescriptionIcon/>
+                            <DescriptionIcon />
                         </ListItemIcon>
-                            <Typography>Resources</Typography>
-                        </ListItem>
-                    </NavLink>
+                        <Typography>Resources</Typography>
+                    </ListItem>
+                </NavLink>
                 <Divider />
             </List>
         </div>
@@ -188,16 +187,16 @@ function NavBar() {
                         >
                             {sideList('left')}
                         </Drawer>
-                        
-                            <Typography variant='h4' className={classes.title}>
+
+                        <Typography variant='h4' className={classes.title}>
                             <NavLink
-                            className={classes.linkHeader}
-                            to='/'
-                         ><Typography variant='h4'>Masters Information Portal</Typography>
-                        </NavLink>
+                                className={classes.linkHeader}
+                                to='/'
+                            ><Typography variant='h4'>Masters Information Portal</Typography>
+                            </NavLink>
                         </Typography>
                         {
-                            !loggedIn?
+                            !loggedIn ?
                                 <NavLink
                                     className={classes.linkHeader}
                                     to='/login'
@@ -206,7 +205,7 @@ function NavBar() {
                                         Login
                                     </Button>
                                 </NavLink>
-                            :
+                                :
                                 <NavLink
                                     className={classes.linkHeader}
                                     to='/'

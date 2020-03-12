@@ -16,6 +16,7 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
+    textAlign: 'center',
     maxWidth: 1111,
     minHeight: 440,
     margin: 'auto',
