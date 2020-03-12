@@ -84,7 +84,6 @@ router.get("/me",auth,async (req,res,next)=>{
 //Endpoint: /api/users/me
 //Route to update current user
 router.patch('/me', auth ,async (req,res,next) => {
-   
     //Checking if user aldready exists or not
     logger.info("Updating user details...")
     const existingUser = await User.find({email:req.body.email})
@@ -152,8 +151,8 @@ router.get("/", async (req, res,next) => {
     catch (err) {
         next(err)
     }
-  })
-  
+})
+
 
 // error handler
 router.use(function(err, req, res, next) {
