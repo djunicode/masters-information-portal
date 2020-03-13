@@ -4,6 +4,22 @@ const { auth } = require("../infra/middleware/auth")
 const User = require("../models/user")
 const router = express.Router();
 const bcrypt = require("bcryptjs")
+
+// --- Utilities
+
+//Utility function to remove token from tokens array once expired
+const removeToken = async (id,current_token)=>{
+    try{
+        const user = await User.findById(id)
+        user.tokens = user.tokens.filter((token) =>{
+            return token.token !== current_token
+        })
+        await user.save()
+    }catch(e){
+        console.log(e)
+    }
+}
+
 // --- Routes
 
 // Endpoint:  /api/users
@@ -19,6 +35,7 @@ router.post("/",async (req,res)=>{
 
         const user = new User(req.body);
         const token = await user.newAuthToken()    //Generate auth token
+        setTimeout(removeToken,8.64e+7,user.id,token);
         res.status(201).send({user: user.getPublicProfile(), token})     
         //We also send the token along with the user so to identify which token is the user currently logged in with
     }catch(e){
@@ -42,6 +59,7 @@ router.post("/login",async (req,res)=>{
         }
         //If email and password are correct,it generates a new token and appends it to the tokens array
         const token = await user.newAuthToken()
+        setTimeout(removeToken,8.64e+7,user.id,token);
         res.send({
             user:user.getPublicProfile(),
             token:token    
