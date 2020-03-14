@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import CloseIcon from '@material-ui/icons/Close';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -466,7 +467,9 @@ export default function Register() {
                 key={index}
                 label={item}
                 color="primary"
-                style={{marginRight:10}}
+                variant="outlined"
+                deleteIcon={<CloseIcon />}
+                style={{backgroundColor:'#E7F3EF',color:'#496961',marginRight:10,borderColor:'#E7F3EF',fontWeight:'bold'}}
                 onDelete={()=>setFieldValue('domain',values.domain.filter((domainName)=>domainName !==item))}
               />
             ))}
