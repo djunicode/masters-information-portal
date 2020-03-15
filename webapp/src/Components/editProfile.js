@@ -24,7 +24,6 @@ import AddIcon from '@material-ui/icons/Add';
 const useStyles = makeStyles(theme => ({
 	root: {
 	    backgroundColor: theme.palette.background.paper,
-	    textAlign: 'center',
 	    maxWidth: 1111,
 	    minHeight: 440,
 	    margin: 'auto',
@@ -37,13 +36,14 @@ const useStyles = makeStyles(theme => ({
         marginTop: 20
     },
     box: {
-        marginLeft: 50,
-        marginRight: 55,
+        marginLeft: '10vw',
+        marginRight: '10vw',
         marginTop: 10
     },
     container: {
         paddingTop: 40,
         paddingBottom: 30,
+        paddingLeft: 40
     }
 }));
 
@@ -81,8 +81,10 @@ function EditProfile() {
     const departments = ["Computers", "IT", "Mechanical", "Bio-Med", "Production", "Electronics", "EXTC", "Chemical", "Civil", "Aeronautical", "Mining", "Agricultural", "Metallurgical"];
     return (
 		<React.Fragment>
-		  <div className={classes.root} style={{paddingTop:'45px',textAlign:'center'}}>
-      		<Typography variant="h4" className={classes.header}><b>Edit Profile</b></Typography><br/><br/>
+		  <div className={classes.root} style={{paddingTop:'45px'}}>
+      		<div align="center">
+      			<Typography variant="h4" className={classes.header}><b>Edit Profile</b></Typography><br/><br/>
+      		</div>
       			<Divider/>
         		<Box className={classes.box}>
 		            <Formik 
@@ -170,7 +172,8 @@ function EditProfile() {
 		        </Grid>
 		      </Grid>
 		      <br/>
-		      <Divider/><Grid container>
+		      <Divider/>
+		      <Grid container className={classes.container}>
 	              <Grid item md={6}>
 	                <Typography variant="h5" style={{paddingTop:40}}> Profile Image </Typography>
 	              </Grid>
@@ -192,7 +195,7 @@ function EditProfile() {
 		      </Grid>
 		      <br/>
 		      <Divider/>
-			  <Grid container>
+			  <Grid container className={classes.container}>
 	            <Grid item md={6}>
 	              <Typography variant="h5" style={{paddingTop:30}}> Current University</Typography>
 	            </Grid>
@@ -533,15 +536,15 @@ function EditProfile() {
                    </div><br/>
                   <Grid container spacing={2}>
               {index===values.uniApplied.length-1?
-              <Grid item xs={6} style={{alignItems:'right'}}>
+              <Grid item xs={8} style={{alignItems:'right'}}>
                 <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',course:'',status:''})}>
-                      <AddIcon /> Add Application
+                      <AddIcon /> Add Applicaiton
                 </Button>
               </Grid>
               :
               <Grid item xs={3}></Grid>
               }
-              <Grid item xs={6}>
+              <Grid item xs={4}>
               <Button 
                     key={index}
                     className={classes.btn}
@@ -570,15 +573,17 @@ function EditProfile() {
           </Grid>
         </Grid> 
         <Divider/> <br/> 
-		<Button
-			variant = "contained"
-			disabled = { isSubmitting }
-			color = "primary"
-			type = "submit"
-			style = { { width: 295, height: 42, borderRadius: 25 } } 
-		>
-	 	Update Info 
-	 	</Button>
+        <div align="center">
+			<Button
+				variant = "contained"
+				disabled = { isSubmitting }
+				color = "primary"
+				type = "submit"
+				style = { { width: 295, height: 42, borderRadius: 25 } } 
+			>
+		 	Update Info 
+		 	</Button>
+		</div>
  		</Form>
 		)
 		} 
