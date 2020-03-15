@@ -15,22 +15,35 @@ import Divider from '@material-ui/core/Divider';
 import { Formik, Form, FieldArray } from 'formik';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import FacebookIcon from '@material-ui/icons/Facebook';
+import ImageUploader from 'react-images-upload';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import LinkedInIcon from '@material-ui/icons/LinkedIn';
 import RemoveIcon from '@material-ui/icons/Remove';
 import AddIcon from '@material-ui/icons/Add';
 
 const useStyles = makeStyles(theme => ({
+	root: {
+	    backgroundColor: theme.palette.background.paper,
+	    textAlign: 'center',
+	    maxWidth: 1111,
+	    minHeight: 440,
+	    margin: 'auto',
+	    marginTop: 20,
+	    paddingTop: 10,
+	    marginBottom: 20,
+	    flexGrow: 1
+  	},
     textf: {
         marginTop: 20
     },
     box: {
-        marginLeft: 55,
+        marginLeft: 50,
         marginRight: 55,
+        marginTop: 10
     },
     container: {
         paddingTop: 40,
-        paddingBottom: 20,
+        paddingBottom: 30,
     }
 }));
 
@@ -53,6 +66,10 @@ function EditProfile() {
         github: '',
         uniApplied: [{ name: '', course: '', status: '' }]
     });
+    const[pic,setPic]=React.useState([])
+    const handleImage = (picture) => {
+    	setPic(pic.concat(picture))
+    }
     const classes = useStyles();
     const [showSuccess, setShowSuccess] = React.useState(false);
     const handleOpenMsg = () => {
@@ -62,21 +79,11 @@ function EditProfile() {
         setShowSuccess(false);
     };
     const departments = ["Computers", "IT", "Mechanical", "Bio-Med", "Production", "Electronics", "EXTC", "Chemical", "Civil", "Aeronautical", "Mining", "Agricultural", "Metallurgical"];
-    var fileReader = new FileReader();
-    var url;
-    const handleFileChange = (event) =>{
-		event.currentTarget.files[0].size>2097152?	//2MB max size
-	    	alert("Image size must be under 2MB")
-	    	:
-	    	user.pic=event.currentTarget.files[0]
-	    url= fileReader.readAsDataURL(user.pic);
-	    console.log(url)
-	    console.log(fileReader.result)
-    }
     return (
 		<React.Fragment>
-		  <div className="App" style={{paddingTop:'45px'}}>
-      		<Typography variant="h4" className={classes.header}><b>Edit Profile</b></Typography>
+		  <div className={classes.root} style={{paddingTop:'45px',textAlign:'center'}}>
+      		<Typography variant="h4" className={classes.header}><b>Edit Profile</b></Typography><br/><br/>
+      			<Divider/>
         		<Box className={classes.box}>
 		            <Formik 
 			          validateOnChange={true}
@@ -141,9 +148,9 @@ function EditProfile() {
 	                Changes Saved!
 	              </Alert>
 	            </Snackbar>
-	            <Grid container>
+	            <Grid container className={classes.container}>
 	              <Grid item md={6}>
-	                <Typography variant="h5" style={{paddingTop:40}}> Account </Typography>
+	                <Typography variant="h5" style={{paddingTop:30}}> Account </Typography>
 	              </Grid>
 	              <Grid item md={6}>
 		          <TextField 
@@ -168,26 +175,26 @@ function EditProfile() {
 	                <Typography variant="h5" style={{paddingTop:40}}> Profile Image </Typography>
 	              </Grid>
 	              <Grid item md={6}>
-		          <TextField 
-		            name="pic"
-		            type="file" 
-		            variant="outlined"
-		            multiple="false"
-		            fullWidth
-		            className={classes.textf}
-		            onChange={handleFileChange}
-		            error={!!errors.pic&&touched.pic}
-		            helperText={touched.pic?errors.pic:''}
-		          /> 
-		          <br/>
-		          <img src={url} height={300} width={300}/>
+		          <ImageUploader
+	                withIcon={true}
+	                buttonText='Choose image'
+	                label="Max Size: 2mb"
+	                buttonStyles={{backgroundColor:'#46BC99'}}
+	                onChange={handleImage}
+	                labelStyles={{font:'Roboto',fontSize:'l'}}
+	                fileContainerStyle={{border:'#ccc'}}
+	                imgExtension={['.jpg', '.png', '.jpeg']}
+	                maxFileSize={2097152}
+	                withPreview={true}
+	                singleImage={true}
+	            />
 		        </Grid>
 		      </Grid>
 		      <br/>
 		      <Divider/>
 			  <Grid container>
 	            <Grid item md={6}>
-	              <Typography variant="h5" style={{paddingTop:40}}> Current University</Typography>
+	              <Typography variant="h5" style={{paddingTop:30}}> Current University</Typography>
 	            </Grid>
 	            <Grid item md={6}>
 	          <TextField 
@@ -226,12 +233,12 @@ function EditProfile() {
 	            onBlur={handleBlur}
 	            className={classes.textf}
 	          /> 
-	          <br/>
+	          <br/><br/>
 	        </Grid>
 	      </Grid>
 	      <Divider/>
         <Grid container className={classes.container}>
-            <Grid item xs={6}>
+            <Grid item xs={6} style={{paddingTop:30}}>
               <Typography variant="h5"> Biography </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -252,7 +259,7 @@ function EditProfile() {
         <Divider/>
         <Grid container className={classes.container}>
             <Grid item xs={6}>
-              <Typography variant="h5"> Domains </Typography>
+              <Typography variant="h5" style={{paddingTop:10}}> Domains </Typography>
             </Grid>
             <Grid item xs={6}>
               <TextField 
@@ -291,7 +298,7 @@ function EditProfile() {
         <Divider/>
         <Grid container className={classes.container}>
             <Grid item xs={6}>
-              <Typography variant="h5" style={{marginTop: 20}}> Timeline of Tests </Typography>
+              <Typography variant="h5" style={{marginTop: 15}}> Timeline of Tests </Typography>
             </Grid>
             <Grid item xs={6}>
           <FieldArray
@@ -385,7 +392,7 @@ function EditProfile() {
 	<Divider/>
 	<Grid container className={classes.container}>
             <Grid item xs={6}>
-              <Typography variant="h5"> Social Links </Typography>
+              <Typography variant="h5" style={{paddingTop:15}}> Social Links </Typography>
             </Grid>
             <Grid item xs={6}>
               <div>
@@ -469,7 +476,7 @@ function EditProfile() {
 		<Divider/>
 	 	<Grid container className={classes.container}>
             <Grid item xs={6}>
-              <Typography variant="h5" style={{marginTop: 20}}> University Applications </Typography>
+              <Typography variant="h5" style={{marginTop: 15}}> University Applications </Typography>
             </Grid>
             <Grid item xs={6}>
           	<FieldArray
@@ -576,7 +583,9 @@ function EditProfile() {
 		)
 		} 
 		</Formik>
+		<br/>
  	  </Box> 
+ 	  <br/>
    </div> 
  </React.Fragment>
 );

@@ -18,6 +18,7 @@ import ListItem from '@material-ui/core/ListItem';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ChatIcon from '@material-ui/icons/Chat';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import EditIcon from '@material-ui/icons/Edit';
 import ForumIcon from '@material-ui/icons/Forum';
 import DescriptionIcon from '@material-ui/icons/Description';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -71,7 +72,7 @@ function NavBar() {
 
         setState({ ...state, [side]: open });
     };
-    const [loggedIn, setLoggedIn] = useState(0);
+    const [loggedIn, setLoggedIn] = useState(1);
     const sideList = side => (
         <div
             className={classes.list}
@@ -122,6 +123,18 @@ function NavBar() {
                                     <AccountCircleIcon />
                                 </ListItemIcon>
                                 <Typography>Profile</Typography>
+                            </ListItem>
+                        </NavLink>
+                        <Divider />
+                        <NavLink
+                            className={classes.link}
+                            to='/edit'
+                        >
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <EditIcon />
+                                </ListItemIcon>
+                                <Typography>Edit Profile</Typography>
                             </ListItem>
                         </NavLink>
                         <Divider />
@@ -210,7 +223,7 @@ function NavBar() {
                                     className={classes.linkHeader}
                                     to='/'
                                 >
-                                    <Button size='large' color='inherit'>
+                                    <Button size='large' color='inherit' onClick={()=>setLoggedIn(0)}>
                                         Logout
                                     </Button>
                                 </NavLink>
