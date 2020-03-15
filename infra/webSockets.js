@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * SocketIO events
  * authenticate ~ To join open user's chats

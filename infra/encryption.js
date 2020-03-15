@@ -1,5 +1,3 @@
-'use strict';
-
 const bcrypt = require('bcryptjs');
 const { saltRounds } = require('../config/constants');
 

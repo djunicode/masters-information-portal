@@ -1,5 +1,3 @@
-'use strict';
-
 const rateLimit = require('express-rate-limit');
 const { rateLimitWindowInterval, rateLimitAttempts } = require('./constants');
 

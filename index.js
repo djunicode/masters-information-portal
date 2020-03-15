@@ -20,7 +20,7 @@ async function main() {
 
 // -----
 
-main().then(server => {
+main().then((server) => {
 	server.listen(port, host, () => {
 		logger.info(`🔥 Server started listening on http://${host}:${port}`);
 	});
