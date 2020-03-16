@@ -1,13 +1,13 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const SALT = process.env.SALT || 'djUnicode';
 
-exports.encryptPassword = async (ptPassword) => {
-  const hashedPassword = await bcrypt.hash(ptPassword, SALT);
-  return hashedPassword;
-};
+const encryptPassword = async function(next){
+    const user = this
+    if(user.isModified("password")){
+        user.password = await bcrypt.hash(user.password, 8)
+    }
+    next()
+  }
 
-exports.comparePassword = async (ptPassword, hashedPassword) => {
-  const match = await bcrypt.compare(ptPassword, hashedPassword);
-  return match;
-};
+module.exports = { encryptPassword }
