@@ -1,8 +1,27 @@
 const app = require('./app');
+const attachChatApp = require('./infra/webSockets');
+const { dbConnection } = require('./config/db');
+const logger = require('./config/logger');
+const { port, host } = require('./config/constants');
 
-const PORT = process.env.PORT || 8000;
-const HOST = process.env.HOST || 'localhost';
+/**
+ * Sets up the project
+ */
+async function main() {
+	// Wait for MongoDB connection
+	await dbConnection();
 
-app.listen(PORT, HOST, () => {
-  console.info(`Server started listening on http://${HOST}:${PORT}`);
+	// Websockets setup
+	const server = attachChatApp(app);
+
+	// Return after setup
+	return server;
+}
+
+// -----
+
+main().then((server) => {
+	server.listen(port, host, () => {
+		logger.info(`🔥 Server started listening on http://${host}:${port}`);
+	});
 });
