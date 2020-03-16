@@ -4,6 +4,10 @@ const path = require('path');
 
 const { userRouter } = require('./controllers');
 
+class App {
+  constructor
+}
+
 // --- App config
 
 const app = express();
