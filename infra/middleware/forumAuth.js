@@ -3,13 +3,10 @@ const Forum = require('../../models/forum');
 const owner = async (req,res,next)=>
 {
     try
-    {    console.log(req.user._id );
+    {    
         const forum = await Forum.findById(req.params.id);
-        console.log(forum.poster, forum.text);
-        if(req.user._id == forum.poster.toString()){
-            //console.log('kaata');
+        if(req.user._id == forum.poster.toString())
             return next();
-        }                
     }
     catch(err)
     {

@@ -1,89 +1,79 @@
-const express = require('express');
 const Forum = require('../models/forum');
-const logger = require("../config/logger");
-const { auth } = require('../infra/middleware/auth');
-const { owner } = require('../infra/middleware/forumAuth');
-const router = express.Router();
+const logger = require('../config/logger');
 
-        //FIND ALL
-        router.get('/', async (req,res)=>{   
-            try
-            {
-                logger.info("Getting forum posts")
-                let allForums = await Forum.find(req.query);
-                return res.send(allForums);
-            }         
-            catch(err)
-            {   
-            next(err)
-            }    
-
-        });
-
-        //CREATE 
-        router.post('/',auth, async (req,res,next)=>{            
-            try
-            {
-                logger.info("Creating forum post")
-                let newForum = await Forum.create(req.body);
-                return res.json(newForum);
-            }
-            catch(err)
-            {
-                next(err)
-            }            
-        });
-        //FIND BY ID
-        router.get('/:id',async (req, res,next)=>{  
-            try
-            {
-                logger.info("Get forum post info by id..")
-                let foundForum  = await Forum.findById(req.params.id);
-                return res.json(foundForum);
-            }          
-            catch(err)
-            {
-                next(err)
-            }
-        });
+/**
+ * @route POST "/api/forum"
+ */
+exports.create = async (req, res) => {
+  const doc = await Forum.create(req.body);
+  logger.created('Forum', doc);
+  return res.status(201).json(doc);
+};
 
 
-        //UPDATE
-        router.put('/:id',auth,owner,async (req,res,next)=>{
-            try
-            {
-                logger.info("Updating forum post")
-                let forum = await Forum.findByIdAndUpdate(req.params.id,req.body,{new:true});
-                return res.json(forum);
-            }
-            catch(err)
-            {
-                next(err)
-            }
-        });
-
-        //DESTROY
-        router.delete('/:id',auth,owner,(req,res,next)=>{
-            logger.info("Deleting forum post")
-        Forum.findByIdAndDelete(req.params.id,(error)=>{
-            if(error)
-            { 
-                next(error)
-            }
-            else{
-            res.redirect("/api/forum");
-            }
-        });
+/**
+ * @route GET "/api/forum"
+ */
+exports.getAll = async (req, res) => {
+  const searchQuery = req.query;
+  const docs = await Forum.find(searchQuery);
+  if (!docs) {
+    return res.status(404).json({
+      msg: 'No documents found',
     });
+  }
 
+  logger.readMany('Forum', docs);
+  return res.json(docs);
+};
 
-// error handler
-    router.use(function(err, req, res, next) {
-    //winston logging
-    logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
-    // render the error page
-    res.status(err.status||500).json(err.message)
-    })  
+/**
+ * @route GET "/api/forum/:id"
+ */
+exports.getById = async (req, res) => {
+  const { id } = req.params;
+  const doc = await Forum.findById(id);
+  if (!doc) {
+    return res.status(404).json({
+      msg: 'Not found',
 
+    });
+  }
 
-        module.exports = router;
+  logger.readOne('Forum', doc);
+  return res.json(doc);
+};
+
+/**
+ * @route PUT "/api/forum/:id"
+ */
+exports.updateById = async (req, res) => {
+  const { id } = req.params;
+  const doc = await Forum.findByIdAndUpdate(id, req.body);
+  if (!doc) {
+    return res.status(404).json({
+      msg: 'Not found',
+    });
+  }
+
+  logger.updated('Forum', doc);
+  return res.json(doc);
+};
+
+/**
+ * @route DELETE "/api/forum/:id"
+ */
+exports.deleteById = async (req, res) => {
+  const { id } = req.params;
+  const doc = await Forum.findByIdAndDelete(id);
+  if (!doc) {
+    return res.status(404).json({
+      msg: 'Not found',
+    });
+  }
+
+  logger.deleted('Forum', doc);
+  return res.json({
+    msg: 'ok',
+  });
+};
