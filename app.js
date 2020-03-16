@@ -14,9 +14,9 @@ const {
   chatRouter,
 } = require('./routes');
 
-class App {
-  constructor
-}
+// class App {
+//   constructor
+// }
 
 // --- App config
 
@@ -29,6 +29,7 @@ app.set('json spaces', 2);
 // body-parser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(bodyParser.raw());
 
 // morgan
 app.use(morgan('dev'));

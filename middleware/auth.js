@@ -22,4 +22,4 @@ const authRequired = async (req, res, next) => {
   next();
 };
 
-module.exports = { authRequired };
+module.exports =  {authRequired};

@@ -1,4 +1,4 @@
-const Forum = require('../../models/forum');
+const Forum = require('../models/forum');
 
 const owner = async (req,res,next)=>
 {
@@ -15,4 +15,4 @@ const owner = async (req,res,next)=>
     }
 }
 
-module.exports = {owner};
+module.exports = {owner}; 
