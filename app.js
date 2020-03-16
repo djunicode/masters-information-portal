@@ -14,10 +14,6 @@ const {
   chatRouter,
 } = require('./routes');
 
-// class App {
-//   constructor
-// }
-
 // --- App config
 
 const app = express();
