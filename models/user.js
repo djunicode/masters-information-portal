@@ -1,96 +1,83 @@
 const mongoose = require('mongoose');
-const validator = require("validator")
-const { encryptPassword } = require("../infra/encryption/index")
-const jwt = require("jsonwebtoken")
-const bcrypt = require('bcryptjs');
-//This is not the final Schema ,The relations with other schemas are yet to be established!
+const validator = require('validator');
+const { encrypt } = require('../infra/encryption');
+const { createJwt } = require('../infra/jwt');
+
 const userSchema = new mongoose.Schema({
   name: {
-    type : String,
-    required : true,
-    trim : true
-  },
-  username: {
     type: String,
     required: true,
-    trim:true, //Trims spaces before & after
-    unique: true 
+    trim: true,
   },
-  email:{
-    type:String,
-    unique:true,
-    required:true,
-    trim:true,
-    lowercase:true,   
-    validate(value){
-        if(!validator.isEmail(value)){
-            throw new Error("Email is Invalid")  
-        }
-    }
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error('Email is Invalid');
+      }
+    },
   },
   password: {
     type: String,
     required: true,
-    validate(value){
-      if(value.length <= 7){
-        throw new Error("Password is too short!")
+    validate(value) {
+      if (value.length <= 7) {
+        throw new Error('Password is too short!');
       }
-    }
+    },
   },
-  graduationDate : {
-    type : Date
+  graduationDate: {
+    type: Date,
   },
-  bio : {
-    type : String
+  bio: {
+    type: String,
   },
-  currentSchool:{
+  currentSchool: {
     type: mongoose.Schema.Types.ObjectId,
-  //  required:true,
-    ref:'Tag'
+    ref: 'Tag',
   },
   accepts: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref:'Tag'
+    ref: 'Tag',
   }],
-  rejects :[{
+  rejects: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref:'Tag'
+    ref: 'Tag',
   }],
   pinnedQuestions: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref:'Forum'
-  }],
-  tokens:[{
-    token:{
-        type:String,
-        required:true
-    }
+    ref: 'Forum',
   }],
 });
 
-
-//Generates a new authentication token and concatenates it to the tokens array
-const SALT = process.env.SALT || 'djUnicode';
 userSchema.methods.newAuthToken = async function(){
-    const user  = this
-    const token =  jwt.sign({ _id: user.id.toString() },SALT, {expiresIn: "1d"})
-    user.tokens = user.tokens.concat({ token })
-    await user.save()
-    return token
-}
+  const user = this;
+  const token = createJwt({ _id: user.id });
+  return token;
+};
 
-//To send only specific data to user
-userSchema.methods.getPublicProfile = function(){
-  const user  = this
-  const userObject = user.toObject()
+userSchema.methods.getPublicProfile = () => {
+  const user = this;
+  const userObject = user.toObject();
 
-  delete userObject.password
-  delete userObject.tokens
-  return userObject
-}
+  delete userObject.password;
+  return userObject;
+};
 
-//Hashes the password before saving
-userSchema.pre('save',encryptPassword)
+/**
+ * Hashing password before save
+ */
+userSchema.pre('save', async function encrptPassword(next) {
+  const user = this;
+  if (user.isModified('password')) {
+    user.password = await encrypt(user.password);
+  }
+  next();
+});
 
 const User = mongoose.model('User', userSchema);
 

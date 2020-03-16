@@ -108,3 +108,4 @@ dist
 
 # npm lock file, would prefer yarn locks
 package-lock.json
+yarn.lock

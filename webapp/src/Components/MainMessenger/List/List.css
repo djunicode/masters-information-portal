@@ -1,0 +1,72 @@
+.conversation-list {
+    display: flex;
+    flex-direction: column;
+    
+  }
+  a{
+    text-decoration: none;
+  }
+  .each_conversation{
+    padding: 5px;
+    margin: 5px;
+
+  }
+  .each_conversation:hover {
+    background: #eeeef1;
+    cursor: pointer;
+  }
+  
+  .conversation-photo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+  
+  .conversation-title {
+    font-size: 25px;
+    font-weight: bold;
+    text-transform: capitalize;
+    color: black;
+    margin: 0;
+  }
+  
+  .conversation-snippet {
+    font-size: 14px;
+    color: #888;
+    margin: 0;
+  }
+  .toolbar-title {
+    text-align: center;
+    font-size: 40px;
+    font-weight: 800;
+    color: black;
+  }
+  .conversation-search {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .conversation-search-input {
+    background: #f4f4f8;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+  }
+  
+  .conversation-search-input::placeholder {
+    text-align: center;
+  }
+  
+  .conversation-search-input:focus::placeholder {
+    text-align: left;
+  }
+  .profile-img{
+    width: 70px;
+    border-radius: 50%;
+    float: left;
+    margin-right: 10px;
+  }
