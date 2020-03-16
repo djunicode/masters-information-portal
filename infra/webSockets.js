@@ -10,6 +10,7 @@ const http = require('http');
 const jwt = require('jsonwebtoken');
 const logger = require('../config/logger');
 const Chat = require('../models/chat');
+const jwtVer=require("./jwt");
 
 function createServer(app) {
   const server = http.Server(app);
@@ -25,15 +26,42 @@ function createServer(app) {
 
     // TODO: Check user's tokens to check if token is valid
     socket.on('authenticate', (token) => {
-      const user = jwt.decode(token);
-      socketUserMap[socket] = user._id;
+      if(!jwtVer.verifyJwt(token)){
+        socket.send('status', {
+          code: 403,
+          msg: 'User not authenticated',
+        });
+      }
+      else{
+        const user = jwt.decode(token);
+        socketUserMap[socket] = user._id;
+      }
     });
 
     // TODO: Check if chat exists, and if user belongs to that chat
     // Note that user should be authenticated
     socket.on('open chat', (chatId) => {
-      socket.join(chatId);
-      socketChatMap[socket] = chatId;
+      const chat=Chat.findOne({_id:chatId});
+      if(!chat){
+        socket.send('status',{
+          code:'400',
+          msg:'Chat not found'
+        })
+      }
+      else{
+        if (socketUserMap[socket]==chat.sender||socketUserMap[socket]==chat.receiver) {
+          socket.join(chatId);
+          socketChatMap[socket] = chatId;   
+          socket.send('msgs',chat.messages) 
+        }
+        else{         
+          socket.send('status', {
+            code: 403,
+            msg: 'User not found in the chats',
+          });   
+        }
+      }
+
     });
 
     socket.on('message', async (message) => {
@@ -57,7 +85,7 @@ function createServer(app) {
       await Chat.findByIdAndUpdate(socketChatMap[socket], {
         $push: {
           messages: { 
-            ender: socket.userId,
+            sender: socket.userId,
             message,
           },
         },
