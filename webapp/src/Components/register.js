@@ -37,16 +37,16 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+const axios = require('axios');
+
 function getSteps() {
     return ['Core Details', 'Other Details'];
 }
-
 
 export default function Register() {
     const [hasSaved, setHasSaved] = React.useState(false);
     const [user, setUser] = React.useState({
         name: '',
-        username: '',
         email: '',
         password: '',
         university: '',
@@ -135,7 +135,6 @@ export default function Register() {
             name:user.name,
             fname:!!user.name?user.name.slice(0,user.name.indexOf(' ')):'' ,
             lname:!!user.name?user.name.slice(user.name.indexOf(' ')+1,user.name.length):'',
-            username:user.username, 
             email:user.email,
             password:'',
             password_confirm:'',
@@ -170,9 +169,6 @@ export default function Register() {
             if (!values.lname){
               errors.lname = "Fill this field"
             }
-            if (!values.username){
-              errors.username = "Fill this field"
-            }
             if (!values.university){
               errors.university = "Fill this field"
             }
@@ -187,7 +183,6 @@ export default function Register() {
           onSubmit={(values, { setSubmitting }) => {
             values.name=values.fname+" "+values.lname;
             user.name=values.name;
-            user.username=values.username;
             user.email=values.email;
             user.password=values.password;
             user.university=values.university;
@@ -248,64 +243,51 @@ export default function Register() {
                    />
                 </Grid> 
              </Grid> 
-          <TextField 
-            name="username"
-            fullWidth
-            variant="filled"
-            label="Username" 
-            value={values.username}
-            placeholder="Enter your Username"
-            className={classes.textf}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={!!errors.username&&touched.username}
-            helperText={touched.username?errors.username:''}
-          /> 
-          <TextField 
-            name="email"
-            type="email" 
-            fullWidth
-            value={values.email}
-            variant="filled"
-            label="Email" 
-            placeholder="example@domain.com" 
-            className={classes.textf}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={!!errors.email&&touched.email}
-            helperText={touched.email?errors.email:''}
-          /> 
-          <TextField 
-            name="password"
-            type="password"  
-            label="Password" 
-            fullWidth
-            variant="filled" 
-            placeholder="Enter your password" 
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className={classes.textf}
-            error={!!errors.password&&touched.password}
-            helperText={touched.password?errors.password:'Minimum 8 charecters'}
-          /> 
-          <TextField 
-            name="password_confirm"
-            type="password" 
-            label="Confirm Password" 
-            fullWidth
-            variant="filled" 
-            placeholder="Re-Enter your password" 
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className={classes.textf}
-            error={!!errors.password_confirm&&touched.password_confirm}
-            helperText={touched.password_confirm?errors.password_confirm:''}
-          /> 
+            <TextField 
+              name="email"
+              type="email" 
+              fullWidth
+              value={values.email}
+              variant="filled"
+              label="Email" 
+              placeholder="example@domain.com" 
+              className={classes.textf}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={!!errors.email&&touched.email}
+              helperText={touched.email?errors.email:''}
+            /> 
+            <TextField 
+              name="password"
+              type="password"  
+              label="Password" 
+              fullWidth
+              variant="filled" 
+              placeholder="Enter your password" 
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={classes.textf}
+              error={!!errors.password&&touched.password}
+              helperText={touched.password?errors.password:'Minimum 8 charecters'}
+            /> 
+            <TextField 
+              name="password_confirm"
+              type="password" 
+              label="Confirm Password" 
+              fullWidth
+              variant="filled" 
+              placeholder="Re-Enter your password" 
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={classes.textf}
+              error={!!errors.password_confirm&&touched.password_confirm}
+              helperText={touched.password_confirm?errors.password_confirm:''}
+            /> 
+          </Grid>
         </Grid>
-      </Grid>
-      <br/>
-      <Divider/>
-      <Grid container>
+        <br/>
+        <Divider/>
+        <Grid container>
             <Grid item md={6}>
               <Typography variant="h5" style={{paddingTop:40}}> Current University</Typography>
             </Grid>
@@ -401,6 +383,30 @@ export default function Register() {
               handleNext();
             }, 1000);   
             console.log(user);
+            axios.post('/api/users/register', {
+              name: user.name,
+              email: user.email,
+              password: user.password,
+              graduationDate: user.gradDate,
+              //currentSchool: user.university,
+              //Department of Current University
+
+              /* -------------- Optional Fields below: ------------------ */
+              bio: user.bio,
+              //Domains (Maching Learning, IOT etc)
+              //Tests Given {name: , date: '', score: ''}
+              //Facebook
+              //Linkedin
+              //Github
+              //Twitter
+              //University Applied {name: '',course: '',Status: 'Accepted/Rejected/Do not wish to disclose'}
+            })
+            .then(function (response) {
+              console.log(response);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
             //@Backend Submit Function for Sign-Up
         }}
         >

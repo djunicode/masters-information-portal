@@ -301,7 +301,7 @@ function EditProfile() {
         <Divider/>
         <Grid container className={classes.container}>
             <Grid item xs={6}>
-              <Typography variant="h5" style={{marginTop: 15}}> Timeline of Tests </Typography>
+              <Typography variant="h5" style={{marginTop: 15}}>Timeline of Tests </Typography>
             </Grid>
             <Grid item xs={6}>
           <FieldArray

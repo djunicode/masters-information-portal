@@ -13,6 +13,8 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 //Individual Imports to reduce bundle size
 
+const axios = require('axios');
+
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
@@ -47,11 +49,11 @@ export default function LoginPage(){
 		      	<Grid item md={6}>
 		      	<Typography variant="h4"><b>Login</b></Typography>
 		        <Formik 
-		        	initialValues={{ username: '', password: '' }}
+		        	initialValues={{ email: '', password: '' }}
 		        	validate={values => {
 			        const errors = {};
-			        if (!values.username) {
-			        	errors.username = "Required"
+			        if (!values.email) {
+			        	errors.email = "Required"
 			        }
 			        if (!values.password){
 			        	errors.password = 'Required';
@@ -63,22 +65,38 @@ export default function LoginPage(){
 			          setSubmitting(false);
 			        }, 1000);
 			        console.log(values);
+			        axios.get('/api/users/login', {
+					    params: {
+					      email: values.email,
+					      password: values.password
+					    }
+					  })
+					  .then(function (response) {
+					    console.log(response);
+					  })
+					  .catch(function (error) {
+					    console.log(error);
+					  })
+					  .finally(function () {
+					    // redirect here
+					  });  
 			        //@Backend submit func for login
 			    }}>
 			    {({ isSubmitting ,handleChange,handleBlur,touched,errors}) => (
 			    	<Form autoComplete="off"> 
 			        	<TextField 
-			        		name="username"
-			        		label="Username/Email" 
+			        		name="email"
+			        		label="Email" 
+			        		type="email"
 			        		style = {{width: 300}}
 			        		color="secondary" 
 			        		variant="filled" 
 			        		className={classes.textf}
-			        		placeholder="Username or Email"
+			        		placeholder="Email"
 			        		onChange={handleChange}
 			        		onBlur={handleBlur}
-			        		helperText={touched.username?errors.username:''}
-			        		error={!!errors.username&&touched.username}
+			        		helperText={touched.email?errors.email:''}
+			        		error={!!errors.email&&touched.email}
 			        	/> <br/>
 			        	<TextField 
 			        		name="password" 
