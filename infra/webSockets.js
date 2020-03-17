@@ -26,17 +26,19 @@ function createServer(app) {
 
     // TODO: Check user's tokens to check if token is valid
     socket.on('authenticate', (token) => {
-      if(!jwtVer.verifyJwt(token)){
-        socket.send('status', {
-          code: 403,
-          msg: 'User not authenticated',
-        });
-      }
-      else{
-        const user = jwt.decode(token);
-        socketUserMap[socket] = user._id;
-      }
-    });
+      jwtVer.verifyJwt(token).then(err,res=>{
+        if(err){
+          socket.send('status', {
+            code: 403,
+            msg: 'User not authenticated',
+          });
+        }
+        else{
+          const user = jwt.decode(token);
+          socketUserMap[socket] = user._id;
+        }
+      })
+  })
 
     // TODO: Check if chat exists, and if user belongs to that chat
     // Note that user should be authenticated
