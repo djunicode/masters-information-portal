@@ -7,12 +7,7 @@ const helmet = require('helmet');
 const logger = require('./config/logger');
 const { directives, limiter, options } = require('./config/middlewares');
 
-const {
-  userRouter,
-  forumRouter,
-  tagRouter,
-  chatRouter,
-} = require('./routes');
+const { userRouter, forumRouter, tagRouter, chatRouter } = require('./routes');
 
 // --- App config
 
