@@ -10,7 +10,7 @@ const http = require('http');
 const jwt = require('jsonwebtoken');
 const logger = require('../config/logger');
 const Chat = require('../models/chat');
-const jwtVer=require("./jwt");
+const { verifyJwt } = require("./jwt");
 
 function createServer(app) {
   const server = http.Server(app);
@@ -24,26 +24,21 @@ function createServer(app) {
   io.on('connection', (socket) => {
     logger.info(`Socket ${socket.id} connected`);
 
-    // TODO: Check user's tokens to check if token is valid
-    socket.on('authenticate', (token) => {
-      jwtVer.verifyJwt(token).then(err,res=>{
-        if(err){
-          socket.send('status', {
-            code: 403,
-            msg: 'User not authenticated',
-          });
-        }
-        else{
-          const user = jwt.decode(token);
-          socketUserMap[socket] = user._id;
-        }
-      })
-  })
+    socket.on('authenticate', async (token) => {
+      try {
+        const decoded = await verifyJwt(token);
+        socketUserMap[socket] = user._id;
+      } catch(err) {
+        socket.send('status', {
+          code: 401,
+          msg: 'User not authenticated',
+          err,
+        });
+      }
+    })
 
-    // TODO: Check if chat exists, and if user belongs to that chat
-    // Note that user should be authenticated
     socket.on('open chat', (chatId) => {
-      const chat=Chat.findOne({_id:chatId});
+      const chat = Chat.findOne({_id:chatId});
       if(!chat){
         socket.send('status',{
           code:'400',
