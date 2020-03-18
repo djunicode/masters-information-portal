@@ -10,11 +10,7 @@ exports.createRefreshToken = async obj => {
 };
 
 exports.verifyJwt = async token => {
-	try{
-		return jwt.verify(token, jwtSecret);
-	}catch(e){
-		return null
-	}
+	return jwt.verify(token, jwtSecret);
 };
 
 exports.extractJwt = req => {
