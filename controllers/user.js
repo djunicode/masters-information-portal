@@ -3,14 +3,14 @@ const { comparePassword } = require('../infra/encryption');
 const { createJwt,createRefreshToken } = require('../infra/jwt');
 const tokenList = {}
 /**
- * @route POST "/api/users/"
+ * @route POST "/api/users/register"
  */
 exports.register = async (req, res) => {
   const { email } = req.body;
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     return res.status(400).json({
-      msg: 'User already exists, try logging in!',
+      msg: 'User already exists, try logging in!'
     });
   }
 
@@ -31,14 +31,14 @@ exports.login = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(401).json({
-      msg: 'User email not found.',
+      msg: 'User email not found.'
     });
   }
 
   const isMatch = await comparePassword(password, user.password);
   if (!isMatch) {
     return res.status(401).json({
-      msg: 'User password didn\'t match.',
+      msg: "User password didn't match."
     });
   }
 
