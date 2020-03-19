@@ -12,9 +12,9 @@ exports.register = async (req, res) => {
       msg: 'User already exists, try logging in!',
     });
   }
-
-  const user = await User.create(req.body);
+  const user = await new User(req.body);
   const token = await user.newAuthToken();
+  await user.save()
   return res.status(201).send({ user, token });
 };
 

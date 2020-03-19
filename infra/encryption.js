@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { saltRounds } = require('../config/constants');
 
-exports.encryptPassword = async plainTextPassword => {
+exports.encrypt = async plainTextPassword => {
 	return bcrypt.hash(plainTextPassword, saltRounds);
 };
 
