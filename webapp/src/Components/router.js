@@ -6,28 +6,24 @@ import NavBar from './navbar';
 import EditProfile from './editProfile';
 import Messenger from './MainMessenger/Messenger/index'
 import List from './MainMessenger/List/List'
-class RootRouter extends React.Component {
-    state = {
-        user: null,
-        isLoggedIn: false
-    };
+function RootRouter(props){
 
-    render() {
-        return (
-            <Router>
-                <NavBar />
-                <Switch>
-                    <Route exact path='/' />
-                    <Route exact path='/login' component={Login} />
-                    <Route exact path='/profile' />
-                    <Route exact path='/edit' component={EditProfile}/>
-                    <Route exact path='/forum' component={Forum} />
-                    <Route exact path='/chat' component={List} />
-                    <Route exact path='/chat/1' component={Messenger} />
-                </Switch>
-            </Router>
-        );
-    }
+    const renderLogin = () => <Login loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn}/>;
+
+    return (
+        <Router>
+            <NavBar loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn}/>
+            <Switch>
+                <Route exact path='/' />
+                <Route exact path='/login' component={renderLogin}/>
+                <Route exact path='/profile' />
+                <Route exact path='/edit' component={EditProfile}/>
+                <Route exact path='/forum' component={Forum} />
+                <Route exact path='/chat' component={List} />
+                <Route exact path='/chat/1' component={Messenger} />
+            </Switch>
+        </Router>
+    );
 }
 
 export default RootRouter;

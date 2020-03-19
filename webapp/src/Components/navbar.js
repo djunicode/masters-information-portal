@@ -3,7 +3,7 @@
 //setLoggedIn(0);  if no user logged in
 //I wish to use the above function whenever the user is loggedIn, this will display profile & logout instead of login
 
-import React, { useState } from 'react';
+import React from 'react';
 import Toolbar from '@material-ui/core/Toolbar';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -24,7 +24,7 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import { NavLink } from 'react-router-dom';
-
+import Cookies from 'js-cookie';
 const useStyles = makeStyles({
     list: {
         width: 250
@@ -56,7 +56,7 @@ const useStyles = makeStyles({
     }
 });
 
-function NavBar() {
+function NavBar(props) {
     const classes = useStyles();
     const [state, setState] = React.useState({
         left: false,
@@ -72,7 +72,7 @@ function NavBar() {
 
         setState({ ...state, [side]: open });
     };
-    const [loggedIn, setLoggedIn] = useState(1);
+
     const sideList = side => (
         <div
             className={classes.list}
@@ -97,7 +97,7 @@ function NavBar() {
                     </ListItem>
                 </NavLink>
                 <Divider />
-                {!loggedIn ?
+                {!props.loggedIn ?
                     <React.Fragment>
                         <NavLink
                             className={classes.link}
@@ -138,6 +138,18 @@ function NavBar() {
                             </ListItem>
                         </NavLink>
                         <Divider />
+                        <NavLink
+                            className={classes.link}
+                            to='chat/'
+                        >
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <ChatIcon />
+                                </ListItemIcon>
+                                <Typography>Chat</Typography>
+                            </ListItem>
+                        </NavLink>
+                        <Divider />
                     </React.Fragment>
                 }
                 <NavLink
@@ -154,18 +166,6 @@ function NavBar() {
                 <Divider />
                 <NavLink
                     className={classes.link}
-                    to='chat/'
-                >
-                    <ListItem button>
-                        <ListItemIcon>
-                            <ChatIcon />
-                        </ListItemIcon>
-                        <Typography>Chat</Typography>
-                    </ListItem>
-                </NavLink>
-                <Divider />
-                <NavLink
-                    className={classes.link}
                     to='/'
                 >
                     <ListItem button>
@@ -176,6 +176,21 @@ function NavBar() {
                     </ListItem>
                 </NavLink>
                 <Divider />
+                
+                {props.loggedIn?
+                <React.Fragment>
+                    <ListItem button onClick={()=>{Cookies.remove('jwt');props.setLoggedIn(0)}}>
+                        <ListItemIcon>
+                            <ChatIcon />
+                        </ListItemIcon>
+                        <Typography>Logout</Typography>
+                    </ListItem>
+                    <Divider />
+                </React.Fragment>
+                :
+                <React.Fragment>
+                </React.Fragment>
+            }
             </List>
         </div>
     );
@@ -209,7 +224,7 @@ function NavBar() {
                             </NavLink>
                         </Typography>
                         {
-                            !loggedIn ?
+                            !props.loggedIn ?
                                 <NavLink
                                     className={classes.linkHeader}
                                     to='/login'
@@ -223,7 +238,7 @@ function NavBar() {
                                     className={classes.linkHeader}
                                     to='/'
                                 >
-                                    <Button size='large' color='inherit' onClick={()=>setLoggedIn(0)}>
+                                    <Button size='large' color='inherit' onClick={()=>{Cookies.remove('jwt');props.setLoggedIn(0)}}>
                                         Logout
                                     </Button>
                                 </NavLink>

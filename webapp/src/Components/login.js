@@ -11,6 +11,10 @@ import {Formik,Form} from 'formik';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
+import {Redirect} from 'react-router-dom';
+import Cookies from 'js-cookie';
 //Individual Imports to reduce bundle size
 
 const axios = require('axios');
@@ -32,15 +36,17 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function LoginPage(){
+export default function LoginPage(props){
 	const classes = useStyles();
 	const [showPassword, setShowPassword] = React.useState(0);
 	function togglePassword(){
 		showPassword===0?setShowPassword(1):setShowPassword(0);
 	}
+    const [showWarning, setShowWarning] = React.useState(false);
 	const [register,setRegister] = React.useState(0);
     return (
 		<div className={classes.root}>
+			{props.loggedIn?<Redirect to='/' />:null}
     		{register===0?
 		      <Grid container alignItems="center" style={{marginTop: 40}} justify="center">
 		      	<Grid item md={6}>
@@ -61,29 +67,39 @@ export default function LoginPage(){
 			        return errors;
 			      }}
 			      onSubmit={(values, { setSubmitting }) => {
-			        setTimeout(() => {
-			          setSubmitting(false);
-			        }, 1000);
 			        console.log(values);
-			        axios.get('/api/users/login', {
-					    params: {
-					      email: values.email,
-					      password: values.password
-					    }
+			        axios.post('/api/users/login', {
+				      email: values.email,
+				      password: values.password
 					  })
 					  .then(function (response) {
 					    console.log(response);
+					    Cookies.set('jwt',response.data.token,{expires: 1});
+					    Cookies.set('refreshToken',response.data.refreshToken,{expires: 7})
+					    console.log(response.data.token);
+					    props.setLoggedIn(1);
 					  })
 					  .catch(function (error) {
-					    console.log(error);
-					  })
-					  .finally(function () {
-					    // redirect here
+				        setTimeout(() => {
+				          setSubmitting(false);
+				        }, 1000);
+					    console.error(error.code);
+					    setShowWarning(true);
+
 					  });  
 			        //@Backend submit func for login
 			    }}>
 			    {({ isSubmitting ,handleChange,handleBlur,touched,errors}) => (
 			    	<Form autoComplete="off"> 
+			    		<Snackbar 
+			              open={showWarning} 
+			              autoHideDuration={750} 
+			              onClose={()=>setShowWarning(false)}
+			            >
+			              <Alert variant="filled" severity="error">
+						  	Invalid Email or Password
+						  </Alert>
+			            </Snackbar>
 			        	<TextField 
 			        		name="email"
 			        		label="Email" 
@@ -143,7 +159,7 @@ export default function LoginPage(){
 	      </Grid>
 	      :
 	      <React.Fragment>
-	      	<Register/>
+	      	<Register register={register} setRegister={setRegister}/>
         	<br/><Typography>Already have an account? <Button onClick={()=>setRegister(0)}><b>Sign In</b></Button></Typography>
 	      </React.Fragment>
 

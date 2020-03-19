@@ -43,8 +43,7 @@ function getSteps() {
     return ['Core Details', 'Other Details'];
 }
 
-export default function Register() {
-    const [hasSaved, setHasSaved] = React.useState(false);
+export default function Register(props) {
     const [user, setUser] = React.useState({
         name: '',
         email: '',
@@ -91,12 +90,7 @@ export default function Register() {
     };
 
     const handleBack = () => {
-        if (!hasSaved) {
-            alert("You will loose any changes if you dont save!");
-            setHasSaved(true);
-        } else {
-            setActiveStep(prevActiveStep => prevActiveStep - 1);
-        }
+        setActiveStep(prevActiveStep => prevActiveStep - 1);
     };
 
     return (
@@ -190,7 +184,6 @@ export default function Register() {
             user.gradDate=values.gradDate;
             setUser(user);
             handleOpenMsg();
-            setHasSaved(false);
             setTimeout(() => {
               setSubmitting(false);
               handleNext();
@@ -376,7 +369,6 @@ export default function Register() {
             user.github=values.github;
             user.uniApplied=values.uniApplied;
             setUser(user);
-            setHasSaved(true);
             handleOpenMsg();
             setTimeout(() => {
               setSubmitting(false);
@@ -403,6 +395,7 @@ export default function Register() {
             })
             .then(function (response) {
               console.log(response);
+              props.setRegister(0);
             })
             .catch(function (error) {
               console.log(error);
@@ -756,18 +749,21 @@ export default function Register() {
           </Grid>
         </Grid>
         <Divider/><br/>
-        <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
+        <Button disabled={activeStep === 0} className={classes.button}
+          onClick={()=>{
+            handleBack();
+            user.bio=values.bio;
+            user.domain=values.domain;
+            user.tests=values.tests;
+            user.facebook=values.facebook;
+            user.twitter=values.twitter;
+            user.linkedIn=values.linkedIn;
+            user.github=values.github;
+            user.uniApplied=values.uniApplied;
+          }}
+        >
           Back
         </Button>
-        <Button 
-          type="submit" 
-          disabled={isSubmitting} 
-          variant="contained" 
-          color="primary"
-        >
-          Save Changes
-        </Button>
-        <br/><br/>
         <Button
           variant="contained"
           color="primary"

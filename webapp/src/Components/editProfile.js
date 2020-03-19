@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -20,7 +20,7 @@ import TwitterIcon from '@material-ui/icons/Twitter';
 import LinkedInIcon from '@material-ui/icons/LinkedIn';
 import RemoveIcon from '@material-ui/icons/Remove';
 import AddIcon from '@material-ui/icons/Add';
-
+const axios = require('axios');
 const useStyles = makeStyles(theme => ({
 	root: {
 	    backgroundColor: theme.palette.background.paper,
@@ -48,7 +48,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function EditProfile() {
-    const [user, setUser] = React.useState({
+
+	const [user, setUser] = React.useState({
     	pic: '',
         name: '',
         username: '',
@@ -66,6 +67,35 @@ function EditProfile() {
         github: '',
         uniApplied: [{ name: '', course: '', status: '' }]
     });
+
+	const[mounted,setMounted]=React.useState(false);
+
+	useEffect(()=>{
+		const token = localStorage.getItem('jwt');
+		console.log(token)
+		if(!mounted){
+			if(!!token){
+		 	axios.get('api/users/me/', {
+			    headers: {
+			      Authorization: token
+			    }
+			  })
+			  .then(function (response) {
+			    console.log(response);
+			    user.email=response.data.email;
+			    user.name=response.data.name;
+			    user.bio=response.data.bio;
+			    user.gradDate=response.data.graduationDate.slice(0,10);
+			    setUser(user);
+			    setMounted(true);
+			  })
+			  .catch(function (error) {
+			    console.log(error);
+			  });  
+			}
+		}
+	})
+
     const[pic,setPic]=React.useState([])
     const handleImage = (picture) => {
     	setPic(pic.concat(picture))
@@ -88,25 +118,27 @@ function EditProfile() {
       			<Divider/>
         		<Box className={classes.box}>
 		            <Formik 
+		              enableReinitialize={true}
 			          validateOnChange={true}
-			          initialValues={{
-			          	pic:null,
-			            email:user.email,
-			            password:'',
-			            password_confirm:'',
-			            university: user.university,
-			            department: user.department,
-			            gradDate: user.gradDate,
-			            bio:user.bio,
-			            domain: user.domain,
-			            tests: user.tests,
-			            facebook: user.facebook,
-			            twitter: user.twitter,
-			            linkedIn: user.linkedIn,
-			            github: user.github, 
-			            uniApplied: user.uniApplied,
-			            addDomain: '',
-			          }}
+			          // initialValues={{
+			          // 	pic:null,
+			          //   email:user.email,
+			          //   password:'',
+			          //   password_confirm:'',
+			          //   university: user.university,
+			          //   department: user.department,
+			          //   gradDate: user.gradDate,
+			          //   bio:user.bio,
+			          //   domain: user.domain,
+			          //   tests: user.tests,
+			          //   facebook: user.facebook,
+			          //   twitter: user.twitter,
+			          //   linkedIn: user.linkedIn,
+			          //   github: user.github, 
+			          //   uniApplied: user.uniApplied,
+			          //   addDomain: '',
+			          // }}
+			          initialValues={user}
 			          validate={values => {
 			          const errors = {};
 			            if (
@@ -117,7 +149,7 @@ function EditProfile() {
 			            return errors;
 			          }}
 			          onSubmit={(values, { setSubmitting }) => {
-			          	user.pic=values.pic;
+			          	user.pic=pic;
 			            user.email=values.email;
 			            user.university=values.university;
 			            user.department=values.department;
