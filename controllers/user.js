@@ -1,8 +1,9 @@
 const User = require('../models/user');
 const { comparePassword } = require('../infra/encryption');
-
+const { createJwt,createRefreshToken } = require('../infra/jwt');
+const tokenList = {}
 /**
- * @route POST "/api/users/"
+ * @route POST "/api/users/register"
  */
 exports.register = async (req, res) => {
   const { email } = req.body;
@@ -12,10 +13,14 @@ exports.register = async (req, res) => {
       msg: 'User already exists, try logging in!'
     });
   }
+
   const user = await new User(req.body);
   const token = await user.newAuthToken();
-  await user.save();
-  return res.status(201).send({ user, token });
+  const refreshToken = await createRefreshToken({ _id: user.id });
+  tokenList[refreshToken] = {id:user.id ,refreshToken:refreshToken}
+  await user.save()
+  const userObject = user.getPublicProfile()
+  return res.status(201).send({ userObject, token ,refreshToken });
 };
 
 /**
@@ -39,10 +44,24 @@ exports.login = async (req, res) => {
   }
 
   const token = await user.newAuthToken();
-  return res.send({
-    user,
-    token
-  });
+  const refreshToken = await createRefreshToken({ _id: user.id });
+  tokenList[refreshToken] = {id:user.id ,refreshToken:refreshToken}
+  const userObject = user.getPublicProfile()
+  return res.send({userObject, token, refreshToken });
+};
+
+/**
+ * @route POST "/api/users/refresh"
+ */
+exports.refresh = async (req, res) => {
+    if((req.body.refreshToken) && (req.body.refreshToken in tokenList)) {
+        const token = await createJwt({ _id: tokenList[req.body.refreshToken].id })
+        res.status(200).send({
+            token : token
+        })
+    }else{
+        res.status(404).send({msg:'Invalid request'})
+    }
 };
 
 /**
@@ -60,7 +79,7 @@ exports.updateProfile = async (req, res) => {
   const user = await User.findById(req.user._id);
   user.update(req.body);
 
-  return res.json(user);
+  return res.json(user.getPublicProfile());
 };
 
 /**
@@ -72,5 +91,5 @@ exports.getById = async (req, res) => {
     res.status(404);
   }
 
-  return res.json(user);
+  return res.json(user.getPublicProfile());
 };

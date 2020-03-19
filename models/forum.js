@@ -38,6 +38,10 @@ const forumSchema = new mongoose.Schema({
     }],
     pinned: { type: Boolean, default: false },
   }],
+  tags:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tag',
+  }]
 });
 
 module.exports = mongoose.model('Forum', forumSchema);
