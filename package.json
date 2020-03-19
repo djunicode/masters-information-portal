@@ -24,6 +24,7 @@
     "lodash": "^4.17.15",
     "mongoose": "^5.8.10",
     "morgan": "^1.9.1",
+    "path": "^0.12.7",
     "socket.io": "^2.3.0",
     "validator": "^12.2.0",
     "winston": "^3.2.1"

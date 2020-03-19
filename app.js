@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
+const path=require("path")
 
 const logger = require('./config/logger');
 const { directives, limiter, options } = require('./config/middlewares');
@@ -35,10 +36,12 @@ app.use(helmet.noCache());
 // cors
 app.use(cors(options));
 
-app.use(express.static('./static/'));
+app.use(express.static(path.join(__dirname,"webapp","build")));
 
 // --- Routes
-
+app.use("/",(req,res)=>{
+  res.sendFile(path.join(__dirname,"webapp","build","index.html"))
+})
 app.use('/api/users', userRouter);
 app.use('/api/tags', tagRouter);
 app.use('/api/chats', chatRouter);
