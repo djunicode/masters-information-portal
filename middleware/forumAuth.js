@@ -2,17 +2,12 @@ const Forum = require('../models/forum');
 
 const owner = async (req,res,next)=>
 {
-    try
-    {    
-        const forum = await Forum.findById(req.params.id);
-        if(req.user._id == forum.poster.toString())
-            return next();
-    }
-    catch(err)
-    {
-        console.log(err);
-        res.status(401).send({error:'Invalid Request!'})
-    }
+    const forum = await Forum.findById(req.params.id);
+    if(!forum)
+        return res.status(400).json({msg:'Post not found'});
+    if(req.user._id != forum.poster.toString())
+        return res.status(400).json({msg:'Unauthoried'});
+    return next();
 }
 
 module.exports = {owner}; 
