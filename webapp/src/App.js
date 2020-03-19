@@ -22,15 +22,13 @@ function App() {
 
   //Function to be called while Refreshing a token
   const handleTokenRefresh = () => {
-    const refreshToken = Cookies.get('refreshToken')
-    if(!refreshToken){
+    const refToken = Cookies.get('refToken')
+    if(!refToken || !!Cookies.get('jwt')){
       return
     }
     else{
-      axios.get('/api/users/refresh/',{
-        headers: {
-          Authorization: refreshToken
-        }
+      axios.post('/api/users/refresh/',{
+        refreshToken: refToken
       })
       .then(function(response){
         Cookies.set('jwt',response.data.token,{expires: 1});
@@ -40,7 +38,7 @@ function App() {
         console.log(error);
       });
     }
-  }
+  };
 
   React.useEffect(()=>{
         const token = Cookies.get('jwt');
