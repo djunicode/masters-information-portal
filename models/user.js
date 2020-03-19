@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    trim: true,
+    trim: true
   },
   email: {
     type: String,
@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
       if (!validator.isEmail(value)) {
         throw new Error('Email is Invalid');
       }
-    },
+    }
   },
   password: {
     type: String,
@@ -28,39 +28,45 @@ const userSchema = new mongoose.Schema({
       if (value.length <= 7) {
         throw new Error('Password is too short!');
       }
-    },
+    }
   },
   graduationDate: {
-    type: Date,
+    type: Date
   },
   bio: {
-    type: String,
+    type: String
   },
   currentSchool: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Tag',
+    ref: 'Tag'
   },
-  accepts: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Tag',
-  }],
-  rejects: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Tag',
-  }],
-  pinnedQuestions: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Forum',
-  }],
+  accepts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Tag'
+    }
+  ],
+  rejects: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Tag'
+    }
+  ],
+  pinnedQuestions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Forum'
+    }
+  ]
 });
 
 userSchema.methods.newAuthToken = async function(){
   const user = this;
-  const token = createJwt({ _id: user.id });
+  const token = await createJwt({ _id: user.id });
   return token;
 };
 
-userSchema.methods.getPublicProfile = () => {
+userSchema.methods.getPublicProfile = function() {
   const user = this;
   const userObject = user.toObject();
 
