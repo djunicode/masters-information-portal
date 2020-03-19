@@ -10,7 +10,7 @@
     "start": "node index.js",
     "start:dev": "nodemon index.js",
     "test": "mocha",
-    "deploy":"sh build.sh"
+    "deploy": "sh build.sh"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
