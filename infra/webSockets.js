@@ -27,9 +27,12 @@ function createServer(app) {
     socket.on('authenticate', async (token) => {
       try {
         const decoded = await verifyJwt(token);
-        socketUserMap[socket] = user._id;
+        console.log("dec",decoded)
+        socketUserMap[socket] = decoded._id;
+        console.log(socketUserMap[socket])
       } catch(err) {
-        socket.send('status', {
+        console.log("error",err)
+        socket.emit('status', {
           code: 401,
           msg: 'User not authenticated',
           err,
@@ -38,57 +41,60 @@ function createServer(app) {
     })
 
     socket.on('open chat', async (chatId) => {
+      console.log(chatId)
       const chat =await Chat.findOne({_id:chatId});
+      console.log(chat)
       if(!chat){
-        return socket.send('status',{
+        return socket.emit('status',{
           code:400,
           msg:'Chat not found'
         }) 
       }
-
       if (socketUserMap[socket]!=chat.sender&&socketUserMap[socket]!=chat.receiver){
-        return socket.send('status', {
+        return socket.emit('status', {
           code: 403,
           msg: 'User not found in the chats',
          }); 
       }
-
+  
       socket.join(chatId);
-      socketChatMap[socket] = chatId;   
-      socket.send('msg hist',chat.messages);
+      socketChatMap[socket] = chatId;
+      console.log('chat msgs' ,chat.messages) 
+      socket.emit('msg hist',chat.messages);
     });
 
     socket.on('message', async (message) => {
+      console.log(message)
       // Unauthenticated
       if (!socketUserMap[socket]) {
-        socket.send('status', {
+        socket.emit('status', {
           code: 403,
           msg: 'User not authenticated',
         });
       }
-
+  
       // No chat openned
       if (!socketChatMap[socket]) {
-        socket.send('status', {
+        socket.emit('status', {
           code: 400,
           msg: 'No chat openned',
         });
       }
-
+  
       // Save message first
       await Chat.findByIdAndUpdate(socketChatMap[socket], {
         $push: {
           messages: { 
-            sender: socket.userId,
+            sender: socketUserMap[socket],
             message,
           },
         },
       });
-
+  
       // Send to connected user(s)
       io.to(socketChatMap[socket]).send('message', message);
     });
-
+  
     socket.on('disconnect', () => {
       // Delete user and chat info from cache table
       delete socketUserMap[socket];
