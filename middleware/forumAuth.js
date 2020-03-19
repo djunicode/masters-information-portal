@@ -1,6 +1,6 @@
 const Forum = require('../models/forum');
 
-const owner = async (req,res,next)=>
+const isOwner = async (req,res,next)=>
 {
     const forum = await Forum.findById(req.params.id);
     if(!forum)
@@ -10,4 +10,4 @@ const owner = async (req,res,next)=>
     return next();
 }
 
-module.exports = {owner}; 
+module.exports = {isOwner}; 
