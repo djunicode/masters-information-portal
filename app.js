@@ -39,7 +39,7 @@ app.use(cors(options));
 // Server static assests if in producition
 if(process.env.NODE_ENV==="production"){
   app.use(express.static(path.join(__dirname,"webapp","build")));
-  app.use("/",(req,res)=>{
+  app.get("/",(req,res)=>{
     res.sendFile(path.join(__dirname,"webapp","build","index.html"))
   })
 
