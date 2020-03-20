@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    trim: true,
+    trim: true
   },
   email: {
     type: String,
@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
       if (!validator.isEmail(value)) {
         throw new Error('Email is Invalid');
       }
-    },
+    }
   },
   password: {
     type: String,
@@ -28,18 +28,19 @@ const userSchema = new mongoose.Schema({
       if (value.length <= 7) {
         throw new Error('Password is too short!');
       }
-    },
+    }
   },
   graduationDate: {
-    type: Date,
+    type: Date
   },
   bio: {
-    type: String,
+    type: String
   },
   currentSchool: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Tag',
+    ref: 'Tag'
   },
+<<<<<<< HEAD
   accepts: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tag',
@@ -64,6 +65,26 @@ const userSchema = new mongoose.Schema({
   twitterUrl: {
     type: String,
   },
+=======
+  accepts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Tag'
+    }
+  ],
+  rejects: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Tag'
+    }
+  ],
+  pinnedQuestions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Forum'
+    }
+  ]
+>>>>>>> e314f3ab7d93639b8da4e1ee818975a3c3a9c972
 });
 
 userSchema.methods.newAuthToken = async function(){
