@@ -40,7 +40,6 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tag'
   },
-<<<<<<< HEAD
   accepts: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tag',
@@ -65,26 +64,6 @@ const userSchema = new mongoose.Schema({
   twitterUrl: {
     type: String,
   },
-=======
-  accepts: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Tag'
-    }
-  ],
-  rejects: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Tag'
-    }
-  ],
-  pinnedQuestions: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Forum'
-    }
-  ]
->>>>>>> e314f3ab7d93639b8da4e1ee818975a3c3a9c972
 });
 
 userSchema.methods.newAuthToken = async function(){
