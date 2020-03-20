@@ -64,6 +64,9 @@ const userSchema = new mongoose.Schema({
   twitterUrl: {
     type: String,
   },
+  avatar : {
+    type : Buffer
+  }
 });
 
 userSchema.methods.newAuthToken = async function(){
@@ -77,6 +80,7 @@ userSchema.methods.getPublicProfile = function() {
   const userObject = user.toObject();
 
   delete userObject.password;
+  delete userObject.avatar;
   return userObject;
 };
 
