@@ -52,6 +52,18 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Forum',
   }],
+  githubUrl: {
+    type: String,
+  },
+  facebookUrl: {
+    type: String,
+  },
+  linkedinUrl: {
+    type: String,
+  },
+  twitterUrl: {
+    type: String,
+  },
 });
 
 userSchema.methods.newAuthToken = async function(){
