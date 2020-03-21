@@ -46,7 +46,7 @@ function getSteps() {
 export default function Register(props) {
 
   const[componentDidMount]=React.useState(0);
-  
+
   const [universityArr,setUniversityArr]=React.useState([]);
   const [universityNames,setUniversityNames]=React.useState([]);
   const [tagArr,setTagArr]=React.useState([]);
@@ -81,7 +81,7 @@ export default function Register(props) {
       });
     }
     //write async funciton here
-  },[componentDidMount,tagArr,tagNames,universityArr,universityNames])
+  })
 
   const submitAxios = () => {
     axios.post('/api/users/register', {
