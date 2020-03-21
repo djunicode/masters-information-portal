@@ -10,6 +10,7 @@ exports.create = async (req, res) => {
   return res.status(201).json(doc);
 };
 
+
 /**
  * @route GET "/api/forum"
  */
@@ -35,6 +36,7 @@ exports.getById = async (req, res) => {
   if (!doc) {
     return res.status(404).json({
       msg: 'Not found',
+
     });
   }
 
