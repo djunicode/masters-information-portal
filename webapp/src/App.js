@@ -60,7 +60,7 @@ function App() {
             setLoggedIn(0);
             handleTokenRefresh();
         }
-    })
+    },[loggedIn])
 
   return (
     <div className="App">

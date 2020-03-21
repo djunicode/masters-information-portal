@@ -9,6 +9,7 @@ import List from './MainMessenger/List/List'
 function RootRouter(props){
 
     const renderLogin = () => <Login loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn}/>;
+    const renderEditProfile= () => <EditProfile loggedIn={props.loggedIn}/>;
 
     return (
         <Router>
@@ -17,7 +18,7 @@ function RootRouter(props){
                 <Route exact path='/' />
                 <Route exact path='/login' component={renderLogin}/>
                 <Route exact path='/profile' />
-                <Route exact path='/edit' component={EditProfile}/>
+                <Route exact path='/edit' component={renderEditProfile}/>
                 <Route exact path='/forum' component={Forum} />
                 <Route exact path='/chat' component={List} />
                 <Route exact path='/chat/1' component={Messenger} />

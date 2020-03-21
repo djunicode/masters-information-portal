@@ -20,6 +20,8 @@ import TwitterIcon from '@material-ui/icons/Twitter';
 import LinkedInIcon from '@material-ui/icons/LinkedIn';
 import RemoveIcon from '@material-ui/icons/Remove';
 import AddIcon from '@material-ui/icons/Add';
+import {Redirect} from 'react-router-dom';
+import Cookies from 'js-cookie';
 const axios = require('axios');
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -47,7 +49,23 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function EditProfile() {
+function EditProfile(props) {
+
+	const [universityArr,setUniversityArr]=React.useState([]);
+    const [universityNames,setUniversityNames]=React.useState([]);
+    const [tagArr,setTagArr]=React.useState([]);
+    const [tagNames,setTagNames]=React.useState([]);  
+
+    const getTagById = (id,ObjectArr) => {
+    	var name;
+    	ObjectArr.forEach((obj)=>{
+    		if(obj._id===id){
+    			name=obj.name;
+    		}
+    	})
+    	console.log(name);
+    	return name;
+    }
 
 	const [user, setUser] = React.useState({
     	pic: '',
@@ -65,15 +83,35 @@ function EditProfile() {
         twitter: '',
         linkedIn: '',
         github: '',
-        uniApplied: [{ name: '', course: '', status: '' }]
+        uniApplied: [{ name: '', status: '' }]
     });
 
-	const[mounted,setMounted]=React.useState(false);
+	const [mounted,setMounted] = React.useState(false);
 
 	useEffect(()=>{
-		const token = localStorage.getItem('jwt');
-		console.log(token)
+		const token = Cookies.get('jwt');
 		if(!mounted){
+		   axios.get('/api/tags')
+		      	.then(function(response){
+		        console.log(response)
+		        response.data.forEach((item,index)=>{
+		          if(item.isSchool){
+		            if(!universityArr.includes(item)){
+		              setUniversityArr(universityArr=>[...universityArr,item])
+		            }
+		            if(!universityNames.includes(item.name)){
+		              setUniversityNames(universityNames=>[...universityNames,item.name])
+		            }
+		          }
+		          else{
+		            if(!tagArr.includes(item)){
+		              setTagArr(tagArr=>[...tagArr,item]);
+		            }
+		            if(!tagNames.includes(item.name)){
+		              setTagNames(tagNames=>[...tagNames,item.name]);
+		            }
+		          }
+		        });
 			if(!!token){
 		 	axios.get('api/users/me/', {
 			    headers: {
@@ -81,20 +119,25 @@ function EditProfile() {
 			    }
 			  })
 			  .then(function (response) {
-			    console.log(response);
+			  	console.log(response);
 			    user.email=response.data.email;
 			    user.name=response.data.name;
 			    user.bio=response.data.bio;
 			    user.gradDate=response.data.graduationDate.slice(0,10);
+			    user.university=getTagById(response.data.currentSchool,universityArr);
+			    user.domains=response.data.domains;
+			    user.accepts=response.accepts;
+			    user.rejects=response.rejects;
 			    setUser(user);
-			    setMounted(true);
+				setMounted(true);
 			  })
 			  .catch(function (error) {
 			    console.log(error);
 			  });  
 			}
+		    });
 		}
-	})
+	},[mounted])
 
     const[pic,setPic]=React.useState([])
     const handleImage = (picture) => {
@@ -111,6 +154,7 @@ function EditProfile() {
     const departments = ["Computers", "IT", "Mechanical", "Bio-Med", "Production", "Electronics", "EXTC", "Chemical", "Civil", "Aeronautical", "Mining", "Agricultural", "Metallurgical"];
     return (
 		<React.Fragment>
+		  {mounted&&!props.loggedIn?<Redirect to='/' />:null}
 		  <div className={classes.root} style={{paddingTop:'45px'}}>
       		<div align="center">
       			<Typography variant="h4" className={classes.header}><b>Edit Profile</b></Typography><br/><br/>
@@ -119,26 +163,27 @@ function EditProfile() {
         		<Box className={classes.box}>
 		            <Formik 
 		              enableReinitialize={true}
+		              dirty={true}
 			          validateOnChange={true}
-			          // initialValues={{
-			          // 	pic:null,
-			          //   email:user.email,
-			          //   password:'',
-			          //   password_confirm:'',
-			          //   university: user.university,
-			          //   department: user.department,
-			          //   gradDate: user.gradDate,
-			          //   bio:user.bio,
-			          //   domain: user.domain,
-			          //   tests: user.tests,
-			          //   facebook: user.facebook,
-			          //   twitter: user.twitter,
-			          //   linkedIn: user.linkedIn,
-			          //   github: user.github, 
-			          //   uniApplied: user.uniApplied,
-			          //   addDomain: '',
-			          // }}
-			          initialValues={user}
+			          initialValues={{
+			          	pic:null,
+			            email:user.email,
+			            password:'',
+			            password_confirm:'',
+			            university: user.university,
+			            department: user.department,
+			            gradDate: user.gradDate,
+			            bio:user.bio,
+			            domain: user.domain,
+			            tests: user.tests,
+			            facebook: user.facebook,
+			            twitter: user.twitter,
+			            linkedIn: user.linkedIn,
+			            github: user.github, 
+			            uniApplied: user.uniApplied,
+			            addDomain: '',
+			          }}
+			          //initialValues={user}
 			          validate={values => {
 			          const errors = {};
 			            if (
@@ -232,31 +277,36 @@ function EditProfile() {
 	              <Typography variant="h5" style={{paddingTop:30}}> Current University</Typography>
 	            </Grid>
 	            <Grid item md={6}>
-	          <TextField 
-	            name="university"
-	            variant="filled"
-	            label="University Name" 
-	            fullWidth
-	            placeholder="Enter your MS University name" 
-	            value={values.university}
-	            onChange={handleChange}
-	            onBlur={handleBlur}
-	            className={classes.textf}
-	          /> 
 	          <Autocomplete
-	              freeSolo
-	              options={departments}
-	              defaultValue={values.department}
-	              name="department"
-	              onChange={(e, value) => {
-	                setFieldValue("department", value)
-	              }}
-	                onBlur={handleBlur}
-	            className={classes.textf}
-	              renderInput={params => (
-	                <TextField {...params} name='department' value={values.department} onChange={handleChange} error={!!errors.department&&touched.department} helperText={touched.department?errors.department:''}  label="Department" margin="normal" variant="filled" fullWidth />
-	              )}
-	            />
+              freeSolo
+              options={universityNames} 
+              disableClearable
+              inputValue={!!values.university?values.university:''}
+              name="university"
+              onChange={(e, value) => {
+                setFieldValue("university", value)
+              }}
+                onBlur={handleBlur}
+            className={classes.textf}
+              renderInput={params => (
+                <TextField {...params} name='university' value={values.university} onChange={handleChange} error={!!errors.university&&touched.university} helperText={touched.university?errors.university:''}  label="University" margin="normal" variant="filled" fullWidth />
+              )}
+            />
+          <Autocomplete
+              freeSolo
+              disableClearable
+              options={departments}
+              inputValue={!!values.department?values.department:''}
+              name="department"
+              onChange={(e, value) => {
+                setFieldValue("department", value)
+              }}
+                onBlur={handleBlur}
+              className={classes.textf}
+              renderInput={params => (
+                <TextField {...params} name='department' value={values.department} onChange={handleChange} error={!!errors.department&&touched.department} helperText={touched.department?errors.department:''}  label="Department" margin="normal" variant="filled" fullWidth />
+              )}
+            />
 	          <TextField 
 	            name="gradDate" 
 	            variant="filled"
@@ -535,20 +585,7 @@ function EditProfile() {
                         onBlur={handleBlur}
                       />
                     </div><br/>
-                    <div>
-                      <TextField 
-                        label="Course"
-                        name={`uniApplied.${index}.course`} 
-                        placeholder="Course Name"
-                        key={index}
-                        value={value.course}
-                        fullWidth
-                        variant="filled" 
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
-                  </div><br/>
-                  <div>
+                 	<div>
                       <TextField 
                         select
                         label="Status"
@@ -563,13 +600,12 @@ function EditProfile() {
                       >
                         <MenuItem value="Accepted">Accepted</MenuItem>
                         <MenuItem value="Rejected">Rejected</MenuItem>
-                        <MenuItem value="Prefer not to disclose">Prefer not to disclose</MenuItem>
                       </TextField>
                    </div><br/>
                   <Grid container spacing={2}>
               {index===values.uniApplied.length-1?
               <Grid item xs={8} style={{alignItems:'right'}}>
-                <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',course:'',status:''})}>
+                <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:''})}>
                       <AddIcon /> Add Applicaiton
                 </Button>
               </Grid>
@@ -594,7 +630,7 @@ function EditProfile() {
               
             :
               <div>
-                <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',course:'',status:''})}>
+                <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:''})}>
                       <AddIcon /> Add University
                 </Button><br/>
               </div>
