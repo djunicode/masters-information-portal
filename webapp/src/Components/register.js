@@ -80,8 +80,8 @@ export default function Register(props) {
         console.error(error)
       });
     }
-    //write async funciton here
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[componentDidMount])
 
   const submitAxios = () => {
     axios.post('/api/users/register', {

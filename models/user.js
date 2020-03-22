@@ -40,24 +40,33 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tag'
   },
-  accepts: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Tag'
-    }
-  ],
-  rejects: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Tag'
-    }
-  ],
-  pinnedQuestions: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Forum'
-    }
-  ]
+  accepts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tag',
+  }],
+  rejects: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tag',
+  }],
+  pinnedQuestions: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Forum',
+  }],
+  githubUrl: {
+    type: String,
+  },
+  facebookUrl: {
+    type: String,
+  },
+  linkedinUrl: {
+    type: String,
+  },
+  twitterUrl: {
+    type: String,
+  },
+  avatar : {
+    type : Buffer
+  }
 });
 
 userSchema.methods.newAuthToken = async function(){
@@ -71,6 +80,7 @@ userSchema.methods.getPublicProfile = function() {
   const userObject = user.toObject();
 
   delete userObject.password;
+  delete userObject.avatar;
   return userObject;
 };
 

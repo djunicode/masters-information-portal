@@ -18,6 +18,8 @@ import FacebookIcon from '@material-ui/icons/Facebook';
 import ImageUploader from 'react-images-upload';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import LinkedInIcon from '@material-ui/icons/LinkedIn';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import RemoveIcon from '@material-ui/icons/Remove';
 import AddIcon from '@material-ui/icons/Add';
 import {Redirect} from 'react-router-dom';
@@ -46,7 +48,11 @@ const useStyles = makeStyles(theme => ({
         paddingTop: 40,
         paddingBottom: 30,
         paddingLeft: 40
-    }
+    },
+	backdrop: {
+		zIndex: theme.zIndex.drawer + 1,
+		color: '#fff',
+	},
 }));
 
 function EditProfile(props) {
@@ -63,7 +69,6 @@ function EditProfile(props) {
     			name=obj.name;
     		}
     	})
-    	console.log(name);
     	return name;
     }
 
@@ -87,6 +92,7 @@ function EditProfile(props) {
     });
 
 	const [mounted,setMounted] = React.useState(false);
+
 
 	useEffect(()=>{
 		const token = Cookies.get('jwt');
@@ -112,32 +118,32 @@ function EditProfile(props) {
 		            }
 		          }
 		        });
-			if(!!token){
-		 	axios.get('api/users/me/', {
-			    headers: {
-			      Authorization: token
-			    }
-			  })
-			  .then(function (response) {
-			  	console.log(response);
-			    user.email=response.data.email;
-			    user.name=response.data.name;
-			    user.bio=response.data.bio;
-			    user.gradDate=response.data.graduationDate.slice(0,10);
-			    user.university=getTagById(response.data.currentSchool,universityArr);
-			    user.domains=response.data.domains;
-			    user.accepts=response.accepts;
-			    user.rejects=response.rejects;
-			    setUser(user);
-				setMounted(true);
-			  })
-			  .catch(function (error) {
-			    console.log(error);
-			  });  
-			}
+				if(!!token){
+			 	axios.get('api/users/me/', {
+				    headers: {
+				      Authorization: token
+				    }
+				  })
+				  .then(function (response) {
+				  	console.log(response);
+				    user.email=response.data.email;
+				    user.name=response.data.name;
+				    user.bio=response.data.bio;
+				    user.gradDate=response.data.graduationDate.slice(0,10);
+				    user.university=response.data.currentSchool;
+				    user.domains=response.data.domains;
+				    user.accepts=response.accepts;
+				    user.rejects=response.rejects;
+					setMounted(true);
+				  })
+				  .catch(function (error) {
+				    console.log(error);
+				  });  
+				}
 		    });
 		}
-	},[mounted])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[])
 
     const[pic,setPic]=React.useState([])
     const handleImage = (picture) => {
@@ -159,6 +165,9 @@ function EditProfile(props) {
       		<div align="center">
       			<Typography variant="h4" className={classes.header}><b>Edit Profile</b></Typography><br/><br/>
       		</div>
+      			 <Backdrop className={classes.backdrop} open={!mounted}>
+			        <CircularProgress color="inherit" />
+			      </Backdrop>
       			<Divider/>
         		<Box className={classes.box}>
 		            <Formik 
@@ -170,7 +179,7 @@ function EditProfile(props) {
 			            email:user.email,
 			            password:'',
 			            password_confirm:'',
-			            university: user.university,
+			            university: getTagById(user.university,universityArr),
 			            department: user.department,
 			            gradDate: user.gradDate,
 			            bio:user.bio,
@@ -183,7 +192,6 @@ function EditProfile(props) {
 			            uniApplied: user.uniApplied,
 			            addDomain: '',
 			          }}
-			          //initialValues={user}
 			          validate={values => {
 			          const errors = {};
 			            if (
@@ -209,9 +217,9 @@ function EditProfile(props) {
 			            user.uniApplied=values.uniApplied;
 			            setUser(user);
 			            handleOpenMsg();
-			            setTimeout(() => {
-		                setSubmitting(false);
-			            }, 1000);
+			            // setTimeout(() => {
+		             //    setSubmitting(false);
+			            // }, 1000);
 			            console.log(user);
 			            //@Backend Submit Function for Sign-Up
 		        }}
