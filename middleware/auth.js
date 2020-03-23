@@ -24,6 +24,7 @@ const authRequired = async (req, res, next) => {
     const user = await User.findOne({ _id: decoded._id });
     req.token = token;
     req.user = user;
+    res.user=user;
     next();
   } catch (e) {
     return res.status(401).json({
@@ -32,4 +33,20 @@ const authRequired = async (req, res, next) => {
   }
 };
 
-module.exports = { authRequired };
+const hasRoles=(list)=>{
+  return function(req,res,next){
+    const m=list;
+    const n=req.user.role;
+    const result = m.every(val => n.includes(val));
+      console.log(result);  
+      if(result==false){
+        return res.send({
+          status:403,
+          error:"You are not capable of doing this,Sorry!"
+        })
+      }
+      next();
+  }
+}
+
+module.exports = { authRequired,hasRoles};
