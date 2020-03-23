@@ -21,7 +21,7 @@ describe(config.GROUP_USER_TESTS, () => {
       .request(server)
       .post('/api/users/login')
       .send({ email: 'test@test.com', password: '123456789' });
-    user = res2.body.user;
+    user = res2.body.userObject;
     token = res2.body.token;
   });
 
@@ -30,27 +30,30 @@ describe(config.GROUP_USER_TESTS, () => {
       .request(server)
       .get('/api/users/me')
       .send({});
-    expect(res1).to.have.status(400);
+    expect(res1).to.have.status(401);
     expect(res1.body).to.have.property('msg');
 
     const res2 = await chai
       .request(server)
       .put('/api/users/me')
       .send({});
-    expect(res1).to.have.status(400);
+    expect(res1).to.have.status(401);
     expect(res1.body).to.have.property('msg');
   });
 
   //! WAITING FOR AUTH-CHANGES
-  // it(config.TEST_PUBLIC_PROFILE, async () => {
-
-  //   const res1 = await chai
-  //     .request(server)
-  //     .get('/api/users/me')
-  //     .set('Authorization', `Bearer ${token}`)
-  //     .send({});
-  //   console.log(token);
-  //   expect(res1).to.have.status(200);
-  //   expect(res1.body).to.have.property('msg');
-  // });
+  it(config.TEST_PUBLIC_PROFILE, async () => {
+    const res1 = await chai
+      .request(server)
+      .get('/api/users/me')
+      .set('Authorization', `Bearer ${token}`)
+      .send({});
+    expect(res1).to.have.status(200);
+    expect(res1.body)
+      .to.have.property('accepts')
+      .to.be.a('array');
+    expect(res1.body)
+      .to.have.property('rejects')
+      .to.be.a('array');
+  });
 });
