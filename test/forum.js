@@ -32,7 +32,8 @@ describe(config.GROUP_FORUM_TESTS, () => {
       .send({
         title: 'TestTitle',
         text: 'TestText',
-        poster: user._id
+        author: user._id,
+        isAnswer: false
       });
     forum = res3.body;
   });
@@ -152,5 +153,53 @@ describe(config.GROUP_FORUM_TESTS, () => {
       .send();
     expect(res2).to.have.status(409);
     expect(res2.body).to.have.property('msg');
+  });
+
+  it(config.TEST_ANSWER_WITHOUT_ID, async () => {
+    const res1 = await await chai
+      .request(server)
+      .post('/api/forum')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        title: 'TestTitle',
+        text: 'TestText',
+        author: user._id,
+        isAnswer: true
+      });
+    expect(res1).to.have.status(400);
+    expect(res1.body).to.have.property('parentId');
+    expect(res1.body.parentId.kind)
+      .to.be.a('string')
+      .eql('user defined');
+  });
+
+  it(config.TEST_VALID_ANSWER, async () => {
+    const res1 = await await chai
+      .request(server)
+      .post('/api/forum')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        title: 'TestAnsTitle',
+        text: 'TestAnsText',
+        author: user._id,
+        isAnswer: true,
+        parentId: forum._id
+      });
+    expect(res1).to.have.status(201);
+    expect(res1.body)
+      .to.have.property('author')
+      .eql(user._id);
+    expect(res1.body)
+      .to.have.property('parentId')
+      .eql(forum._id);
+    expect(res1.body)
+      .to.have.property('isAnswer')
+      .eql(true);
+    expect(res1.body)
+      .to.have.property('title')
+      .eql('TestAnsTitle');
+    expect(res1.body)
+      .to.have.property('text')
+      .eql('TestAnsText');
   });
 });

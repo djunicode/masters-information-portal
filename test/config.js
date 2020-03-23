@@ -24,6 +24,8 @@ const TEST_UPVOTE_AND_DOWNVOTE = 'Should remove upvote after downvoting';
 const TEST_DOWNVOTE_AND_UPNVOTE = 'Should remove downvote after upvoting';
 const TEST_VALID_PINNING = 'Should allow pinning of questions';
 const TEST_MULTIPLE_PINNING = 'Should not allow multiple pinning of questions';
+const TEST_ANSWER_WITHOUT_ID = 'Should not alllow posting an answer without parent Id parameter';
+const TEST_VALID_ANSWER = 'Should allow a valid answer to be posted';
 //* Still tests remaining
 
 module.exports = {
@@ -49,5 +51,7 @@ module.exports = {
   TEST_UPVOTE_AND_DOWNVOTE,
   TEST_DOWNVOTE_AND_UPNVOTE,
   TEST_VALID_PINNING,
-  TEST_MULTIPLE_PINNING
+  TEST_MULTIPLE_PINNING,
+  TEST_ANSWER_WITHOUT_ID,
+  TEST_VALID_ANSWER
 };

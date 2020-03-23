@@ -1,17 +1,34 @@
 const mongoose = require('mongoose');
 
 const forumSchema = new mongoose.Schema({
+  parentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Forum',
+    default: null,
+    validate: {
+      validator: function(id) {
+        if (this.isAnswer && !id) {
+          return false;
+        } else {
+          return true;
+        }
+      },
+      message: 'parentId is reuired for an answers'
+    }
+  },
   title: {
     type: String,
     required: true
   },
   text: { type: String, required: true },
+  isAnswer: { type: Boolean, required: true, default: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  poster: {
+  author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
+  answers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Forum' }],
   upvoters: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -22,30 +39,6 @@ const forumSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
-    }
-  ],
-  answers: [
-    {
-      text: String,
-      createdAt: { type: Date, default: Date.now },
-      updatedAt: { type: Date, default: Date.now },
-      poster: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-      },
-      upvoters: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User'
-        }
-      ],
-      downvoters: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User'
-        }
-      ],
-      pinned: { type: Boolean, default: false }
     }
   ],
   tags: [
