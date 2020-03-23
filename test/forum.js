@@ -25,7 +25,7 @@ describe(config.GROUP_FORUM_TESTS, () => {
       .send({ email: 'test@test.com', password: '123456789' });
     user = res2.body.userObject;
     token = res2.body.token;
-    const res3 = await await chai
+    const res3 = await chai
       .request(server)
       .post('/api/forum')
       .set('Authorization', `Bearer ${token}`)
@@ -38,7 +38,7 @@ describe(config.GROUP_FORUM_TESTS, () => {
     forum = res3.body;
   });
   it(config.TEST_UNAUTHENTICATED_REQ, async () => {
-    const res1 = await await chai
+    const res1 = await chai
       .request(server)
       .post('/api/forum')
       .send({});
@@ -46,7 +46,7 @@ describe(config.GROUP_FORUM_TESTS, () => {
   });
 
   it(config.TEST_VALID_UPVOTE, async () => {
-    const res1 = await await chai
+    const res1 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/upvote`)
       .set('Authorization', `Bearer ${token}`)
@@ -55,12 +55,12 @@ describe(config.GROUP_FORUM_TESTS, () => {
   });
 
   it(config.TEST_MULTIPLE_UPVOTES, async () => {
-    const res1 = await await chai
+    const res1 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/upvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
-    const res2 = await await chai
+    const res2 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/upvote`)
       .set('Authorization', `Bearer ${token}`)
@@ -69,7 +69,7 @@ describe(config.GROUP_FORUM_TESTS, () => {
   });
 
   it(config.TEST_VALID_DOWNVOTE, async () => {
-    const res1 = await await chai
+    const res1 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/downvote`)
       .set('Authorization', `Bearer ${token}`)
@@ -78,12 +78,12 @@ describe(config.GROUP_FORUM_TESTS, () => {
   });
 
   it(config.TEST_MULTIPLE_DOWNVOTES, async () => {
-    const res1 = await await chai
+    const res1 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/downvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
-    const res2 = await await chai
+    const res2 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/downvote`)
       .set('Authorization', `Bearer ${token}`)
@@ -92,17 +92,17 @@ describe(config.GROUP_FORUM_TESTS, () => {
   });
 
   it(config.TEST_UPVOTE_AND_DOWNVOTE, async () => {
-    const res1 = await await chai
+    const res1 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/upvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
-    const res2 = await await chai
+    const res2 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/downvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
-    const res3 = await await chai
+    const res3 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/upvote`)
       .set('Authorization', `Bearer ${token}`)
@@ -112,17 +112,17 @@ describe(config.GROUP_FORUM_TESTS, () => {
   });
 
   it(config.TEST_DOWNVOTE_AND_UPNVOTE, async () => {
-    const res1 = await await chai
+    const res1 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/downvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
-    const res2 = await await chai
+    const res2 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/upvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
-    const res3 = await await chai
+    const res3 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/downvote`)
       .set('Authorization', `Bearer ${token}`)
@@ -132,7 +132,7 @@ describe(config.GROUP_FORUM_TESTS, () => {
   });
 
   it(config.TEST_VALID_PINNING, async () => {
-    const res1 = await await chai
+    const res1 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/pin`)
       .set('Authorization', `Bearer ${token}`)
@@ -141,12 +141,12 @@ describe(config.GROUP_FORUM_TESTS, () => {
   });
 
   it(config.TEST_MULTIPLE_PINNING, async () => {
-    const res1 = await await chai
+    const res1 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/pin`)
       .set('Authorization', `Bearer ${token}`)
       .send();
-    const res2 = await await chai
+    const res2 = await chai
       .request(server)
       .post(`/api/forum/${forum._id}/pin`)
       .set('Authorization', `Bearer ${token}`)
@@ -156,7 +156,7 @@ describe(config.GROUP_FORUM_TESTS, () => {
   });
 
   it(config.TEST_ANSWER_WITHOUT_ID, async () => {
-    const res1 = await await chai
+    const res1 = await chai
       .request(server)
       .post('/api/forum')
       .set('Authorization', `Bearer ${token}`)
@@ -174,7 +174,7 @@ describe(config.GROUP_FORUM_TESTS, () => {
   });
 
   it(config.TEST_VALID_ANSWER, async () => {
-    const res1 = await await chai
+    const res1 = await chai
       .request(server)
       .post('/api/forum')
       .set('Authorization', `Bearer ${token}`)
@@ -201,5 +201,14 @@ describe(config.GROUP_FORUM_TESTS, () => {
     expect(res1.body)
       .to.have.property('text')
       .eql('TestAnsText');
+
+    //* Check if answer id is added to forum question
+    const res2 = await chai.request(server).get(`/api/forum/${forum._id}`);
+    expect(res2).to.have.status(200);
+    expect(res2.body)
+      .to.have.property('answers')
+      .to.be.a('array');
+    expect(Array.from(res2.body.answers).length === 1).to.be.eql(true);
+    expect(JSON.stringify(res2.body.answers[0])).to.be.eql(JSON.stringify(res1.body._id));
   });
 });

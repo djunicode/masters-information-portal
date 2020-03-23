@@ -7,6 +7,14 @@ const logger = require('../config/logger');
  */
 exports.create = async (req, res) => {
   const doc = await Forum.create(req.body);
+  if (req.body.isAnswer) {
+    const forum = await Forum.findByIdAndUpdate(req.body.parentId, { $push: { answers: doc._id } });
+    logger.info(
+      `Created answer ${doc._id} to question ${forum._id} posted by user ${req.body.author}`
+    );
+    return res.status(201).json(doc);
+  }
+
   logger.created('Forum', doc);
   return res.status(201).json(doc);
 };
