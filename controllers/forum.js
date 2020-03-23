@@ -44,7 +44,7 @@ exports.getById = async (req, res) => {
 };
 
 /**
- * @route PUT "/api/forum/:id/upvote"
+ * @route POST "/api/forum/:id/upvote"
  */
 
 exports.upvoteById = async (req, res) => {
@@ -65,16 +65,18 @@ exports.upvoteById = async (req, res) => {
   //* User has already downvoted it
   if (doc.downvoters.includes(userId)) {
     await Forum.findByIdAndUpdate(id, { $pull: { downvoters: userId } });
+    logger.info(`Forum Question ${id} removed downvote by ${userId}`);
     return res.status(200).send({});
   }
 
   //* User has not reacted at all
   await Forum.findByIdAndUpdate(id, { $push: { upvoters: userId } });
+  logger.info(`Forum Question ${id} upvoted by ${userId}`);
   return res.status(201).send({});
 };
 
 /**
- * @route PUT "/api/forum/:id/downvote"
+ * @route POST "/api/forum/:id/downvote"
  */
 
 exports.downvoteById = async (req, res) => {
@@ -94,14 +96,16 @@ exports.downvoteById = async (req, res) => {
   //* User has already upvoted it
   if (doc.upvoters.includes(userId)) {
     await Forum.findByIdAndUpdate(id, { $pull: { upvoters: userId } });
+    logger.info(`Forum Question ${id} removed upvote by ${userId}`);
     return res.status(200).send({});
   }
   await Forum.findByIdAndUpdate(id, { $push: { downvoters: userId } });
+  logger.info(`Forum Question ${id} downvoted by ${userId}`);
   return res.status(201).send({});
 };
 
 /**
- * @route PUT "/api/forum/:id/pin"
+ * @route POST "/api/forum/:id/pin"
  */
 
 exports.pinById = async (req, res) => {
@@ -120,6 +124,7 @@ exports.pinById = async (req, res) => {
     });
   }
   await User.findByIdAndUpdate(userId, { $push: { pinnedQuestions: id } });
+  logger.info(`Forum Question ${id} pinned by ${userId}`);
   return res.status(201).send({});
 };
 

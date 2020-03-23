@@ -36,19 +36,18 @@ describe(config.GROUP_FORUM_TESTS, () => {
       });
     forum = res3.body;
   });
-  // it(config.TEST_UNAUTHENTICATED_REQ, async () => {
-  //   const res1 = await await chai
-  //     .request(server)
-  //     .post('/api/forum')
-  //     .send({});
-  //   console.log(res1.body);
-  //   expect(res1).to.have.status(400);
-  // });
+  it(config.TEST_UNAUTHENTICATED_REQ, async () => {
+    const res1 = await await chai
+      .request(server)
+      .post('/api/forum')
+      .send({});
+    expect(res1).to.have.status(401);
+  });
 
   it(config.TEST_VALID_UPVOTE, async () => {
     const res1 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/upvote`)
+      .post(`/api/forum/${forum._id}/upvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     expect(res1).to.have.status(201);
@@ -57,12 +56,12 @@ describe(config.GROUP_FORUM_TESTS, () => {
   it(config.TEST_MULTIPLE_UPVOTES, async () => {
     const res1 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/upvote`)
+      .post(`/api/forum/${forum._id}/upvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     const res2 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/upvote`)
+      .post(`/api/forum/${forum._id}/upvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     expect(res2).to.have.status(409);
@@ -71,7 +70,7 @@ describe(config.GROUP_FORUM_TESTS, () => {
   it(config.TEST_VALID_DOWNVOTE, async () => {
     const res1 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/downvote`)
+      .post(`/api/forum/${forum._id}/downvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     expect(res1).to.have.status(201);
@@ -80,12 +79,12 @@ describe(config.GROUP_FORUM_TESTS, () => {
   it(config.TEST_MULTIPLE_DOWNVOTES, async () => {
     const res1 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/downvote`)
+      .post(`/api/forum/${forum._id}/downvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     const res2 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/downvote`)
+      .post(`/api/forum/${forum._id}/downvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     expect(res2).to.have.status(409);
@@ -94,17 +93,17 @@ describe(config.GROUP_FORUM_TESTS, () => {
   it(config.TEST_UPVOTE_AND_DOWNVOTE, async () => {
     const res1 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/upvote`)
+      .post(`/api/forum/${forum._id}/upvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     const res2 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/downvote`)
+      .post(`/api/forum/${forum._id}/downvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     const res3 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/upvote`)
+      .post(`/api/forum/${forum._id}/upvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     //* As the upvote is removed after downvote, we should be able to upvote again
@@ -114,17 +113,17 @@ describe(config.GROUP_FORUM_TESTS, () => {
   it(config.TEST_DOWNVOTE_AND_UPNVOTE, async () => {
     const res1 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/downvote`)
+      .post(`/api/forum/${forum._id}/downvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     const res2 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/upvote`)
+      .post(`/api/forum/${forum._id}/upvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     const res3 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/downvote`)
+      .post(`/api/forum/${forum._id}/downvote`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     //* As the downvote is removed after upvote, we should be able to downvote again
@@ -134,7 +133,7 @@ describe(config.GROUP_FORUM_TESTS, () => {
   it(config.TEST_VALID_PINNING, async () => {
     const res1 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/pin`)
+      .post(`/api/forum/${forum._id}/pin`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     expect(res1).to.have.status(201);
@@ -143,12 +142,12 @@ describe(config.GROUP_FORUM_TESTS, () => {
   it(config.TEST_MULTIPLE_PINNING, async () => {
     const res1 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/pin`)
+      .post(`/api/forum/${forum._id}/pin`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     const res2 = await await chai
       .request(server)
-      .put(`/api/forum/${forum._id}/pin`)
+      .post(`/api/forum/${forum._id}/pin`)
       .set('Authorization', `Bearer ${token}`)
       .send();
     expect(res2).to.have.status(409);

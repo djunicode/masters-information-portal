@@ -10,6 +10,7 @@ const { directives, limiter, options } = require('./config/middlewares');
 
 const { userRouter, forumRouter, tagRouter, chatRouter } = require('./routes');
 
+
 // --- App config
 
 const app = express();
@@ -21,6 +22,7 @@ app.set('json spaces', 2);
 // body-parser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(bodyParser.raw());
 
 // morgan
 app.use(morgan('dev'));
