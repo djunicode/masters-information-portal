@@ -7,21 +7,27 @@ const forumSchema = new mongoose.Schema({
     default: null,
     validate: {
       validator: function(id) {
-        if (this.isAnswer && !id) {
-          return false;
-        } else {
-          return true;
-        }
+        return !this.isAnswer || !!id;
       },
-      message: 'parentId is reuired for an answers'
+      message: 'parentId is reuired for an answers',
+      type: 'required',
+      kind: 'required'
     }
   },
+  isAnswer: { type: Boolean, required: true, default: false },
   title: {
     type: String,
-    required: true
+    default: '',
+    validate: {
+      validator: function(val) {
+        return this.isAnswer || !!val;
+      },
+      message: 'Title is required for questions',
+      type: 'required',
+      kind: 'required'
+    }
   },
   text: { type: String, required: true },
-  isAnswer: { type: Boolean, required: true, default: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   author: {

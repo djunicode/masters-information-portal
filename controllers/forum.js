@@ -12,7 +12,6 @@ exports.create = async (req, res) => {
     logger.info(
       `Created answer ${doc._id} to question ${forum._id} posted by user ${req.body.author}`
     );
-    return res.status(201).json(doc);
   }
 
   logger.created('Forum', doc);

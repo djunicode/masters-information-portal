@@ -170,7 +170,7 @@ describe(config.GROUP_FORUM_TESTS, () => {
     expect(res1.body).to.have.property('parentId');
     expect(res1.body.parentId.kind)
       .to.be.a('string')
-      .eql('user defined');
+      .eql('required');
   });
 
   it(config.TEST_VALID_ANSWER, async () => {
@@ -179,7 +179,6 @@ describe(config.GROUP_FORUM_TESTS, () => {
       .post('/api/forum')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        title: 'TestAnsTitle',
         text: 'TestAnsText',
         author: user._id,
         isAnswer: true,
@@ -197,7 +196,7 @@ describe(config.GROUP_FORUM_TESTS, () => {
       .eql(true);
     expect(res1.body)
       .to.have.property('title')
-      .eql('TestAnsTitle');
+      .eql('');
     expect(res1.body)
       .to.have.property('text')
       .eql('TestAnsText');
