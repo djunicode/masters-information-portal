@@ -24,7 +24,7 @@ const authRequired = async (req, res, next) => {
     const user = await User.findOne({ _id: decoded._id });
     req.token = token;
     req.user = user;
-    res.user=user;
+    res.locals.user=user;
     next();
   } catch (e) {
     return res.status(401).json({
@@ -36,7 +36,7 @@ const authRequired = async (req, res, next) => {
 const hasRoles=(list)=>{
   return function(req,res,next){
     const m=list;
-    const n=req.user.role;
+    const n=res.locals.user.role;
     const result = m.every(val => n.includes(val));
       console.log(result);  
       if(result==false){
