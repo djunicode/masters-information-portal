@@ -1,5 +1,6 @@
 const Forum = require('../models/forum');
 const User = require('../models/user');
+const Tag=require("../models/tag")
 const logger = require('../config/logger');
 
 /**
@@ -12,17 +13,26 @@ exports.create = async (req, res) => {
 };
 
 /**
- * @route GET "/api/forum"
+ * @route GET "/api/forum?slugs[]=node&title=xyz"
+ * Extra query parameter - slugs: [String], array of tag slugs
  */
 exports.getAll = async (req, res) => {
-  const searchQuery = req.query;
-  const docs = await Forum.find(searchQuery);
+  const queryFilter = req.query;
+
+  if(queryFilter.slugs) {
+    const { slugs } = queryFilter;
+    const tags_id = await Tag.find({ slug: { $in:slugs } }).select({ _id:1 });
+    delete queryFilter.slugs;
+    queryFilter.tags = { $in: tags_id };
+  }
+  
+  const docs = await Forum.find(queryFilter);
   if (!docs) {
     return res.status(404).json({
       msg: 'No documents found'
     });
   }
-
+  
   logger.readMany('Forum', docs);
   return res.json(docs);
 };
@@ -46,7 +56,6 @@ exports.getById = async (req, res) => {
 /**
  * @route POST "/api/forum/:id/upvote"
  */
-
 exports.upvoteById = async (req, res) => {
   const { id } = req.params;
   const userId = req.user._id;
@@ -78,7 +87,6 @@ exports.upvoteById = async (req, res) => {
 /**
  * @route POST "/api/forum/:id/downvote"
  */
-
 exports.downvoteById = async (req, res) => {
   const { id } = req.params;
   const userId = req.user._id;
@@ -107,7 +115,6 @@ exports.downvoteById = async (req, res) => {
 /**
  * @route POST "/api/forum/:id/pin"
  */
-
 exports.pinById = async (req, res) => {
   const { id } = req.params;
   const userId = req.user._id;
