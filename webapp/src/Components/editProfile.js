@@ -57,11 +57,6 @@ const useStyles = makeStyles(theme => ({
 
 function EditProfile(props) {
 
-	const [universityArr,setUniversityArr]=React.useState([]);
-    const [universityNames,setUniversityNames]=React.useState([]);
-    const [tagArr,setTagArr]=React.useState([]);
-    const [tagNames,setTagNames]=React.useState([]);  
-
     const getTagById = (id,ObjectArr) => {
     	var name;
     	ObjectArr.forEach((obj)=>{
@@ -72,7 +67,31 @@ function EditProfile(props) {
     	return name;
     }
 
-	const [user, setUser] = React.useState({
+    const getObjectId = async (NamesArr,ObjectArr,ObjectName,isSchoolBool) => {
+      var id=null;
+      if(NamesArr.includes(ObjectName)){
+        ObjectArr.forEach((value)=>{
+          if(value.name===ObjectName){
+            id=value._id;
+          }
+        })
+      }
+      else{
+        try{
+          var response= await axios.post('/api/tags' , {
+            name: ObjectName,
+            isSchool: isSchoolBool
+          })
+          id=response.data._id;
+        }
+        catch(error){
+          console.error(error);
+        }
+      }
+      return id;
+    }
+
+	const [user] = React.useState({
     	pic: '',
         name: '',
         username: '',
@@ -88,25 +107,33 @@ function EditProfile(props) {
         twitter: '',
         linkedIn: '',
         github: '',
-        uniApplied: [{ name: '', status: '' }]
+        uniApplied: []
     });
 
 	const [mounted,setMounted] = React.useState(false);
 
+	const [universityArr,setUniversityArr]=React.useState([]);
+    const [universityNames,setUniversityNames]=React.useState([]);
+    const [tagArr,setTagArr]=React.useState([]);
+    const [tagNames,setTagNames]=React.useState([]);  
 
+	const[token1,setToken1]=React.useState(null);
 	useEffect(()=>{
 		const token = Cookies.get('jwt');
+		setToken1(token)
 		if(!mounted){
 		   axios.get('/api/tags')
-		      	.then(function(response){
-		        console.log(response)
-		        response.data.forEach((item,index)=>{
+		      	.then(function(res){
+		        console.log(res)
+		        res.data.forEach((item)=>{
 		          if(item.isSchool){
 		            if(!universityArr.includes(item)){
 		              setUniversityArr(universityArr=>[...universityArr,item])
+		              universityArr.push(item)
 		            }
 		            if(!universityNames.includes(item.name)){
-		              setUniversityNames(universityNames=>[...universityNames,item.name])
+		              universityNames.push(item.name)
+		              setUniversityNames(universityNames)
 		            }
 		          }
 		          else{
@@ -126,11 +153,29 @@ function EditProfile(props) {
 				  })
 				  .then(function (response) {
 				  	console.log(response);
+				  	user.id=response.data._id
 				    user.email=response.data.email;
 				    user.name=response.data.name;
 				    user.bio=response.data.bio;
 				    user.gradDate=response.data.graduationDate.slice(0,10);
 				    user.university=response.data.currentSchool;
+				    response.data.accepts.forEach(async (item,index)=>{
+		      			var obj={};
+		            	obj.name=getTagById(item,universityArr);
+		            	obj.status="Accepted";
+		            	user.uniApplied.push(obj);
+		            })
+		            response.data.rejects.forEach(async (item,index)=>{
+		              	var obj={};
+		                obj.name=getTagById(item,universityArr);
+		                obj.status="Rejected";
+		                user.uniApplied.push(obj);
+		          	})
+		          	console.log(user)
+				    user.github=response.data.githubUrl;
+				    user.facebook=response.data.facebookUrl;
+				    user.linkedIn=response.data.linkedinUrl;
+				    user.twitter=response.data.twitterUrl;
 				    user.domains=response.data.domains;
 				    user.accepts=response.accepts;
 				    user.rejects=response.rejects;
@@ -145,9 +190,10 @@ function EditProfile(props) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[])
 
-    const[pic,setPic]=React.useState([])
+    const[pic,setPic]=React.useState(null)
     const handleImage = (picture) => {
-    	setPic(pic.concat(picture))
+    	console.log(picture)
+    	setPic(picture)
     }
     const classes = useStyles();
     const [showSuccess, setShowSuccess] = React.useState(false);
@@ -201,7 +247,7 @@ function EditProfile(props) {
 			            }
 			            return errors;
 			          }}
-			          onSubmit={(values, { setSubmitting }) => {
+			          onSubmit={async (values, { setSubmitting }) => {
 			          	user.pic=pic;
 			            user.email=values.email;
 			            user.university=values.university;
@@ -215,12 +261,59 @@ function EditProfile(props) {
 			            user.linkedIn=values.linkedIn;
 			            user.github=values.github;
 			            user.uniApplied=values.uniApplied;
-			            setUser(user);
-			            handleOpenMsg();
-			            // setTimeout(() => {
-		             //    setSubmitting(false);
-			            // }, 1000);
+			            user.accepts=[];
+			            user.rejects=[];
+			            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
+			            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
+			            user.university= await getObjectId(universityNames,universityArr,user.university,true);
+			            accepts.forEach(async (item,index)=>
+			              user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
+			            )
+			            rejects.forEach(async (item,index)=>
+			              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
+			            )
+			            values.domain.forEach(async (item,index)=>
+			              user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
+			            )
 			            console.log(user);
+			            if(!!user.pic){
+			           	 	const formData = new FormData();
+			            	formData.append('avatar',user.pic[0]);
+				            axios.post('/api/users/upload',formData,{
+		        			headers: {
+		          			  	Authorization: token1,
+		          			  	'content-type': 'multipart/form-data'
+		          			}})
+		          			.then(function(response){
+		          				console.log(response)
+		          			})
+				        }
+            			axios.put('/api/users/me', {
+					      email: user.email,
+					      graduationDate: user.gradDate,
+					      currentSchool: user.university,
+					      department: user.department,
+
+					      /* -------------- Optional Fields below: ------------------ */
+					      bio: user.bio,
+					      //domains: user.domains,
+					      linkedinUrl: user.linkedIn,
+					      githubUrl: user.github,
+					      facebookUrl: user.facebook,
+					      twitterUrl: user.twitter,
+					      accepts: user.accepts,
+					      rejects: user.rejects
+					    },
+            			  {headers: {
+              			  	Authorization: token1
+              			  }})
+					    .then(function (response) {
+					      console.log(response);
+			           	  handleOpenMsg();
+					    })
+					    .catch(function (error) {
+					      console.log(error);
+					    });
 			            //@Backend Submit Function for Sign-Up
 		        }}
         		>
@@ -355,17 +448,32 @@ function EditProfile(props) {
               <Typography variant="h5" style={{paddingTop:10}}> Domains </Typography>
             </Grid>
             <Grid item xs={6}>
-              <TextField 
-                name='addDomain'
-                value={values.addDomain}
-                label="Domains"
-                placeholder="eg:Machine Learning, IOT"
-                fullWidth
-                variant="filled"
-                helperText="Press enter after adding each domain" 
-                onChange={handleChange}
+              <Autocomplete
+              freeSolo
+              options={tagNames}
+              disableClearable
+              inputValue={!!values.addDomain?values.addDomain:''}
+              autoHighlight
+              getOptionDisabled={option => values.domain.includes(option)}
+              name="addDomain"
+              onChange={(e, value) => {
+                setFieldValue("addDomain", value)
+              }}
                 onBlur={handleBlur}
-                onKeyPress={(event) => {
+            className={classes.textf}
+              renderInput={params => (
+                <TextField 
+                  {...params} 
+                  name='addDomain'
+                  value={values.addDomain}
+                  label="Domains"
+                  placeholder="eg:Machine Learning, IOT"
+                  fullWidth
+                  variant="filled"
+                  helperText="Press enter after adding each domain" 
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  onKeyPress={(event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
                         if (values.addDomain.trim()){
@@ -373,8 +481,10 @@ function EditProfile(props) {
                           setFieldValue('addDomain','');
                         }
                     }
-              }}
-          />
+                  }}
+                />
+              )}
+            />
             <br/>
             <br/>
             {values.domain.map((item,index)=>(
@@ -580,18 +690,29 @@ function EditProfile(props) {
                   values.uniApplied.map((value,index) => (
                     <React.Fragment key={index}>
                       <div>
-                      <TextField 
-                        name={`uniApplied.${index}.name`}
-                        value={value.name}
-                        key={index}
-                        fullWidth
-                        type="text" 
-                        variant="filled"
-                        label="University Name" 
-                        placeholder="Enter the name" 
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
+                      <Autocomplete
+                            freeSolo
+                            options={universityNames} 
+                            key={index}
+                            disableClearable
+                            inputValue={!!value.name?value.name:''}
+                            name={`uniApplied.${index}.name`}
+                            onChange={(e, value) => {
+                              setFieldValue(`uniApplied.${index}.name`, value)
+                            }}
+                            onBlur={handleBlur}
+                            renderInput={params => (
+                              <TextField {...params} 
+                                name={`uniApplied.${index}.name`} 
+                                value={value.name} 
+                                onChange={handleChange} 
+                                label="University Name" 
+                                margin="normal" 
+                                variant="filled" 
+                                fullWidth 
+                              />
+                            )}
+                          />
                     </div><br/>
                  	<div>
                       <TextField 

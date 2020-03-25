@@ -90,7 +90,7 @@ export default function Register(props) {
       password: user.password,
       graduationDate: user.gradDate,
       currentSchool: user.university,
-      //Department of Current University
+      department: user.department,
 
       /* -------------- Optional Fields below: ------------------ */
       bio: user.bio,

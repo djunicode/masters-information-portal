@@ -75,9 +75,10 @@ exports.getProfile = async (req, res) => {
  * @route PUT "/api/users/me"
  */
 exports.updateProfile = async (req, res) => {
-  const user = await User.findById(req.user._id);
-  user.update(req.body);
-
+  const user = await User.findByIdAndUpdate(req.user._id,req.body,{
+    new : true
+  });
+  user.save()
   return res.json(user.getPublicProfile());
 };
 

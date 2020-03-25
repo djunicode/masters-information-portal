@@ -64,6 +64,9 @@ const userSchema = new mongoose.Schema({
   twitterUrl: {
     type: String,
   },
+  department: {
+    type: String,
+  },
   avatar : {
     type : Buffer
   }
