@@ -43,6 +43,22 @@ exports.getBySlug = async (req, res) => {
 };
 
 /**
+ * @route PUT "/api/tag/:slug"
+ */
+exports.updateBySlug = async (req, res) => {
+  const { slug } = req.params;
+  const doc = await Tag.findByIdAndUpdate( slug,req.body);
+  if (!doc) {
+    return res.status(404).json({
+      msg: 'Not found',
+    });
+  }
+
+  logger.updated('Tag', doc);
+  return res.json(doc);
+};
+
+/**
  * @route DELETE "/api/tag/:slug"
  */
 exports.deleteBySlug = async (req, res) => {
