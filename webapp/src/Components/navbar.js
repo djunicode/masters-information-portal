@@ -54,6 +54,9 @@ const useStyles = makeStyles({
         textDecoration: 'none',
         color: 'white',
         fontFamily: 'Roboto'
+    },
+    paper: {
+        background: '#ffffff'
     }
 });
 
@@ -246,6 +249,7 @@ function NavBar(props) {
                         <Drawer
                             open={state.left}
                             onClose={toggleDrawer('left', false)}
+                            classes={{ paper: classes.paper }}
                         >
                             {sideList('left')}
                         </Drawer>

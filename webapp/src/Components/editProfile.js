@@ -1,4 +1,5 @@
 import React,{useEffect} from 'react';
+import {getTagById,getObjectId} from './tagRequests.js';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,6 +14,7 @@ import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Divider from '@material-ui/core/Divider';
 import { Formik, Form, FieldArray } from 'formik';
+import CloseIcon from '@material-ui/icons/Close';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import ImageUploader from 'react-images-upload';
@@ -57,40 +59,6 @@ const useStyles = makeStyles(theme => ({
 
 function EditProfile(props) {
 
-    const getTagById = (id,ObjectArr) => {
-    	var name;
-    	ObjectArr.forEach((obj)=>{
-    		if(obj._id===id){
-    			name=obj.name;
-    		}
-    	})
-    	return name;
-    }
-
-    const getObjectId = async (NamesArr,ObjectArr,ObjectName,isSchoolBool) => {
-      var id=null;
-      if(NamesArr.includes(ObjectName)){
-        ObjectArr.forEach((value)=>{
-          if(value.name===ObjectName){
-            id=value._id;
-          }
-        })
-      }
-      else{
-        try{
-          var response= await axios.post('/api/tags' , {
-            name: ObjectName,
-            isSchool: isSchoolBool
-          })
-          id=response.data._id;
-        }
-        catch(error){
-          console.error(error);
-        }
-      }
-      return id;
-    }
-
 	const [user] = React.useState({
     	pic: '',
         name: '',
@@ -102,7 +70,7 @@ function EditProfile(props) {
         gradDate: '2020-01-01',
         bio: '',
         domain: [],
-        tests: [{ name: '', date: '2020-01-01', score: '' }],
+        tests: [],
         facebook: '',
         twitter: '',
         linkedIn: '',
@@ -138,10 +106,12 @@ function EditProfile(props) {
 		          }
 		          else{
 		            if(!tagArr.includes(item)){
-		              setTagArr(tagArr=>[...tagArr,item]);
+		              tagArr.push(item)
+		              setTagArr(tagArr)
 		            }
 		            if(!tagNames.includes(item.name)){
-		              setTagNames(tagNames=>[...tagNames,item.name]);
+		              tagNames.push(item.name)
+		              setTagNames(tagNames)
 		            }
 		          }
 		        });
@@ -157,6 +127,13 @@ function EditProfile(props) {
 				    user.email=response.data.email;
 				    user.name=response.data.name;
 				    user.bio=response.data.bio;
+				    user.tests=response.data.timeline;
+				    response.data.timeline.forEach((item,index)=>{
+				    	user.tests[index].name=item.name;
+				    	user.tests[index].score=item.score;
+				    	user.tests[index].date=item.date.slice(0,10);
+				    })
+				    user.department=response.data.department;
 				    user.gradDate=response.data.graduationDate.slice(0,10);
 				    user.university=response.data.currentSchool;
 				    response.data.accepts.forEach(async (item,index)=>{
@@ -171,12 +148,13 @@ function EditProfile(props) {
 		                obj.status="Rejected";
 		                user.uniApplied.push(obj);
 		          	})
-		          	console.log(user)
 				    user.github=response.data.githubUrl;
 				    user.facebook=response.data.facebookUrl;
 				    user.linkedIn=response.data.linkedinUrl;
 				    user.twitter=response.data.twitterUrl;
-				    user.domains=response.data.domains;
+				    response.data.domains.forEach(async (item,index)=>{
+		                user.domain.push(getTagById(item,tagArr));
+		          	});
 				    user.accepts=response.accepts;
 				    user.rejects=response.rejects;
 					setMounted(true);
@@ -192,7 +170,6 @@ function EditProfile(props) {
 
     const[pic,setPic]=React.useState(null)
     const handleImage = (picture) => {
-    	console.log(picture)
     	setPic(picture)
     }
     const classes = useStyles();
@@ -206,7 +183,7 @@ function EditProfile(props) {
     const departments = ["Computers", "IT", "Mechanical", "Bio-Med", "Production", "Electronics", "EXTC", "Chemical", "Civil", "Aeronautical", "Mining", "Agricultural", "Metallurgical"];
     return (
 		<React.Fragment>
-		  {mounted&&!props.loggedIn?<Redirect to='/' />:null}
+		  {!props.loggedIn?<Redirect to='/' />:null}
 		  <div className={classes.root} style={{paddingTop:'45px'}}>
       		<div align="center">
       			<Typography variant="h4" className={classes.header}><b>Edit Profile</b></Typography><br/><br/>
@@ -254,7 +231,6 @@ function EditProfile(props) {
 			            user.department=values.department;
 			            user.gradDate=values.gradDate;
 			            user.bio=values.bio;
-			            user.domain=values.domain;
 			            user.tests=values.tests;
 			            user.facebook=values.facebook;
 			            user.twitter=values.twitter;
@@ -275,7 +251,6 @@ function EditProfile(props) {
 			            values.domain.forEach(async (item,index)=>
 			              user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
 			            )
-			            console.log(user);
 			            if(!!user.pic){
 			           	 	const formData = new FormData();
 			            	formData.append('avatar',user.pic[0]);
@@ -293,10 +268,9 @@ function EditProfile(props) {
 					      graduationDate: user.gradDate,
 					      currentSchool: user.university,
 					      department: user.department,
-
-					      /* -------------- Optional Fields below: ------------------ */
 					      bio: user.bio,
-					      //domains: user.domains,
+					      domains: user.domain,
+					      timeline: user.tests,
 					      linkedinUrl: user.linkedIn,
 					      githubUrl: user.github,
 					      facebookUrl: user.facebook,
@@ -492,7 +466,9 @@ function EditProfile(props) {
                 key={index}
                 label={item}
                 color="primary"
-                style={{marginRight:10}}
+                variant="outlined"
+                deleteIcon={<CloseIcon />}
+                style={{backgroundColor:'#E7F3EF',color:'#496961',marginRight:10,borderColor:'#E7F3EF',fontWeight:'bold'}}
                 onDelete={()=>setFieldValue('domain',values.domain.filter((domainName)=>domainName !==item))}
               />
             ))}
@@ -514,7 +490,7 @@ function EditProfile(props) {
                           <div>
                           <TextField 
                             name={`tests.${index}.name`}
-                            value={value.name}
+                            value={!!value.name?value.name:''}
                             key={index}
                             fullWidth
                             type="text" 
@@ -532,7 +508,7 @@ function EditProfile(props) {
                               label="Date"
                               name={`tests.${index}.date`} 
                               key={index}
-                              value={value.date}
+                              value={!!value.date?value.date:''}
                               fullWidth
                               variant="filled" 
                               onChange={handleChange}
@@ -543,7 +519,7 @@ function EditProfile(props) {
                             <TextField
                               type="number" 
                               label="Score"
-                              value={value.score}
+                              value={!!value.score?value.score:''}
                               name={`tests.${index}.score`} 
                               key={index}
                               fullWidth

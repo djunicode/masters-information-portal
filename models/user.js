@@ -64,12 +64,21 @@ const userSchema = new mongoose.Schema({
   twitterUrl: {
     type: String,
   },
+  avatar : {
+    type : Buffer
+  },
   department: {
     type: String,
   },
-  avatar : {
-    type : Buffer
-  }
+  timeline : [{
+    name :  String,
+    date : Date,
+    score : Number
+  }],
+  domains: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tag',
+  }]
 });
 
 userSchema.methods.newAuthToken = async function(){

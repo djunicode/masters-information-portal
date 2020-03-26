@@ -1,4 +1,5 @@
 import React,{useEffect} from 'react';
+import {getObjectId} from './tagRequests.js';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -94,8 +95,8 @@ export default function Register(props) {
 
       /* -------------- Optional Fields below: ------------------ */
       bio: user.bio,
-      domains: user.domains,
-      //Tests Given {name: , date: '', score: ''}
+      domains: user.domain,
+      timeline: user.tests,
       linkedinUrl: user.linkedIn,
       githubUrl: user.github,
       facebookUrl: user.facebook,
@@ -162,30 +163,6 @@ export default function Register(props) {
     const handleBack = () => {
         setActiveStep(prevActiveStep => prevActiveStep - 1);
     };
-
-    const getObjectId = async (NamesArr,ObjectArr,ObjectName,isSchoolBool) => {
-      var id=null;
-      if(NamesArr.includes(ObjectName)){
-        ObjectArr.forEach((value)=>{
-          if(value.name===ObjectName){
-            id=value._id;
-          }
-        })
-      }
-      else{
-        try{
-          var response= await axios.post('/api/tags' , {
-            name: ObjectName,
-            isSchool: isSchoolBool
-          })
-          id=response.data._id;
-        }
-        catch(error){
-          console.error(error);
-        }
-      }
-      return id;
-    }
 
     return (
       <div className="App" style={{paddingTop:'45px'}}>
@@ -527,7 +504,6 @@ export default function Register(props) {
                 setFieldValue("addDomain", value)
               }}
                 onBlur={handleBlur}
-            className={classes.textf}
               renderInput={params => (
                 <TextField 
                   {...params} 
