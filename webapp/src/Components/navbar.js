@@ -96,7 +96,6 @@ function NavBar(props) {
         } 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[props.loggedIn])
-
     const sideList = side => (
         <div
             className={classes.list}
