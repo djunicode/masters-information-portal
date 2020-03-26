@@ -16,7 +16,7 @@ exports.register = async (req, res) => {
 
   const user = await new User(req.body);
   const token = await user.newAuthToken();
-  const refreshToken = await createRefreshToken({ _id: user.id });
+  const refreshToken = await createRefreshToken({ _id: user.id});
   tokenList[refreshToken] = {id:user.id ,refreshToken:refreshToken}
   await user.save()
   const userObject = user.getPublicProfile()
@@ -91,4 +91,27 @@ exports.getById = async (req, res) => {
   }
 
   return res.json(user.getPublicProfile());
+};
+
+/**
+ * @route POST "/api/users/upload"
+ */
+exports.uploadProfilePhoto = async (req, res) => {
+  req.user.avatar = req.file.buffer
+  await req.user.save()
+  res.status(200).send({
+    msg : 'Profile photo uploaded successfully'
+  })
+};
+
+/**
+ * @route GET "/api/users/:id/avatar"
+ */
+exports.getProfilePhoto = async (req, res) => {
+  const user = await User.findById(req.params.id)
+  if (!user || !user.avatar) {
+    res.status(404).send();
+  }
+  res.set('Content-Type','image/jpg')
+  res.send(user.avatar)
 };
