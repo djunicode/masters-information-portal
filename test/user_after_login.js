@@ -41,7 +41,6 @@ describe(config.GROUP_USER_TESTS, () => {
     expect(res1.body).to.have.property('msg');
   });
 
-  //! WAITING FOR AUTH-CHANGES
   it(config.TEST_PUBLIC_PROFILE, async () => {
     const res1 = await chai
       .request(server)
