@@ -4,12 +4,17 @@ const logger = require('../config/logger');
 /**
  * @route POST "/api/tag"
  */
-exports.create = async (req, res) => {
-  const doc = await Tag.create(req.body);
-  logger.created('Tag', doc);
-  return res.status(201).json(doc);
+    exports.create = async (req, res) => {
+      const { name } = req.body;
+      const existingTag = await Tag.findOne({ name });
+      if (existingTag)
+        return res.status(400).json({msg: 'Tag already exists!'});
+      else{
+        const doc = await Tag.create(req.body);
+        logger.created('Tag', doc);
+        return res.status(201).json(doc);
+      }
 };
-
 /**
  * @route GET "/api/tag"
  */
