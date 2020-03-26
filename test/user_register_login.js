@@ -62,17 +62,15 @@ describe(config.GROUP_USER_TESTS, () => {
       .send({ name: 'Test', email: 'test@test.com', password: '123456789' });
     expect(res).to.have.status(201);
     expect(res.body).to.be.a('object');
-    expect(res.body).to.have.property('user');
+    expect(res.body).to.have.property('userObject');
     expect(res.body).to.have.property('token');
-    expect(res.body.user.name)
+    expect(res.body).to.have.property('refreshToken');
+    expect(res.body.userObject.name)
       .to.be.a('string')
       .eql('Test');
-    expect(res.body.user.email)
+    expect(res.body.userObject.email)
       .to.be.a('string')
       .eql('test@test.com');
-    expect(res.body.user.password)
-      .to.be.a('string')
-      .not.eql('123456789');
   });
   it(config.TEST_DUPLICATE_USER, async () => {
     const res1 = await chai
@@ -142,7 +140,8 @@ describe(config.GROUP_USER_TESTS, () => {
     expect(res2).to.have.status(200);
     expect(res2.body).to.be.a('object');
     expect(res2.body).to.not.have.property('msg');
-    expect(res2.body).to.have.property('user');
+    expect(res2.body).to.have.property('userObject');
     expect(res2.body).to.have.property('token');
+    expect(res2.body).to.have.property('refreshToken');
   });
 });

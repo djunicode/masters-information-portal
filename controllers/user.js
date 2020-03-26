@@ -16,7 +16,7 @@ exports.register = async (req, res) => {
 
   const user = await new User(req.body);
   const token = await user.newAuthToken();
-  const refreshToken = await createRefreshToken({ _id: user.id });
+  const refreshToken = await createRefreshToken({ _id: user.id});
   tokenList[refreshToken] = {id:user.id ,refreshToken:refreshToken}
   await user.save()
   const userObject = user.getPublicProfile()

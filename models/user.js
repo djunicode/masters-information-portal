@@ -78,12 +78,13 @@ const userSchema = new mongoose.Schema({
   domains: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tag',
-  }]
+  }],
+  role:[String]
 });
 
 userSchema.methods.newAuthToken = async function(){
   const user = this;
-  const token = await createJwt({ _id: user.id });
+  const token = await createJwt({ _id: user.id});
   return token;
 };
 
