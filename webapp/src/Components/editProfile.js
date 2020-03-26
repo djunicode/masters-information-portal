@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{useEffect} from 'react';
+import {getTagById,getObjectId} from './tagRequests.js';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,14 +14,19 @@ import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Divider from '@material-ui/core/Divider';
 import { Formik, Form, FieldArray } from 'formik';
+import CloseIcon from '@material-ui/icons/Close';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import ImageUploader from 'react-images-upload';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import LinkedInIcon from '@material-ui/icons/LinkedIn';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import RemoveIcon from '@material-ui/icons/Remove';
 import AddIcon from '@material-ui/icons/Add';
-
+import {Redirect} from 'react-router-dom';
+import Cookies from 'js-cookie';
+const axios = require('axios');
 const useStyles = makeStyles(theme => ({
 	root: {
 	    backgroundColor: theme.palette.background.paper,
@@ -44,11 +50,16 @@ const useStyles = makeStyles(theme => ({
         paddingTop: 40,
         paddingBottom: 30,
         paddingLeft: 40
-    }
+    },
+	backdrop: {
+		zIndex: theme.zIndex.drawer + 1,
+		color: '#fff',
+	},
 }));
 
-function EditProfile() {
-    const [user, setUser] = React.useState({
+function EditProfile(props) {
+
+	const [user] = React.useState({
     	pic: '',
         name: '',
         username: '',
@@ -59,16 +70,107 @@ function EditProfile() {
         gradDate: '2020-01-01',
         bio: '',
         domain: [],
-        tests: [{ name: '', date: '2020-01-01', score: '' }],
+        tests: [],
         facebook: '',
         twitter: '',
         linkedIn: '',
         github: '',
-        uniApplied: [{ name: '', course: '', status: '' }]
+        uniApplied: []
     });
-    const[pic,setPic]=React.useState([])
+
+	const [mounted,setMounted] = React.useState(false);
+
+	const [universityArr,setUniversityArr]=React.useState([]);
+    const [universityNames,setUniversityNames]=React.useState([]);
+    const [tagArr,setTagArr]=React.useState([]);
+    const [tagNames,setTagNames]=React.useState([]);  
+
+	const[token1,setToken1]=React.useState(null);
+	useEffect(()=>{
+		const token = Cookies.get('jwt');
+		setToken1(token)
+		if(!mounted){
+		   axios.get('/api/tags')
+		      	.then(function(res){
+		        console.log(res)
+		        res.data.forEach((item)=>{
+		          if(item.isSchool){
+		            if(!universityArr.includes(item)){
+		              setUniversityArr(universityArr=>[...universityArr,item])
+		              universityArr.push(item)
+		            }
+		            if(!universityNames.includes(item.name)){
+		              universityNames.push(item.name)
+		              setUniversityNames(universityNames)
+		            }
+		          }
+		          else{
+		            if(!tagArr.includes(item)){
+		              tagArr.push(item)
+		              setTagArr(tagArr)
+		            }
+		            if(!tagNames.includes(item.name)){
+		              tagNames.push(item.name)
+		              setTagNames(tagNames)
+		            }
+		          }
+		        });
+				if(!!token){
+			 	axios.get('api/users/me/', {
+				    headers: {
+				      Authorization: token
+				    }
+				  })
+				  .then(function (response) {
+				  	console.log(response);
+				  	user.id=response.data._id
+				    user.email=response.data.email;
+				    user.name=response.data.name;
+				    user.bio=response.data.bio;
+				    user.tests=response.data.timeline;
+				    response.data.timeline.forEach((item,index)=>{
+				    	user.tests[index].name=item.name;
+				    	user.tests[index].score=item.score;
+				    	user.tests[index].date=item.date.slice(0,10);
+				    })
+				    user.department=response.data.department;
+				    user.gradDate=response.data.graduationDate.slice(0,10);
+				    user.university=response.data.currentSchool;
+				    response.data.accepts.forEach(async (item,index)=>{
+		      			var obj={};
+		            	obj.name=getTagById(item,universityArr);
+		            	obj.status="Accepted";
+		            	user.uniApplied.push(obj);
+		            })
+		            response.data.rejects.forEach(async (item,index)=>{
+		              	var obj={};
+		                obj.name=getTagById(item,universityArr);
+		                obj.status="Rejected";
+		                user.uniApplied.push(obj);
+		          	})
+				    user.github=response.data.githubUrl;
+				    user.facebook=response.data.facebookUrl;
+				    user.linkedIn=response.data.linkedinUrl;
+				    user.twitter=response.data.twitterUrl;
+				    response.data.domains.forEach(async (item,index)=>{
+		                user.domain.push(getTagById(item,tagArr));
+		          	});
+				    user.accepts=response.accepts;
+				    user.rejects=response.rejects;
+					setMounted(true);
+				  })
+				  .catch(function (error) {
+				    console.log(error);
+				  });  
+				}
+		    });
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[])
+
+    const[pic,setPic]=React.useState(null)
     const handleImage = (picture) => {
-    	setPic(pic.concat(picture))
+    	setPic(picture)
     }
     const classes = useStyles();
     const [showSuccess, setShowSuccess] = React.useState(false);
@@ -81,20 +183,26 @@ function EditProfile() {
     const departments = ["Computers", "IT", "Mechanical", "Bio-Med", "Production", "Electronics", "EXTC", "Chemical", "Civil", "Aeronautical", "Mining", "Agricultural", "Metallurgical"];
     return (
 		<React.Fragment>
+		  {!props.loggedIn?<Redirect to='/' />:null}
 		  <div className={classes.root} style={{paddingTop:'45px'}}>
       		<div align="center">
       			<Typography variant="h4" className={classes.header}><b>Edit Profile</b></Typography><br/><br/>
       		</div>
+      			 <Backdrop className={classes.backdrop} open={!mounted}>
+			        <CircularProgress color="inherit" />
+			      </Backdrop>
       			<Divider/>
         		<Box className={classes.box}>
 		            <Formik 
+		              enableReinitialize={true}
+		              dirty={true}
 			          validateOnChange={true}
 			          initialValues={{
 			          	pic:null,
 			            email:user.email,
 			            password:'',
 			            password_confirm:'',
-			            university: user.university,
+			            university: getTagById(user.university,universityArr),
 			            department: user.department,
 			            gradDate: user.gradDate,
 			            bio:user.bio,
@@ -116,26 +224,70 @@ function EditProfile() {
 			            }
 			            return errors;
 			          }}
-			          onSubmit={(values, { setSubmitting }) => {
-			          	user.pic=values.pic;
+			          onSubmit={async (values, { setSubmitting }) => {
+			          	user.pic=pic;
 			            user.email=values.email;
 			            user.university=values.university;
 			            user.department=values.department;
 			            user.gradDate=values.gradDate;
 			            user.bio=values.bio;
-			            user.domain=values.domain;
 			            user.tests=values.tests;
 			            user.facebook=values.facebook;
 			            user.twitter=values.twitter;
 			            user.linkedIn=values.linkedIn;
 			            user.github=values.github;
 			            user.uniApplied=values.uniApplied;
-			            setUser(user);
-			            handleOpenMsg();
-			            setTimeout(() => {
-		                setSubmitting(false);
-			            }, 1000);
-			            console.log(user);
+			            user.accepts=[];
+			            user.rejects=[];
+			            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
+			            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
+			            user.university= await getObjectId(universityNames,universityArr,user.university,true);
+			            accepts.forEach(async (item,index)=>
+			              user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
+			            )
+			            rejects.forEach(async (item,index)=>
+			              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
+			            )
+			            values.domain.forEach(async (item,index)=>
+			              user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
+			            )
+			            if(!!user.pic){
+			           	 	const formData = new FormData();
+			            	formData.append('avatar',user.pic[0]);
+				            axios.post('/api/users/upload',formData,{
+		        			headers: {
+		          			  	Authorization: token1,
+		          			  	'content-type': 'multipart/form-data'
+		          			}})
+		          			.then(function(response){
+		          				console.log(response)
+		          			})
+				        }
+            			axios.put('/api/users/me', {
+					      email: user.email,
+					      graduationDate: user.gradDate,
+					      currentSchool: user.university,
+					      department: user.department,
+					      bio: user.bio,
+					      domains: user.domain,
+					      timeline: user.tests,
+					      linkedinUrl: user.linkedIn,
+					      githubUrl: user.github,
+					      facebookUrl: user.facebook,
+					      twitterUrl: user.twitter,
+					      accepts: user.accepts,
+					      rejects: user.rejects
+					    },
+            			  {headers: {
+              			  	Authorization: token1
+              			  }})
+					    .then(function (response) {
+					      console.log(response);
+			           	  handleOpenMsg();
+					    })
+					    .catch(function (error) {
+					      console.log(error);
+					    });
 			            //@Backend Submit Function for Sign-Up
 		        }}
         		>
@@ -200,31 +352,36 @@ function EditProfile() {
 	              <Typography variant="h5" style={{paddingTop:30}}> Current University</Typography>
 	            </Grid>
 	            <Grid item md={6}>
-	          <TextField 
-	            name="university"
-	            variant="filled"
-	            label="University Name" 
-	            fullWidth
-	            placeholder="Enter your MS University name" 
-	            value={values.university}
-	            onChange={handleChange}
-	            onBlur={handleBlur}
-	            className={classes.textf}
-	          /> 
 	          <Autocomplete
-	              freeSolo
-	              options={departments}
-	              defaultValue={values.department}
-	              name="department"
-	              onChange={(e, value) => {
-	                setFieldValue("department", value)
-	              }}
-	                onBlur={handleBlur}
-	            className={classes.textf}
-	              renderInput={params => (
-	                <TextField {...params} name='department' value={values.department} onChange={handleChange} error={!!errors.department&&touched.department} helperText={touched.department?errors.department:''}  label="Department" margin="normal" variant="filled" fullWidth />
-	              )}
-	            />
+              freeSolo
+              options={universityNames} 
+              disableClearable
+              inputValue={!!values.university?values.university:''}
+              name="university"
+              onChange={(e, value) => {
+                setFieldValue("university", value)
+              }}
+                onBlur={handleBlur}
+            className={classes.textf}
+              renderInput={params => (
+                <TextField {...params} name='university' value={values.university} onChange={handleChange} error={!!errors.university&&touched.university} helperText={touched.university?errors.university:''}  label="University" margin="normal" variant="filled" fullWidth />
+              )}
+            />
+          <Autocomplete
+              freeSolo
+              disableClearable
+              options={departments}
+              inputValue={!!values.department?values.department:''}
+              name="department"
+              onChange={(e, value) => {
+                setFieldValue("department", value)
+              }}
+                onBlur={handleBlur}
+              className={classes.textf}
+              renderInput={params => (
+                <TextField {...params} name='department' value={values.department} onChange={handleChange} error={!!errors.department&&touched.department} helperText={touched.department?errors.department:''}  label="Department" margin="normal" variant="filled" fullWidth />
+              )}
+            />
 	          <TextField 
 	            name="gradDate" 
 	            variant="filled"
@@ -265,17 +422,32 @@ function EditProfile() {
               <Typography variant="h5" style={{paddingTop:10}}> Domains </Typography>
             </Grid>
             <Grid item xs={6}>
-              <TextField 
-                name='addDomain'
-                value={values.addDomain}
-                label="Domains"
-                placeholder="eg:Machine Learning, IOT"
-                fullWidth
-                variant="filled"
-                helperText="Press enter after adding each domain" 
-                onChange={handleChange}
+              <Autocomplete
+              freeSolo
+              options={tagNames}
+              disableClearable
+              inputValue={!!values.addDomain?values.addDomain:''}
+              autoHighlight
+              getOptionDisabled={option => values.domain.includes(option)}
+              name="addDomain"
+              onChange={(e, value) => {
+                setFieldValue("addDomain", value)
+              }}
                 onBlur={handleBlur}
-                onKeyPress={(event) => {
+            className={classes.textf}
+              renderInput={params => (
+                <TextField 
+                  {...params} 
+                  name='addDomain'
+                  value={values.addDomain}
+                  label="Domains"
+                  placeholder="eg:Machine Learning, IOT"
+                  fullWidth
+                  variant="filled"
+                  helperText="Press enter after adding each domain" 
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  onKeyPress={(event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
                         if (values.addDomain.trim()){
@@ -283,8 +455,10 @@ function EditProfile() {
                           setFieldValue('addDomain','');
                         }
                     }
-              }}
-          />
+                  }}
+                />
+              )}
+            />
             <br/>
             <br/>
             {values.domain.map((item,index)=>(
@@ -292,7 +466,9 @@ function EditProfile() {
                 key={index}
                 label={item}
                 color="primary"
-                style={{marginRight:10}}
+                variant="outlined"
+                deleteIcon={<CloseIcon />}
+                style={{backgroundColor:'#E7F3EF',color:'#496961',marginRight:10,borderColor:'#E7F3EF',fontWeight:'bold'}}
                 onDelete={()=>setFieldValue('domain',values.domain.filter((domainName)=>domainName !==item))}
               />
             ))}
@@ -301,7 +477,7 @@ function EditProfile() {
         <Divider/>
         <Grid container className={classes.container}>
             <Grid item xs={6}>
-              <Typography variant="h5" style={{marginTop: 15}}> Timeline of Tests </Typography>
+              <Typography variant="h5" style={{marginTop: 15}}>Timeline of Tests </Typography>
             </Grid>
             <Grid item xs={6}>
           <FieldArray
@@ -314,7 +490,7 @@ function EditProfile() {
                           <div>
                           <TextField 
                             name={`tests.${index}.name`}
-                            value={value.name}
+                            value={!!value.name?value.name:''}
                             key={index}
                             fullWidth
                             type="text" 
@@ -332,7 +508,7 @@ function EditProfile() {
                               label="Date"
                               name={`tests.${index}.date`} 
                               key={index}
-                              value={value.date}
+                              value={!!value.date?value.date:''}
                               fullWidth
                               variant="filled" 
                               onChange={handleChange}
@@ -343,7 +519,7 @@ function EditProfile() {
                             <TextField
                               type="number" 
                               label="Score"
-                              value={value.score}
+                              value={!!value.score?value.score:''}
                               name={`tests.${index}.score`} 
                               key={index}
                               fullWidth
@@ -490,33 +666,31 @@ function EditProfile() {
                   values.uniApplied.map((value,index) => (
                     <React.Fragment key={index}>
                       <div>
-                      <TextField 
-                        name={`uniApplied.${index}.name`}
-                        value={value.name}
-                        key={index}
-                        fullWidth
-                        type="text" 
-                        variant="filled"
-                        label="University Name" 
-                        placeholder="Enter the name" 
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
+                      <Autocomplete
+                            freeSolo
+                            options={universityNames} 
+                            key={index}
+                            disableClearable
+                            inputValue={!!value.name?value.name:''}
+                            name={`uniApplied.${index}.name`}
+                            onChange={(e, value) => {
+                              setFieldValue(`uniApplied.${index}.name`, value)
+                            }}
+                            onBlur={handleBlur}
+                            renderInput={params => (
+                              <TextField {...params} 
+                                name={`uniApplied.${index}.name`} 
+                                value={value.name} 
+                                onChange={handleChange} 
+                                label="University Name" 
+                                margin="normal" 
+                                variant="filled" 
+                                fullWidth 
+                              />
+                            )}
+                          />
                     </div><br/>
-                    <div>
-                      <TextField 
-                        label="Course"
-                        name={`uniApplied.${index}.course`} 
-                        placeholder="Course Name"
-                        key={index}
-                        value={value.course}
-                        fullWidth
-                        variant="filled" 
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
-                  </div><br/>
-                  <div>
+                 	<div>
                       <TextField 
                         select
                         label="Status"
@@ -531,13 +705,12 @@ function EditProfile() {
                       >
                         <MenuItem value="Accepted">Accepted</MenuItem>
                         <MenuItem value="Rejected">Rejected</MenuItem>
-                        <MenuItem value="Prefer not to disclose">Prefer not to disclose</MenuItem>
                       </TextField>
                    </div><br/>
                   <Grid container spacing={2}>
               {index===values.uniApplied.length-1?
               <Grid item xs={8} style={{alignItems:'right'}}>
-                <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',course:'',status:''})}>
+                <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:''})}>
                       <AddIcon /> Add Applicaiton
                 </Button>
               </Grid>
@@ -562,7 +735,7 @@ function EditProfile() {
               
             :
               <div>
-                <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',course:'',status:''})}>
+                <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:''})}>
                       <AddIcon /> Add University
                 </Button><br/>
               </div>
