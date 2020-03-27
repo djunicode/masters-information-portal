@@ -1,31 +1,28 @@
+import React from 'react';
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import Login from './login';
+import Forum from './forum';
+import NavBar from './navbar';
+import EditProfile from './editProfile';
+import Messenges from './Messages'
+function RootRouter(props){
 
-import React from "react";
-import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
-import Login from "./login";
-import Forum from "./forum";
-import NavBar from "./navbar";
-import Messages from "./Messages";
-class RootRouter extends React.Component {
-  state = {
-    user: null,
-    isLoggedIn: false
-  };
+    const renderLogin = () => <Login loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn}/>;
+    const renderEditProfile= () => <EditProfile loggedIn={props.loggedIn}/>;
 
-  render() {
     return (
-      <Router>
-        <NavBar />
-        <Switch>
-          <Route exact path="/" />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/profile" />
-          <Route exact path="/forum" component={Forum} />
-          <Route exact path="/chat" component={Messages} />
-        </Switch>
-      </Router>
+        <Router>
+            <NavBar loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn}/>
+            <Switch>
+                <Route exact path='/' />
+                <Route exact path='/login' component={renderLogin}/>
+                <Route exact path='/profile' />
+                <Route exact path='/edit' component={renderEditProfile}/>
+                <Route exact path='/forum' component={Forum} />
+                <Route exact path='/chat' component={Messages} />
+            </Switch>
+        </Router>
     );
-  }
-
 }
 
 export default RootRouter;
