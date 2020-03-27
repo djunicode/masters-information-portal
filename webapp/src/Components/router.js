@@ -4,7 +4,8 @@ import Login from './login';
 import Forum from './forum';
 import NavBar from './navbar';
 import EditProfile from './editProfile';
-import Messages from './Messages'
+import Messages from './Messages';
+import FullWidthTabs from './profpage3'
 function RootRouter(props){
 
     const renderLogin = () => <Login loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn}/>;
@@ -16,7 +17,7 @@ function RootRouter(props){
             <Switch>
                 <Route exact path='/' />
                 <Route exact path='/login' component={renderLogin}/>
-                <Route exact path='/profile' />
+                <Route exact path='/profile' component={FullWidthTabs}/>
                 <Route exact path='/edit' component={renderEditProfile}/>
                 <Route exact path='/forum' component={Forum} />
                 <Route exact path='/chat' component={Messages} />
