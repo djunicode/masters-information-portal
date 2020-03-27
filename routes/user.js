@@ -3,7 +3,6 @@ const asyncHandler = require('express-async-handler');
 const { authRequired,hasRoles} = require('../middleware/auth');
 const { upload } = require('../middleware/multer');
 const controller = require('../controllers/user');
-const reqdRoles=require('../constants/roles')
 
 const router = Router();
 
