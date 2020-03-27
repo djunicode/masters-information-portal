@@ -4,7 +4,7 @@ import Login from './login';
 import Forum from './forum';
 import NavBar from './navbar';
 import EditProfile from './editProfile';
-import Messenges from './Messages'
+import Messages from './Messages'
 function RootRouter(props){
 
     const renderLogin = () => <Login loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn}/>;
