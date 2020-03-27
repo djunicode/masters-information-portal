@@ -3,6 +3,7 @@
 //setLoggedIn(0);  if no user logged in
 //I wish to use the above function whenever the user is loggedIn, this will display profile & logout instead of login
 
+
 import React, { useState } from "react";
 import Toolbar from "@material-ui/core/Toolbar";
 import { makeStyles } from "@material-ui/core/styles";
@@ -196,5 +197,6 @@ function NavBar() {
     </React.Fragment>
   );
 }
+
 
 export default NavBar;

@@ -4,8 +4,8 @@
 	<li>Navbar: Done(Updating needed when new component is added)</li>
 	<li>Router: Done(Updating needed when new component is added)</li>
 	<li>Sign-Up: Done</li>
-	<li>Login: Done</li>
-	<li>Edit Profile: Work in progress </li>
+	<li>Login: Done + Backend Integrated</li>
+	<li>Edit Profile: Done </li>
 </ul>
 
 
