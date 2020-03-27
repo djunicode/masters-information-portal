@@ -225,6 +225,7 @@ function EditProfile(props) {
 			            return errors;
 			          }}
 			          onSubmit={async (values, { setSubmitting }) => {
+			          	var domains = [];
 			          	user.pic=pic;
 			            user.email=values.email;
 			            user.university=values.university;
@@ -249,7 +250,7 @@ function EditProfile(props) {
 			              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
 			            )
 			            values.domain.forEach(async (item,index)=>
-			              user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
+			              domains[index]=await getObjectId(tagNames,tagArr,item,false)
 			            )
 			            if(!!user.pic){
 			           	 	const formData = new FormData();
@@ -269,7 +270,7 @@ function EditProfile(props) {
 					      currentSchool: user.university,
 					      department: user.department,
 					      bio: user.bio,
-					      domains: user.domain,
+					      domains: domains,
 					      timeline: user.tests,
 					      linkedinUrl: user.linkedIn,
 					      githubUrl: user.github,
