@@ -176,7 +176,7 @@ function NavBar(props) {
                         <Divider />
                         <NavLink
                             className={classes.link}
-                            to='chat/'
+                            to='/chat'
                         >
                             <ListItem button>
                                 <ListItemIcon>

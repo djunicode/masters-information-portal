@@ -4,8 +4,7 @@ import Login from './login';
 import Forum from './forum';
 import NavBar from './navbar';
 import EditProfile from './editProfile';
-import Messenger from './MainMessenger/Messenger/index'
-import List from './MainMessenger/List/List'
+import Messenges from './Messages'
 function RootRouter(props){
 
     const renderLogin = () => <Login loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn}/>;
@@ -20,8 +19,7 @@ function RootRouter(props){
                 <Route exact path='/profile' />
                 <Route exact path='/edit' component={renderEditProfile}/>
                 <Route exact path='/forum' component={Forum} />
-                <Route exact path='/chat' component={List} />
-                <Route exact path='/chat/1' component={Messenger} />
+                <Route exact path='/chat' component={Messages} />
             </Switch>
         </Router>
     );
