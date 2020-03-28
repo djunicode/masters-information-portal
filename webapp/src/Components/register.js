@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import CloseIcon from '@material-ui/icons/Close';
 import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete,{createFilterOptions} from '@material-ui/lab/Autocomplete';
 import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const axios = require('axios');
-
+const filter = createFilterOptions();
 function getSteps() {
     return ['Core Details', 'Other Details'];
 }
@@ -96,7 +96,7 @@ export default function Register(props) {
       /* -------------- Optional Fields below: ------------------ */
       bio: user.bio,
       domains: user.domain,
-      timeline: user.tests,
+      testTimeline: user.tests,
       linkedinUrl: user.linkedIn,
       githubUrl: user.github,
       facebookUrl: user.facebook,
@@ -355,7 +355,6 @@ export default function Register(props) {
             </Grid>
             <Grid item md={6}>
          <Autocomplete
-              freeSolo
               options={universityNames} 
               disableClearable
               inputValue={!!values.university?values.university:''}
@@ -363,10 +362,29 @@ export default function Register(props) {
               onChange={(e, value) => {
                 setFieldValue("university", value)
               }}
-                onBlur={handleBlur}
-            className={classes.textf}
+              filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+                if (params.inputValue !== '' && !filtered.includes("Other")) {
+                  filtered.push("Other");
+                 }
+                  return filtered;
+              }}
+              onBlur={handleBlur}
+              className={classes.textf}
               renderInput={params => (
-                <TextField {...params} name='university' value={values.university} onChange={handleChange} error={!!errors.university&&touched.university} helperText={touched.university?errors.university:''}  label="University" margin="normal" variant="filled" fullWidth />
+                <TextField 
+                  {...params} 
+                  name='university' 
+                  value={values.university} 
+                  onChange={handleChange} 
+                  onBlur={()=>(values.university=universityNames.includes(values.university)||values.university===''?values.university:"Other")} 
+                  error={!!errors.university&&touched.university} 
+                  helperText={!!touched.university?errors.university:''} 
+                  label="University" 
+                  margin="normal" 
+                  variant="filled" 
+                  fullWidth 
+                />
               )}
             />
           <Autocomplete
@@ -493,17 +511,23 @@ export default function Register(props) {
             </Grid>
             <Grid item xs={6}>
              <Autocomplete
-              freeSolo
               options={tagNames}
               disableClearable
               inputValue={!!values.addDomain?values.addDomain:''}
               autoHighlight
               getOptionDisabled={option => values.domain.includes(option)}
+              filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+                if (params.inputValue !== '' && !filtered.includes("Other")) {
+                  filtered.push("Other");
+                }
+                return filtered;
+              }}
               name="addDomain"
               onChange={(e, value) => {
                 setFieldValue("addDomain", value)
               }}
-                onBlur={handleBlur}
+              onBlur={handleBlur}
               renderInput={params => (
                 <TextField 
                   {...params} 
@@ -519,7 +543,7 @@ export default function Register(props) {
                   onKeyPress={(event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
-                        if (values.addDomain.trim()){
+                        if (values.addDomain.trim() && !values.domain.includes(values.addDomain)){
                           setFieldValue('domain',[...values.domain,values.addDomain]);
                           setFieldValue('addDomain','');
                         }
@@ -736,7 +760,6 @@ export default function Register(props) {
                         <React.Fragment key={index}>
                           <div>
                           <Autocomplete
-                            freeSolo
                             options={universityNames} 
                             key={index}
                             disableClearable
@@ -745,12 +768,20 @@ export default function Register(props) {
                             onChange={(e, value) => {
                               setFieldValue(`uniApplied.${index}.name`, value)
                             }}
+                            filterOptions={(options, params) => {
+                              const filtered = filter(options, params);
+                              if (params.inputValue !== ''&& !filtered.includes("Other")) {
+                              filtered.push("Other");
+                               }
+                                return filtered;
+                            }}
                             onBlur={handleBlur}
                             renderInput={params => (
                               <TextField {...params} 
                                 name={`uniApplied.${index}.name`} 
                                 value={value.name} 
                                 onChange={handleChange} 
+                                onBlur={()=>(value.name=universityNames.includes(value.name)||value.name===''?value.name:"Other")}
                                 label="University Name" 
                                 margin="normal" 
                                 variant="filled" 
