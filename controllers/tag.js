@@ -67,7 +67,7 @@ exports.follow = async (req, res) => {
   const { slug } = req.params;
   const doc = await Tag.findOne({ slug:slug });
   //Checking if tag exists
-  if (doc==null) {
+  if (doc===null) {
     return res.status(404).json({
       msg: 'Tag Not found',
     });
@@ -92,7 +92,7 @@ exports.unfollow = async (req, res) => {
   const { slug } = req.params;
   //Checking if tag exists
   const doc = await Tag.findOne({ slug:slug });
-  if (doc==null) {
+  if (doc===null) {
     return res.status(404).json({
       msg: 'Tag Not found',
     });
