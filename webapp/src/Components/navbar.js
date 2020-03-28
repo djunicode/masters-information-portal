@@ -86,12 +86,11 @@ function NavBar(props) {
                 }
               })
               .then(function (response) {
-                console.log(response);
                 setUrl(`/api/users/${response.data._id}/avatar`);
                 setName(response.data.name);
               })
               .catch(function (error) {
-                console.log(error);
+                console.log("Invalid User");
               }); 
         } 
         // eslint-disable-next-line react-hooks/exhaustive-deps

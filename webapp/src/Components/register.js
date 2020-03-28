@@ -57,7 +57,6 @@ export default function Register(props) {
     if(!componentDidMount){
       axios.get('/api/tags')
       .then(function(response){
-        console.log(response)
         response.data.forEach((item,index)=>{
           if(item.isSchool){
             if(!universityArr.includes(item)){
@@ -105,11 +104,11 @@ export default function Register(props) {
       rejects: user.rejects
     })
     .then(function (response) {
-      console.log(response);
+      console.log("Registration Successful");
       props.setRegister(0);
     })
     .catch(function (error) {
-      console.log(error);
+      console.log("Registration Failed");
     });
   }
 
@@ -469,7 +468,6 @@ export default function Register(props) {
             values.domain.forEach(async (item,index)=>
               user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
             )
-            console.log(user);
             submitAxios();
             //@Backend Submit Function for Sign-Up
         }}

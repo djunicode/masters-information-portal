@@ -92,7 +92,6 @@ function EditProfile(props) {
 		if(!mounted){
 		   axios.get('/api/tags')
 		      	.then(function(res){
-		        console.log(res)
 		        res.data.forEach((item)=>{
 		          if(item.isSchool){
 		            if(!universityArr.includes(item)){
@@ -122,7 +121,6 @@ function EditProfile(props) {
 				    }
 				  })
 				  .then(function (response) {
-				  	console.log(response);
 				  	user.id=response.data._id
 				    user.email=response.data.email;
 				    user.name=response.data.name;
@@ -160,7 +158,7 @@ function EditProfile(props) {
 					setMounted(true);
 				  })
 				  .catch(function (error) {
-				    console.log(error);
+				    console.log("Failed to fetch user details");
 				  });  
 				}
 		    });
@@ -270,7 +268,7 @@ function EditProfile(props) {
 		          			  	'content-type': 'multipart/form-data'
 		          			}})
 		          			.then(function(response){
-		          				console.log(response)
+		          				console.log("Picture Uploaded!")
 		          			})
 				        }
             			axios.put('/api/users/me', {
@@ -292,11 +290,10 @@ function EditProfile(props) {
               			  	Authorization: token1
               			  }})
 					    .then(function (response) {
-					      console.log(response);
 			           	  handleOpenMsg();
 					    })
 					    .catch(function (error) {
-					      console.log(error);
+					      console.log("Failed! An error occured. Please try again later");
 					    });
 			            //@Backend Submit Function for Sign-Up
 		        }}
