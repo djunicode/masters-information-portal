@@ -234,9 +234,9 @@ export default function Register(props) {
             if (!values.lname){
               errors.lname = "Fill this field"
             }
-            if (!values.university){
-              errors.university = "Fill this field"
-            }
+            // if (!values.university){
+            //   errors.university = "Fill this field"
+            // }
             if (!values.department){
               errors.department = "Fill this field"
             }

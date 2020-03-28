@@ -228,9 +228,9 @@ function EditProfile(props) {
 			            if (values.gradDate.trim()===''){
 			            	errors.gradDate = "Cannot be empty"
 			            }
-			            if (values.university.trim()===''){
-			            	errors.university = "Cannot be empty"
-			            }
+			            // if (values.university.trim()===''){
+			            // 	errors.university = "Cannot be empty"
+			            // }
 			            return errors;
 			          }}
 			          onSubmit={async (values, { setSubmitting }) => {
