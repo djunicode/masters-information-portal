@@ -13,6 +13,10 @@ const TagSchema = new mongoose.Schema({
     //* Alternate Versions for the tag, Eg Artificial Intelligence can be alt as AI or ai or A.I.
     type: String,
   },
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
 });
 
 TagSchema.pre('save', function(next) {
