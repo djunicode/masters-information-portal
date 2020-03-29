@@ -19,6 +19,10 @@ const TagSchema = new mongoose.Schema({
     type: String,
     unique :true
   },
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
 });
 
 TagSchema.pre('save', function(next) {

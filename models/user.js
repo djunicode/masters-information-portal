@@ -67,7 +67,23 @@ const userSchema = new mongoose.Schema({
   avatar : {
     type : Buffer
   },
-  role:[String]
+  role:[String],
+  department : {
+    type: String
+  },
+  testTimeline : [{
+    name :  String,
+    date : Date,
+    score : Number
+  }],
+  domains: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tag',
+  }],
+  tagFollows: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tag',
+  }],
 });
 
 userSchema.methods.newAuthToken = async function(){
