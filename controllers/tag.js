@@ -46,13 +46,13 @@ exports.getBySlug = async (req, res) => {
  */
 exports.updateBySlug = async (req, res) => {
   const { slug } = req.params;
-  const doc = await Tag.findByIdAndUpdate( slug,req.body);
+  const doc = await Tag.findOneAndUpdate({slug},req.body);
   if (!doc) {
     return res.status(404).json({
       msg: 'Not found',
     });
   }
-
+console.log("updated",doc);
   logger.updated('Tag', doc);
   return res.json(doc);
 };

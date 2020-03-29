@@ -6,6 +6,10 @@ const TagSchema = new mongoose.Schema({
     unique:true,
     required: [true, 'Please provide a display name for tag'],
   },
+  author:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User' 
+  },
   isSchool: {
     type: Boolean,
     default: false,
@@ -22,5 +26,11 @@ TagSchema.pre('save', function(next) {
   this.slug = slug;
   next();
 });
+
+TagSchema.pre(['updateOne','findOneAndUpdate'],function(next){
+  console.log(this.getFilter());
+  next();
+});
+
 
 module.exports = mongoose.model('Tag', TagSchema);
