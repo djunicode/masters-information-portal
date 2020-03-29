@@ -18,12 +18,13 @@ const theme = createMuiTheme({
 
 function App() {
 
-  const [loggedIn, setLoggedIn] = React.useState(0);
+  const [loggedIn, setLoggedIn] = React.useState(1);
 
   //Function to be called while Refreshing a token
   const handleTokenRefresh = () => {
     const refToken = Cookies.get('refToken')
     if(!refToken || !!Cookies.get('jwt')){
+      setLoggedIn(0);
       return
     }
     else{
@@ -35,7 +36,7 @@ function App() {
         setLoggedIn(1);
       })
       .catch(function(error){
-        console.log(error);
+        setLoggedIn(0);
       });
     }
   };
@@ -52,12 +53,10 @@ function App() {
             setLoggedIn(1);
           })
           .catch(function (error) {
-            console.log(error);
             setLoggedIn(0);
           }); 
         }
         else{
-            setLoggedIn(0);
             handleTokenRefresh();
         }
     },[loggedIn])

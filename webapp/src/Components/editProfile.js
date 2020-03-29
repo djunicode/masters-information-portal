@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete,{createFilterOptions} from '@material-ui/lab/Autocomplete';
 import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
 		color: '#fff',
 	},
 }));
-
+const filter = createFilterOptions();
 function EditProfile(props) {
 
 	const [user] = React.useState({
@@ -92,7 +92,6 @@ function EditProfile(props) {
 		if(!mounted){
 		   axios.get('/api/tags')
 		      	.then(function(res){
-		        console.log(res)
 		        res.data.forEach((item)=>{
 		          if(item.isSchool){
 		            if(!universityArr.includes(item)){
@@ -122,7 +121,6 @@ function EditProfile(props) {
 				    }
 				  })
 				  .then(function (response) {
-				  	console.log(response);
 				  	user.id=response.data._id
 				    user.email=response.data.email;
 				    user.name=response.data.name;
@@ -160,7 +158,7 @@ function EditProfile(props) {
 					setMounted(true);
 				  })
 				  .catch(function (error) {
-				    console.log(error);
+				    console.log("Failed to fetch user details");
 				  });  
 				}
 		    });
@@ -222,6 +220,15 @@ function EditProfile(props) {
 			            ) {
 			              errors.email = 'Invalid email address';
 			            }
+			            if (values.department.trim()===''){
+			            	errors.department = "Cannot be empty"
+			            }
+			            if (values.gradDate.trim()===''){
+			            	errors.gradDate = "Cannot be empty"
+			            }
+			            // if (values.university.trim()===''){
+			            // 	errors.university = "Cannot be empty"
+			            // }
 			            return errors;
 			          }}
 			          onSubmit={async (values, { setSubmitting }) => {
@@ -261,7 +268,7 @@ function EditProfile(props) {
 		          			  	'content-type': 'multipart/form-data'
 		          			}})
 		          			.then(function(response){
-		          				console.log(response)
+		          				console.log("Picture Uploaded!")
 		          			})
 				        }
             			axios.put('/api/users/me', {
@@ -271,7 +278,7 @@ function EditProfile(props) {
 					      department: user.department,
 					      bio: user.bio,
 					      domains: domains,
-					      timeline: user.tests,
+					      testTimeline: user.tests,
 					      linkedinUrl: user.linkedIn,
 					      githubUrl: user.github,
 					      facebookUrl: user.facebook,
@@ -283,11 +290,10 @@ function EditProfile(props) {
               			  	Authorization: token1
               			  }})
 					    .then(function (response) {
-					      console.log(response);
 			           	  handleOpenMsg();
 					    })
 					    .catch(function (error) {
-					      console.log(error);
+					      console.log("Failed! An error occured. Please try again later");
 					    });
 			            //@Backend Submit Function for Sign-Up
 		        }}
@@ -354,7 +360,6 @@ function EditProfile(props) {
 	            </Grid>
 	            <Grid item md={6}>
 	          <Autocomplete
-              freeSolo
               options={universityNames} 
               disableClearable
               inputValue={!!values.university?values.university:''}
@@ -362,10 +367,17 @@ function EditProfile(props) {
               onChange={(e, value) => {
                 setFieldValue("university", value)
               }}
-                onBlur={handleBlur}
-            className={classes.textf}
+              filterOptions={(options, params) => {
+				  const filtered = filter(options, params);
+					if (params.inputValue !== ''&& !filtered.includes("Other")) {
+					filtered.push("Other");
+				   }
+				    return filtered;
+			  }}
+              onBlur={handleBlur}
+              className={classes.textf}
               renderInput={params => (
-                <TextField {...params} name='university' value={values.university} onChange={handleChange} error={!!errors.university&&touched.university} helperText={touched.university?errors.university:''}  label="University" margin="normal" variant="filled" fullWidth />
+                <TextField {...params} name='university' value={values.university} onChange={handleChange} onBlur={()=>(values.university=universityNames.includes(values.university)||values.university===''?values.university:"Other")} error={!!errors.university&&touched.university} helperText={touched.university?errors.university:''}  label="University" margin="normal" variant="filled" fullWidth />
               )}
             />
           <Autocomplete
@@ -377,7 +389,7 @@ function EditProfile(props) {
               onChange={(e, value) => {
                 setFieldValue("department", value)
               }}
-                onBlur={handleBlur}
+              onBlur={handleBlur}
               className={classes.textf}
               renderInput={params => (
                 <TextField {...params} name='department' value={values.department} onChange={handleChange} error={!!errors.department&&touched.department} helperText={touched.department?errors.department:''}  label="Department" margin="normal" variant="filled" fullWidth />
@@ -393,6 +405,8 @@ function EditProfile(props) {
 	            onChange={handleChange}
 	            onBlur={handleBlur}
 	            className={classes.textf}
+	            error={!!errors.gradDate&&touched.gradDate}
+	            helperText={touched.gradDate?errors.gradDate:''}
 	          /> 
 	          <br/><br/>
 	        </Grid>
@@ -424,18 +438,24 @@ function EditProfile(props) {
             </Grid>
             <Grid item xs={6}>
               <Autocomplete
-              freeSolo
               options={tagNames}
               disableClearable
               inputValue={!!values.addDomain?values.addDomain:''}
+              filterOptions={(options, params) => {
+				  const filtered = filter(options, params);
+					if (params.inputValue !== ''&& !filtered.includes("Other")) {
+					filtered.push("Other");
+				   }
+				    return filtered;
+			  }}
               autoHighlight
               getOptionDisabled={option => values.domain.includes(option)}
               name="addDomain"
               onChange={(e, value) => {
                 setFieldValue("addDomain", value)
               }}
-                onBlur={handleBlur}
-            className={classes.textf}
+              onBlur={handleBlur}
+              className={classes.textf}
               renderInput={params => (
                 <TextField 
                   {...params} 
@@ -447,11 +467,10 @@ function EditProfile(props) {
                   variant="filled"
                   helperText="Press enter after adding each domain" 
                   onChange={handleChange}
-                  onBlur={handleBlur}
                   onKeyPress={(event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
-                        if (values.addDomain.trim()){
+                        if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
                           setFieldValue('domain',[...values.domain,values.addDomain]);
                           setFieldValue('addDomain','');
                         }
@@ -668,28 +687,35 @@ function EditProfile(props) {
                     <React.Fragment key={index}>
                       <div>
                       <Autocomplete
-                            freeSolo
-                            options={universityNames} 
-                            key={index}
-                            disableClearable
-                            inputValue={!!value.name?value.name:''}
-                            name={`uniApplied.${index}.name`}
-                            onChange={(e, value) => {
-                              setFieldValue(`uniApplied.${index}.name`, value)
-                            }}
-                            onBlur={handleBlur}
-                            renderInput={params => (
-                              <TextField {...params} 
-                                name={`uniApplied.${index}.name`} 
-                                value={value.name} 
-                                onChange={handleChange} 
-                                label="University Name" 
-                                margin="normal" 
-                                variant="filled" 
-                                fullWidth 
-                              />
-                            )}
+                        options={universityNames} 
+                        key={index}
+                        disableClearable
+                        inputValue={!!value.name?value.name:''}
+                        name={`uniApplied.${index}.name`}
+                        onChange={(e, value) => {
+                          setFieldValue(`uniApplied.${index}.name`, value)
+                        }}
+                        filterOptions={(options, params) => {
+							const filtered = filter(options, params);
+							if (params.inputValue !== ''&& !filtered.includes("Other")){
+								filtered.push("Other");
+							}
+						    return filtered;
+						}}
+                        onBlur={handleBlur}
+                        renderInput={params => (
+                          <TextField {...params} 
+                            name={`uniApplied.${index}.name`} 
+                            value={value.name} 
+                            onChange={handleChange} 
+                            onBlur={()=>(value.name=universityNames.includes(value.name)||value.name===''?value.name:"Other")}
+                            label="University Name" 
+                            margin="normal" 
+                            variant="filled" 
+                            fullWidth 
                           />
+                        )}
+                      />
                     </div><br/>
                  	<div>
                       <TextField 

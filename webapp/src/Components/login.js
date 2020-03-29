@@ -67,23 +67,19 @@ export default function LoginPage(props){
 			        return errors;
 			      }}
 			      onSubmit={(values, { setSubmitting }) => {
-			        console.log(values);
 			        axios.post('/api/users/login', {
 				      email: values.email,
 				      password: values.password
 					  })
 					  .then(function (response) {
-					    console.log(response);
 					    Cookies.set('jwt',response.data.token,{expires: 1});
 					    Cookies.set('refreshToken',response.data.refreshToken,{expires: 7})
-					    console.log(response.data.token);
 					    props.setLoggedIn(1);
 					  })
 					  .catch(function (error) {
 				        setTimeout(() => {
 				          setSubmitting(false);
 				        }, 1000);
-					    console.error(error.code);
 					    setShowWarning(true);
 
 					  });  

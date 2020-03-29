@@ -70,7 +70,7 @@ const userSchema = new mongoose.Schema({
   department: {
     type: String,
   },
-  timeline : [{
+  testTimeline : [{
     name :  String,
     date : Date,
     score : Number
