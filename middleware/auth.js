@@ -35,9 +35,17 @@ const authRequired = async (req, res, next) => {
 
 const hasRoles=(list)=>{
   return function(req,res,next){
-    const m=list;
-    const n=res.locals.user.role;
-    const result = m.every(val => n.includes(val));
+    // List of roles required to access
+
+    const reqdRoles=list;
+
+    // List of roles the user possesses
+    // Receiving user roles from the jwt payload
+
+    const acqdRoles=res.locals.user.role;
+
+    // Check if user roles are a subset to the list of required roles
+    const result = reqdRoles.every(val => acqdRoles.includes(val));
       console.log(result);  
       if(result==false){
         return res.send({

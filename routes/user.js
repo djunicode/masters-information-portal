@@ -5,6 +5,7 @@ const { upload } = require('../middleware/multer');
 const controller = require('../controllers/user');
 
 const router = Router();
+
 router.post('/register', asyncHandler(controller.register));
 router.post('/login', asyncHandler(controller.login));
 router.post('/refresh',asyncHandler(controller.refresh))
