@@ -1,6 +1,5 @@
-const reqdRoles={
-    ADMIN:'Admin',
-    USER:'User'
-}
+const ADMIN='Admin';
 
-module.exports=reqdRoles;
+module.exports={
+ADMIN
+};
