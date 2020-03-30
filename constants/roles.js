@@ -1,4 +1,4 @@
-const ADMIN='Admin';
+const ADMIN='admin';
 
 module.exports={
 ADMIN
