@@ -10,9 +10,12 @@
     "start": "node index.js",
     "start:dev": "nodemon index.js",
     "test": "mocha",
+    "apidoc": "apidoc -i controllers/ -o doc/ ",
+    "jsdoc": "jsdoc -c jsdoc.json",
     "deploy": "sh build.sh"
   },
   "dependencies": {
+    "apidoc": "^0.20.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
@@ -21,6 +24,7 @@
     "express-async-handler": "^1.1.4",
     "express-rate-limit": "^5.1.1",
     "helmet": "^3.21.3",
+    "jsdoc": "^3.6.3",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mongoose": "^5.8.10",

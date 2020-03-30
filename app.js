@@ -12,7 +12,6 @@ const {
   userRouter, forumRouter, tagRouter, chatRouter,
 } = require('./routes');
 
-
 // --- App config
 
 const app = express();
@@ -48,12 +47,14 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-
 // --- Routes
 app.use('/api/users', userRouter);
 app.use('/api/tags', tagRouter);
 app.use('/api/chats', chatRouter);
 app.use('/api/forum', forumRouter);
+
+// --- Documentation
+app.use('/docs/', express.static(path.join(__dirname, '/doc/')));
 
 // TODO: add 404 resource not found route
 

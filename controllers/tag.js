@@ -2,7 +2,21 @@ const Tag = require('../models/tag');
 const logger = require('../config/logger');
 
 /**
- * @route POST "/api/tag"
+ * @apiDefine Tag
+ */
+
+/**
+ * @apiGroup Tag
+ * @api {POST} /api/tag Create new Tag
+ * @apiDescription Creates a new Tag
+ * @apiPermission Admin
+ * @apiParam {String} name Display name of tag
+ * @apiParam {Boolean} isSchool=false Whether the tag belongs to an Institute
+ * @apiSuccess (201) {ObjectId} _id Object Id of created object
+ * @apiSuccess (201) {String} name Display name of tag
+ * @apiSuccess (201) {Boolean} isSchool Whether the tag belongs to an Institute
+ * @apiSuccess (201) {String} slug Compressd version of name <Currently under developemant>
+ * @apiSuccess (201) {Array} followers Empty array
  */
 exports.create = async (req, res) => {
   const doc = await Tag.create(req.body);
@@ -10,14 +24,23 @@ exports.create = async (req, res) => {
   return res.status(201).json(doc);
 };
 /**
- * @route GET "/api/tag"
+ * @apiGroup Tag
+ * @api {GET} /api/tag Get all Tags
+ * @apiDescription Get all Tags in database
+ * @apiPermission None
+ * @apiSuccess (200) {Tag[]} no_field Array of tags, where each tag contains :
+ * @apiSuccess (200) {ObjectId} _id Object Id of created object
+ * @apiSuccess (200) {String} name Display name of tag
+ * @apiSuccess (200) {Boolean} isSchool Whether the tag belongs to an Institute
+ * @apiSuccess (200) {String} slug Compressd version of name <Currently under developemant>
+ * @apiSuccess (200) {Array} followers Array of ObjectIds' of following Users
  */
 exports.getAll = async (req, res) => {
   const searchQuery = req.query;
   const docs = await Tag.find(searchQuery);
   if (!docs) {
     return res.status(404).json({
-      msg: 'No documents found',
+      msg: 'No documents found'
     });
   }
 
@@ -26,14 +49,23 @@ exports.getAll = async (req, res) => {
 };
 
 /**
- * @route GET "/api/tag/:slug"
+ * @apiGroup Tag
+ * @api {GET} /api/tag/:slug Get a Tag by slug
+ * @apiDescription Get Tag by its slug
+ * @apiPermission None
+ * @apiSuccess (200) {ObjectId} _id Object Id of created object
+ * @apiSuccess (200) {String} name Display name of tag
+ * @apiSuccess (200) {Boolean} isSchool Whether the tag belongs to an Institute
+ * @apiSuccess (200) {String} slug Compressd version of name <Currently under developemant>
+ * @apiSuccess (200) {Array}  followers Array of ObjectIds' of following Users
+ *
  */
 exports.getBySlug = async (req, res) => {
   const { slug } = req.params;
   const doc = await Tag.findOne({ slug });
   if (!doc) {
     return res.status(404).json({
-      msg: 'Not found',
+      msg: 'Not found'
     });
   }
 
@@ -49,7 +81,7 @@ exports.updateBySlug = async (req, res) => {
   const doc = await Tag.findOneAndUpdate({ slug }, req.body);
   if (!doc) {
     return res.status(404).json({
-      msg: 'Not found',
+      msg: 'Not found'
     });
   }
   logger.updated('Tag', doc);
@@ -57,72 +89,93 @@ exports.updateBySlug = async (req, res) => {
 };
 
 /**
- * @route DELETE "/api/tag/:slug"
+ * @apiGroup Tag
+ * @api {DELETE} /api/tag/:slug Delete Tag by slug
+ * @apiDescription Delete a Tag by its slug
+ * @apiPermission Admin
+ * @apiSuccess (200) {String} msg Contains value "ok"
  */
 exports.deleteBySlug = async (req, res) => {
   const { slug } = req.params;
   const doc = await Tag.findOneAndDelete({ slug });
   if (!doc) {
     return res.status(404).json({
-      msg: 'Not found',
+      msg: 'Not found'
     });
   }
 
   logger.deleted('Tag', doc);
   return res.json({
-    msg: 'ok',
+    msg: 'ok'
   });
 };
 
 /**
- * @route POST "/api/tag/:slug/follow"
+ * @apiGroup Tag
+ * @api {POST} /api/tag/:slug/follow Follow a Tag
+ * @apiDescription Request to follow a Tag
+ * @apiPermission LoggedIn
+ * @apiSuccess (200) {ObjectId} _id Object Id of created object
+ * @apiSuccess (200) {String} name Display name of tag
+ * @apiSuccess (200) {Boolean} isSchool Whether the tag belongs to an Institute
+ * @apiSuccess (200) {String} slug Compressd version of name <Currently under developemant>
+ * @apiSuccess (200) {Array}  followers Array of ObjectIds' of following Users
+ *
  */
 exports.follow = async (req, res) => {
   const { slug } = req.params;
-  const doc = await Tag.findOne({ slug:slug });
+  const doc = await Tag.findOne({ slug: slug });
   //Checking if tag exists
-  if (doc===null) {
+  if (doc === null) {
     return res.status(404).json({
-      msg: 'Tag Not found',
+      msg: 'Tag Not found'
     });
   }
   //Checking if user aldready follows the tag
-  if(doc.followers.includes(req.user.id)){
+  if (doc.followers.includes(req.user.id)) {
     return res.status(403).json({
-          msg:"You aldready follow this tag"
-      })
+      msg: 'You aldready follow this tag'
+    });
   }
-  doc.followers.push(req.user._id)
-  await doc.save()
-  req.user.tagFollows.push(doc._id)
-  await req.user.save()
+  doc.followers.push(req.user._id);
+  await doc.save();
+  req.user.tagFollows.push(doc._id);
+  await req.user.save();
   return res.json(doc);
 };
 
 /**
- * @route POST "/api/tag/:slug/unfollow"
+ * @apiGroup Tag
+ * @api {POST} /api/tag/:slug/unfollow unfollow a Tag
+ * @apiDescription Request to unfollow a Tag
+ * @apiPermission LoggedIn
+ * @apiSuccess (200) {ObjectId} _id Object Id of created object
+ * @apiSuccess (200) {String} name Display name of tag
+ * @apiSuccess (200) {Boolean} isSchool Whether the tag belongs to an Institute
+ * @apiSuccess (200) {String} slug Compressd version of name <Currently under developemant>
+ * @apiSuccess (200) {Array}  followers Array of ObjectIds' of following Users
  */
 exports.unfollow = async (req, res) => {
   const { slug } = req.params;
   //Checking if tag exists
-  const doc = await Tag.findOne({ slug:slug });
-  if (doc===null) {
+  const doc = await Tag.findOne({ slug: slug });
+  if (doc === null) {
     return res.status(404).json({
-      msg: 'Tag Not found',
+      msg: 'Tag Not found'
     });
   }
   //Checking if user does not follow the tag
-  if(!doc.followers.includes(req.user.id)){
+  if (!doc.followers.includes(req.user.id)) {
     return res.status(403).json({
-          msg:"You don't follow this tag"
-      })
+      msg: "You don't follow this tag"
+    });
   }
   //Removing user from followers array of the tag
-  doc.followers.splice(doc.followers.indexOf(req.user.id), 1)
+  doc.followers.splice(doc.followers.indexOf(req.user.id), 1);
   //Removing the tag from the tagFollows array of the user
-  req.user.tagFollows.splice(req.user.tagFollows.indexOf(doc.id,1))
- 
-  await doc.save()
-  await req.user.save()
+  req.user.tagFollows.splice(req.user.tagFollows.indexOf(doc.id, 1));
+
+  await doc.save();
+  await req.user.save();
   return res.json(doc);
 };

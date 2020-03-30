@@ -1,27 +1,37 @@
 const mongoose = require('mongoose');
 
+/**
+ * @typedef {Object} Tag
+ * @property {string} name - Display name for tag
+ * @property {Boolean} isSchool - represents if the tag represents an institute
+ * @property {string} slug - A compressed version of name, in deelopement
+ * @property {Array<ObjectId>} followers - Array of object Id's of followers
+ * @property {function} pre_save - converts the name into slug
+ */
 const TagSchema = new mongoose.Schema({
   name: {
     type: String,
     unique: true,
-    required: [true, 'Please provide a display name for tag'],
+    required: [true, 'Please provide a display name for tag']
   },
   isSchool: {
     type: Boolean,
-    default: false,
+    default: false
   },
   slug: {
-    //* Alternate Versions for the tag, Eg Artificial Intelligence can be alt as AI or ai or A.I.
+    //* Alternate Versions for the Tag
     type: String,
-    unique: true,
+    unique: true
   },
-  followers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  }],
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ]
 });
 
-const generateSlug = (name) => name.replace(/\s+/g, '-').toLowerCase();
+const generateSlug = name => name.replace(/\s+/g, '-').toLowerCase();
 
 TagSchema.pre('save', function addSlug(next) {
   console.log(this.getFilter());
