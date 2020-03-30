@@ -14,17 +14,19 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import ShareIcon from '@material-ui/icons/Share';
 import CommentIcon from '@material-ui/icons/Comment';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+
 
 
 
 
 const useStyles = makeStyles(theme => ({
     root: {
-    margin:'10px',
-    alignItems: 'center',
     flexGrow: 1,
-    maxWidth:1100,
-    float:'right',
+    // maxWidth:1100,
+    // float:'right',
+  
+
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -44,8 +46,9 @@ const useStyles = makeStyles(theme => ({
   },
   forumpage:{
       marginTop:'10px',
-      minHeight:'500px',
+      // minHeight:'500px',
       padding:'5px',
+      maxWidth:'800px',
   },
   card:{
     margin:'10px',
@@ -57,9 +60,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Forum() {
+  
   const classes = useStyles();
+  
+  const [selected, setSelected] = React.useState(false);
+  
   return (
-    <div className={classes.root}>
+    <div className={classes.root} align="center">
         
         
     <Paper component="form" className={classes.search}>
@@ -74,12 +81,12 @@ export default function Forum() {
     <Paper className={classes.forumpage}>
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
-        <div className={classes.image}>
-          <Avatar alt="Himanshu Sanklecha" src="WP_Ironman-2560x1440_00000.jpg" />
+        <div className={classes.image} align="left">
+          <Avatar alt="ABC" src="WP_Ironman-2560x1440_00000.jpg" />
         </div>
 
         <Typography color="initial" align="left"  gutterBottom>
-          Himanshu Sanklecha
+          ABC
         </Typography>
         <Typography variant="body2" align="left">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
@@ -89,19 +96,96 @@ export default function Forum() {
 
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton>
-          <ThumbUpIcon />
-        </IconButton>
-        <IconButton >
-          <ThumbDownIcon />
-        </IconButton>
-        <IconButton >
-          <CommentIcon />
-        </IconButton>
+      <ToggleButton
+      value="check"
+      selected={selected}
+      onChange={() => {
+        setSelected(!selected);
+      }}
+    >
+      <ThumbUpIcon />
+    </ToggleButton>
+    
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
 
-        <IconButton>
+      <IconButton>
           <ShareIcon />
-        </IconButton>
+      </IconButton>
+        </CardActions>
+    </Card>
+    <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div className={classes.image} align="left">
+          <Avatar alt="DEF" src="WP_Ironman-2560x1440_00000.jpg" />
+        </div>
+
+        <Typography color="initial" align="left"  gutterBottom>
+          DEF
+        </Typography>
+        <Typography variant="body2" align="left">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <ToggleButton
+      value="check"
+      selected={selected}
+      onChange={() => {
+        setSelected(!selected);
+      }}
+    >
+      <ThumbUpIcon />
+    </ToggleButton>
+    
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+
+      <IconButton>
+          <ShareIcon />
+      </IconButton>
+        </CardActions>
+    </Card>
+    <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div className={classes.image} align="left">
+          <Avatar alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" />
+        </div>
+
+        <Typography color="initial" align="left"  gutterBottom>
+          GHI
+        </Typography>
+        <Typography variant="body2" align="left">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <ToggleButton
+      value="check"
+      selected={selected}
+      onChange={() => {
+        setSelected(!selected);
+      }}
+    >
+      <ThumbUpIcon />
+    </ToggleButton>
+    
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+
+      <IconButton>
+          <ShareIcon />
+          
+      </IconButton>
         </CardActions>
     </Card>
     </Paper>
