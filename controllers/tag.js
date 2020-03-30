@@ -4,10 +4,10 @@ const logger = require('../config/logger');
 /**
  * @route POST "/api/tag"
  */
-    exports.create = async (req, res) => {
-        const doc = await Tag.create(req.body);
-        logger.created('Tag', doc);
-        return res.status(201).json(doc);
+exports.create = async (req, res) => {
+  const doc = await Tag.create(req.body);
+  logger.created('Tag', doc);
+  return res.status(201).json(doc);
 };
 /**
  * @route GET "/api/tag"
@@ -46,7 +46,7 @@ exports.getBySlug = async (req, res) => {
  */
 exports.updateBySlug = async (req, res) => {
   const { slug } = req.params;
-  const doc = await Tag.findOneAndUpdate({slug},req.body);
+  const doc = await Tag.findOneAndUpdate({ slug }, req.body);
   if (!doc) {
     return res.status(404).json({
       msg: 'Not found',
