@@ -46,7 +46,7 @@ exports.getBySlug = async (req, res) => {
  */
 exports.updateBySlug = async (req, res) => {
   const { slug } = req.params;
-  const doc = await Tag.findOneAndUpdate({ slug }, req.body);
+  const doc = await Tag.findOneAndUpdate({ slug }, req.body,{new:true});
   if (!doc) {
     return res.status(404).json({
       msg: 'Not found',

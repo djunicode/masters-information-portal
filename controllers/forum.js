@@ -147,7 +147,7 @@ exports.pinById = async (req, res) => {
  */
 exports.updateById = async (req, res) => {
   const { id } = req.params;
-  const doc = await Forum.findByIdAndUpdate(id, req.body);
+  const doc = await Forum.findByIdAndUpdate(id, req.body,{new:true});
   if (!doc) {
     return res.status(404).json({
       msg: 'Not found'
