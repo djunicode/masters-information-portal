@@ -10,7 +10,8 @@
     "start": "node index.js",
     "start:dev": "nodemon index.js",
     "test": "mocha",
-    "apidoc": "apidoc -i controllers/ -o doc/ ",
+    "doc": "npm run apidoc && npm run jsdoc",
+    "apidoc": "apidoc -i controllers/ -o docs/routes",
     "jsdoc": "jsdoc -c jsdoc.json",
     "deploy": "sh build.sh"
   },

@@ -74,11 +74,22 @@ exports.getBySlug = async (req, res) => {
 };
 
 /**
- * @route PUT "/api/tag/:slug"
+ * @apiGroup Tag
+ * @api {PUT} /api/tag/:slug Update a Tag
+ * @apiDescription Update Tag by its slug
+ * @apiPermission Admin
+ * @apiParam {String} [name] Display name of tag
+ * @apiParam {Boolean} [isSchool] Whether the tag belongs to an Institute
+ * @apiParam {String} [slug] Compact Version of name \<Should not be Given,ideally\>
+ * @apiSuccess (200) {ObjectId} _id Object Id of created object
+ * @apiSuccess (200) {String} name Display name of tag
+ * @apiSuccess (200) {Boolean} isSchool Whether the tag belongs to an Institute
+ * @apiSuccess (200) {String} slug Compressd version of name <Currently under developemant>
+ * @apiSuccess (200) {Array}  followers Array of ObjectIds' of following Users
  */
 exports.updateBySlug = async (req, res) => {
   const { slug } = req.params;
-  const doc = await Tag.findOneAndUpdate({ slug }, req.body,{new:true});
+  const doc = await Tag.findOneAndUpdate({ slug }, req.body, { new: true });
   if (!doc) {
     return res.status(404).json({
       msg: 'Not found'
