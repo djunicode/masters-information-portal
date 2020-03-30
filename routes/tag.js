@@ -1,14 +1,17 @@
 const { Router } = require('express');
 const asyncHandler = require('express-async-handler');
+const {authRequired,hasRoles} = require('../middleware/auth');
 const controller = require('../controllers/tag');
 const { authRequired } = require('../middleware/auth');
 
 const router = Router();
-router.post('/', asyncHandler(controller.create));
-router.post('/:slug/follow',authRequired,asyncHandler(controller.follow));
-router.post('/:slug/unfollow',authRequired,asyncHandler(controller.unfollow));
+
+router.post('/',authRequired,hasRoles(['admin']), asyncHandler(controller.create));
+router.post('/:slug/follow',authRequired,hasRoles(['admin']),asyncHandler(controller.follow));
+router.post('/:slug/unfollow',authRequired,hasRoles(['admin']),asyncHandler(controller.unfollow));
 router.get('/', asyncHandler(controller.getAll));
 router.get('/:slug', asyncHandler(controller.getBySlug));
-router.delete('/:slug', asyncHandler(controller.deleteBySlug));
+router.put('/:slug',authRequired,hasRoles(['admin']),asyncHandler(controller.updateBySlug))
+router.delete('/:slug',authRequired,hasRoles(['admin']), asyncHandler(controller.deleteBySlug));
 
 module.exports = router;
