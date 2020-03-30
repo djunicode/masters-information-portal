@@ -6,10 +6,6 @@ const TagSchema = new mongoose.Schema({
     unique:true,
     required: [true, 'Please provide a display name for tag'],
   },
-  author:{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User' 
-  },
   isSchool: {
     type: Boolean,
     default: false,

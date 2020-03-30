@@ -52,7 +52,6 @@ exports.updateBySlug = async (req, res) => {
       msg: 'Not found',
     });
   }
-console.log("updated",doc);
   logger.updated('Tag', doc);
   return res.json(doc);
 };
