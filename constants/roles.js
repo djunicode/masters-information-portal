@@ -1,3 +1,5 @@
- reqdRoles=['Admin']
+const ADMIN='admin';
 
-module.exports=reqdRoles;
+module.exports={
+ADMIN
+};
