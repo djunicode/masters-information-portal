@@ -1,5 +1,5 @@
-import React from 'react';
-import { makeStyles, withTheme } from '@material-ui/core/styles';
+import React,{useState,Component} from 'react';
+import { makeStyles, useTheme ,withStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
@@ -14,8 +14,62 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import ShareIcon from '@material-ui/icons/Share';
 import CommentIcon from '@material-ui/icons/Comment';
-import ToggleButton from '@material-ui/lab/ToggleButton';
+import Button from '@material-ui/core/Button';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import SwipeableViews from 'react-swipeable-views';
+import PropTypes from 'prop-types';
+import Box from '@material-ui/core/Box';
+// import ToggleButton from '@material-ui/lab/ToggleButton';
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
 
+  return (
+    <Typography
+      component="div"
+      role="tabpanel"
+      hidden={value !== index}
+      id={`full-width-tabpanel-${index}`}
+      aria-labelledby={`full-width-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box p={3}>{children}</Box>}
+    </Typography>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
+const useStyles1 = makeStyles(theme => ({
+  root: {
+    // backgroundColor:'#E5E5E5',
+    
+    flexGrow:1,
+    // marginTop:0,
+    
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
+  search:{
+      borderRadius:'25px',
+      width:'300px',
+      textAlign:"center",
+      margin:'5px'
+  },
+  paper: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  },
+}));
 
 
 
@@ -25,8 +79,6 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     // maxWidth:1100,
     // float:'right',
-  
-
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -43,9 +95,10 @@ const useStyles = makeStyles(theme => ({
   search:{
       borderRadius:'25px',
       width:'300px',
+
   },
   forumpage:{
-      marginTop:'10px',
+      // marginTop:'10px',
       // minHeight:'500px',
       padding:'5px',
       maxWidth:'800px',
@@ -57,18 +110,475 @@ const useStyles = makeStyles(theme => ({
     margin:"5px",
     float:'left',
   },
+  like:{
+    textAlign:"left",
+    color:"black"
+  }
 }));
 
-export default function Forum() {
+function Trending() {
+  const classes=useStyles();
   
-  const classes = useStyles();
+  const [like, setLike] = useState(25);
+  const[bg,setBg]=useState("disabled");
+  const[bg1,setBg1]=useState("disabled");
+    const [dislike,setDislike] = useState(7);
+    const handleLike = e => {
+      if(like==25)
+      {
+      const like1 = like +1; 
+      setLike(like1);
+      setBg("secondary");      
+      }
+      else
+      {
+        const like2=like-1;
+        setLike(like2);
+        setBg("disabled");
+      }
+    };
+    const handleDislike = e => {
+      if(dislike==7)
+      {
+        const dislike1 = dislike +1;  
+        setDislike(dislike1);
+        setBg1("secondary");
+      }
+      else{
+        const dislike2=dislike-1;
+        setDislike(dislike2)
+        setBg1("disabled");
+      }
+      };
   
-  const [selected, setSelected] = React.useState(false);
+  // const [selected, setSelected] = React.useState(false);
   
   return (
     <div className={classes.root} align="center">
         
+    
+    <Paper className={classes.forumpage}>
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div className={classes.question} align="left">
+        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"verdana"}} gutterBottom>
+        What is better React or Angular?
+        </Typography>
+
+
+        </div>
+        <div className={classes.image} align="left">
+      <span><Avatar alt="ABC" src="WP_Ironman-2560x1440_00000.jpg" align="left" /></span>
+      <span><Typography>ABC</Typography></span>
+        </div>
+
+        <Typography variant="body2" align="left" style={{marginTop:"5px"}}>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <IconButton onClick={handleLike} color={bg}>
+          <ThumbUpIcon />
+          
+      </IconButton>
+      <span className={classes.like} style={{fontFamily:"arial"}}>{like}</span>
+      <IconButton onClick={handleDislike} color={bg1}>
+          <ThumbDownIcon/>
+      </IconButton>
+      <span className={classes.dislike} style={{fontFamily:"arial"}}>{dislike}</span>
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+
+      <IconButton>
+          <ShareIcon />
+      </IconButton>
+      <span>
+        <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",marginRight:"5px",right:"-340px",opacity:"0.9",borderRadius:"5px",fontSize:"10px"
+            }} className={classes.button1}>Javascript</Button>
+              <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",right:"-345px",borderRadius:"5px",opacity:"0.9",fontSize:"10px"
+            }} className={classes.button1}>React</Button>
+
+
+        </span>
+        </CardActions>
+    </Card>
+    </Paper>
+   
+    
+    
+    </div>
+    
+
+  );
+};
+
+
+const  New=(props)=>{
+  const classes=useStyles();
+  
+  const [like, setLike] = useState(15);
+  const[bg,setBg]=useState("disabled");
+  const[bg1,setBg1]=useState("disabled");
+    const [dislike,setDislike] = useState(5);
+    const handleLike = e => {
+      if(like==15)
+      {
+      const like1 = like +1; 
+      setLike(like1);
+      setBg("secondary");
+      }
+      else
+      {
+        const like2=like-1;
+        setLike(like2);
+        setBg("disabled");
+      }
+    };
+    const handleDislike = e => {
+      if(dislike==5)
+      {
+        const dislike1 = dislike +1;  
+        setDislike(dislike1);
+        setBg1("secondary");
+      }
+      else{
+        const dislike2=dislike-1;
+        setDislike(dislike2)
+        setBg1("disabled");
+      }
+      };
+  
+  // const [selected, setSelected] = React.useState(false);
+  
+  return (
+    <div className={classes.root} align="center">
         
+    
+    <Paper className={classes.forumpage}>
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div className={classes.question} align="left">
+        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"verdana"}} gutterBottom>
+        What goes better with react,node or django?
+        </Typography>
+
+        </div>
+        <div className={classes.image} align="left">
+      <span><Avatar alt="DEF" src="WP_Ironman-2560x1440_00000.jpg" align="left" /></span>
+      <span><Typography>DEF</Typography></span>
+        </div>
+        <Typography variant="body2" align="left" style={{marginTop:"5px"}}>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <IconButton onClick={handleLike} color={bg}>
+          <ThumbUpIcon />
+          
+      </IconButton>
+      <span className={classes.like} style={{fontFamily:"arial"}}>{like}</span>
+      <IconButton onClick={handleDislike} color={bg1}>
+          <ThumbDownIcon/>
+      </IconButton>
+      <span className={classes.dislike} style={{fontFamily:"arial"}}>{dislike}</span>
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+
+      <IconButton>
+          <ShareIcon />
+      </IconButton>
+      <span>
+        <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",marginRight:"5px",right:"-340px",opacity:"0.9",borderRadius:"5px",fontSize:"10px"
+            }} className={classes.button1}>Bootstrap</Button>
+              <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",right:"-345px",borderRadius:"5px",opacity:"0.9",fontSize:"10px"
+            }} className={classes.button1}>Android</Button>
+
+
+        </span>
+        </CardActions>
+    </Card>
+    </Paper>
+   
+    
+    
+    </div>
+    
+
+  );
+};
+
+const  User=(props)=>{
+  const classes=useStyles();
+  
+  const [like, setLike] = useState(32);
+  const[bg,setBg]=useState("disabled");
+  const[bg1,setBg1]=useState("disabled");
+    const [dislike,setDislike] = useState(9);
+    const handleLike = e => {
+      if(like==32)
+      {
+      const like1 = like +1; 
+      setLike(like1);
+      setBg("secondary");
+      }
+      else
+      {
+        const like2=like-1;
+        setLike(like2);
+        setBg("disabled");
+      }
+    };
+    const handleDislike = e => {
+      if(dislike==9)
+      {
+        const dislike1 = dislike +1;  
+        setDislike(dislike1);
+        setBg1("secondary");
+      }
+      else{
+        const dislike2=dislike-1;
+        setDislike(dislike2)
+        setBg1("disabled");
+      }
+      };
+  
+  // const [selected, setSelected] = React.useState(false);
+  
+  return (
+    <div className={classes.root} align="center">
+        
+    
+    <Paper className={classes.forumpage}>
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div className={classes.question} align="left">
+        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"verdana"}} gutterBottom>
+        Will Iron Man return?
+        </Typography>
+
+        </div>
+        <div className={classes.image} align="left">
+      <span><Avatar alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" align="left" /></span>
+      <span><Typography>GHI</Typography></span>
+        </div>
+
+        <Typography variant="body2" align="left" style={{marginTop:"5px"}}>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <IconButton onClick={handleLike} color={bg}>
+          <ThumbUpIcon />
+          
+      </IconButton>
+      <span className={classes.like} style={{fontFamily:"arial"}}>{like}</span>
+      <IconButton onClick={handleDislike} color={bg1}>
+          <ThumbDownIcon/>
+      </IconButton>
+      <span className={classes.dislike} style={{fontFamily:"arial"}}>{dislike}</span>
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+
+      <IconButton>
+          <ShareIcon />
+      </IconButton>
+      <span>
+        <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",marginRight:"5px",right:"-340px",opacity:"0.9",borderRadius:"5px",fontSize:"10px"
+            }} className={classes.button1}>Django</Button>
+              <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",right:"-345px",borderRadius:"5px",opacity:"0.9",fontSize:"10px"
+            }} className={classes.button1}>Node</Button>
+
+
+        </span>
+        </CardActions>
+    </Card>
+    </Paper>
+   
+    
+    
+    </div>
+    
+
+  );
+};
+const  University=(props)=>{
+  const classes=useStyles();
+  
+  const [like, setLike] = useState(71);
+  const[bg,setBg]=useState("disabled");
+  const[bg1,setBg1]=useState("disabled");
+    const [dislike,setDislike] = useState(0);
+    const handleLike = e => {
+      if(like==71)
+      {
+      const like1 = like +1; 
+      setLike(like1);
+      setBg("secondary");
+      }
+      else
+      {
+        const like2=like-1;
+        setLike(like2);
+        setBg("disabled");
+      }
+    };
+    const handleDislike = e => {
+      if(dislike==0)
+      {
+        const dislike1 = dislike +1;  
+        setDislike(dislike1);
+        setBg1("secondary");
+      }
+      else{
+        const dislike2=dislike-1;
+        setDislike(dislike2)
+        setBg1("disabled");
+      }
+      };
+  
+  // const [selected, setSelected] = React.useState(false);
+  
+  return (
+    <div className={classes.root} align="center">
+        
+    
+    <Paper className={classes.forumpage}>
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div className={classes.question} align="left">
+        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"verdana"}} gutterBottom>
+        Is it that hard to make money?
+        </Typography>
+
+        </div>
+        <div className={classes.image} align="left">
+      <span><Avatar alt="JKL" src="WP_Ironman-2560x1440_00000.jpg" align="left" /></span>
+      <span><Typography>JKL</Typography></span>
+        </div>
+
+        <Typography variant="body2" align="left" style={{marginTop:"5px"}}>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <IconButton onClick={handleLike} color={bg}>
+          <ThumbUpIcon />
+          
+      </IconButton>
+      <span className={classes.like} style={{fontFamily:"arial"}}>{like}</span>
+      <IconButton onClick={handleDislike} color={bg1}>
+          <ThumbDownIcon/>
+      </IconButton>
+      <span className={classes.dislike} style={{fontFamily:"arial"}}>{dislike}</span>
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+
+      <IconButton>
+          <ShareIcon />
+      </IconButton>
+      <span>
+        <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",marginRight:"5px",right:"-340px",opacity:"0.9",borderRadius:"5px",fontSize:"10px"
+            }} className={classes.button1}>Python</Button>
+              <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",right:"-345px",borderRadius:"5px",opacity:"0.9",fontSize:"10px"
+            }} className={classes.button1}>Html</Button>
+
+
+        </span>
+        </CardActions>
+    </Card>
+    </Paper>
+   
+    
+    
+    </div>
+    
+
+  );
+};
+function a11yProps(index) {
+  return {
+    id: `full-width-tab-${index}`,
+    'aria-controls': `full-width-tabpanel-${index}`,
+  };
+}
+
+const AntTabs = withStyles({
+  root: {
+    borderBottom: '0px solid #2CE89A',
+  },
+  indicator: {
+    backgroundColor: '#2CE89A',
+  },
+})(Tabs);
+
+
+const AntTab = withStyles(theme => ({
+  root: {
+    textTransform: 'none',
+    minWidth: 72,
+
+    fontSize:20,
+    marginTop:5,
+    marginRight: theme.spacing(4),
+    
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    '&:hover': {
+      color: '#2CE89A',
+      opacity: 1,
+    },
+    '&$selected': {
+      color: '#2CE89A',
+      fontWeight: theme.typography.fontWeightMedium,
+    },
+    '&:focus': {
+      color: '#2CE89A',
+    },
+  },
+  selected: {},
+}))(props => <Tab disableRipple {...props} />);
+
+export default function Forum() {
+  const classes = useStyles1();
+  const theme = useTheme();
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const handleChangeIndex = index => {
+    setValue(index);
+  };
+
+  return (
+    <div className={classes.root} align="center"> 
     <Paper component="form" className={classes.search}>
       <InputBase
         className={classes.input}
@@ -78,119 +588,36 @@ export default function Forum() {
         <SearchIcon />
       </IconButton>
     </Paper>
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div className={classes.image} align="left">
-          <Avatar alt="ABC" src="WP_Ironman-2560x1440_00000.jpg" />
-        </div>
-
-        <Typography color="initial" align="left"  gutterBottom>
-          ABC
-        </Typography>
-        <Typography variant="body2" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <ToggleButton
-      value="check"
-      selected={selected}
-      onChange={() => {
-        setSelected(!selected);
-      }}
-    >
-      <ThumbUpIcon />
-    </ToggleButton>
-    
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-
-      <IconButton>
-          <ShareIcon />
-      </IconButton>
-        </CardActions>
-    </Card>
-    <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div className={classes.image} align="left">
-          <Avatar alt="DEF" src="WP_Ironman-2560x1440_00000.jpg" />
-        </div>
-
-        <Typography color="initial" align="left"  gutterBottom>
-          DEF
-        </Typography>
-        <Typography variant="body2" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <ToggleButton
-      value="check"
-      selected={selected}
-      onChange={() => {
-        setSelected(!selected);
-      }}
-    >
-      <ThumbUpIcon />
-    </ToggleButton>
-    
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-
-      <IconButton>
-          <ShareIcon />
-      </IconButton>
-        </CardActions>
-    </Card>
-    <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div className={classes.image} align="left">
-          <Avatar alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" />
-        </div>
-
-        <Typography color="initial" align="left"  gutterBottom>
-          GHI
-        </Typography>
-        <Typography variant="body2" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <ToggleButton
-      value="check"
-      selected={selected}
-      onChange={() => {
-        setSelected(!selected);
-      }}
-    >
-      <ThumbUpIcon />
-    </ToggleButton>
-    
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-
-      <IconButton>
-          <ShareIcon />
-          
-      </IconButton>
-        </CardActions>
-    </Card>
-    </Paper>
+      <div className={classes.demo1}>
+          <Grid>
+          <Grid item xs = {4}></Grid>
+          <Grid item xs = {8}>    
+        <AntTabs value={value} onChange={handleChange} aria-label="ant example" >
+          <AntTab className="tabu" label="Trending" />
+          <AntTab className="tabu" label="New" />
+          <AntTab className="tabu" label="User" />
+          <AntTab className="tabu" label="University" />
+        </AntTabs></Grid></Grid>
+        <Typography className={classes.padding} />
+      </div>
+      <SwipeableViews
+        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+        index={value}
+        onChangeIndex={handleChangeIndex}
+      >
+        <TabPanel value={value} index={0} dir={theme.direction}>
+        <Trending />
+        </TabPanel>
+        <TabPanel value={value} index={1} dir={theme.direction}>
+        <New style={{backgroundColor:'#E5E5E5'}} />
+        </TabPanel>
+        <TabPanel value={value} index={2} dir={theme.direction}>
+       <User />
+        </TabPanel>
+        <TabPanel value={value} index={3} dir={theme.direction}>
+       <University />
+        </TabPanel>
+      </SwipeableViews>
     </div>
-    
-
   );
 }
