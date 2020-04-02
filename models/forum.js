@@ -55,4 +55,7 @@ const forumSchema = new mongoose.Schema({
   ]
 });
 
+// Indexing the forum model for search
+forumSchema.index({title:"text",text:"text"},{weight:{title:3,text:2}})
+
 module.exports = mongoose.model('Forum', forumSchema);

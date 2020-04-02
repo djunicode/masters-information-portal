@@ -24,7 +24,7 @@ exports.create = async (req, res) => {
  * Extra query parameter - slugs: [String], array of tag slugs
  */
 exports.getAll = async (req, res) => {
-  const queryFilter = req.query;
+  let queryFilter = req.query;
 
   if(queryFilter.slugs) {
     const { slugs } = queryFilter;
@@ -32,8 +32,12 @@ exports.getAll = async (req, res) => {
     delete queryFilter.slugs;
     queryFilter.tags = { $in: tags_id };
   }
+  if(queryFilter.search){
+    const { search }=queryFilter
+    queryFilter={$text:{$search:search}}
+  }
   
-  const docs = await Forum.find(queryFilter);
+  const docs = await Forum.find(queryFilter)
   if (!docs) {
     return res.status(404).json({
       msg: 'No documents found'
