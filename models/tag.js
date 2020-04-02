@@ -42,7 +42,6 @@ const generateSlug = name => name.replace(/\s+/g, '-').toLowerCase();
  * @description Converts the Tag name into slug before saving.Uses mongoose schema hooks.
  */
 TagSchema.pre('save', function addSlug(next) {
-  console.log(this.getFilter());
   const slug = generateSlug(this.name);
   this.slug = slug;
   next();
