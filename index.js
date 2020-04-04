@@ -8,20 +8,20 @@ const { port, host } = require('./config/constants');
  * Sets up the project
  */
 async function main() {
-	// Wait for MongoDB connection
-	await dbConnection();
+  // Wait for MongoDB connection
+  await dbConnection();
 
-	// Websockets setup
-	const server = attachChatApp(app);
+  // Websockets setup
+  const server = attachChatApp(app);
 
-	// Return after setup
-	return server;
+  // Return after setup
+  return server;
 }
 
 // -----
 
-main().then((server) => {
-	server.listen(port, host, () => {
-		logger.info(`🔥 Server started listening on http://${host}:${port}`);
-	});
+main().then(server => {
+  server.listen(port, host, () => {
+    logger.info(`🔥 Server started listening on http://${host}:${port}`);
+  });
 });
