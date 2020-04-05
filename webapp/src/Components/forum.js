@@ -46,7 +46,6 @@ TabPanel.propTypes = {
 const useStyles1 = makeStyles(theme => ({
   root: {
     // backgroundColor:'#E5E5E5',
-    
     flexGrow:1,
     // marginTop:0,
     
@@ -59,10 +58,11 @@ const useStyles1 = makeStyles(theme => ({
     padding: 10,
   },
   search:{
-      borderRadius:'25px',
+      // borderRadius:'25px',
       width:'300px',
       textAlign:"center",
-      margin:'5px'
+      margin:'5px',
+      backgroundColor:"#F8F8F8",
   },
   paper: {
     padding: theme.spacing(2),
@@ -103,6 +103,11 @@ const useStyles = makeStyles(theme => ({
       padding:'5px',
       maxWidth:'800px',
   },
+  content:
+  {
+    textAlign:"left",
+
+  },
   card:{
     margin:'10px',
   },
@@ -113,7 +118,7 @@ const useStyles = makeStyles(theme => ({
   like:{
     textAlign:"left",
     color:"black"
-  }
+  },
 }));
 
 function Trending() {
@@ -161,22 +166,23 @@ function Trending() {
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
         <div className={classes.question} align="left">
-        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"verdana"}} gutterBottom>
+        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"Arial"}} gutterBottom>
         What is better React or Angular?
         </Typography>
 
 
         </div>
-        <div className={classes.image} align="left">
-      <span><Avatar alt="ABC" src="WP_Ironman-2560x1440_00000.jpg" align="left" /></span>
-      <span><Typography>ABC</Typography></span>
-        </div>
-
-        <Typography variant="body2" align="left" style={{marginTop:"5px"}}>
+        <div className={classes.image}>
+      <Avatar alt="ABC" src="WP_Ironman-2560x1440_00000.jpg" align="left" style={{float:"left"}} />
+      <Typography style={{float:"left",marginLeft:"5px",paddingTop:"8px",fontWeight:"bold"}}>ABC</Typography><br /><br />
+      </div>
+        <div className={classes.content}>
+        <Typography variant="body1" align="left" style={{marginTop:"5px"}}>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
         unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
         dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
       </Typography>
+      </div>
 
       </CardContent>
       <CardActions disableSpacing>
@@ -262,15 +268,15 @@ const  New=(props)=>{
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
         <div className={classes.question} align="left">
-        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"verdana"}} gutterBottom>
+        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"Arial"}} gutterBottom>
         What goes better with react,node or django?
         </Typography>
 
         </div>
-        <div className={classes.image} align="left">
-      <span><Avatar alt="DEF" src="WP_Ironman-2560x1440_00000.jpg" align="left" /></span>
-      <span><Typography>DEF</Typography></span>
-        </div>
+        <div className={classes.image}>
+      <Avatar alt="DEF" src="WP_Ironman-2560x1440_00000.jpg" align="left" style={{float:"left"}} />
+      <Typography style={{float:"left",marginLeft:"5px",paddingTop:"8px",fontWeight:"bold"}}>DEF</Typography><br /><br />
+      </div>
         <Typography variant="body2" align="left" style={{marginTop:"5px"}}>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
         unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
@@ -360,15 +366,15 @@ const  User=(props)=>{
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
         <div className={classes.question} align="left">
-        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"verdana"}} gutterBottom>
+        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"Arial"}} gutterBottom>
         Will Iron Man return?
         </Typography>
 
         </div>
-        <div className={classes.image} align="left">
-      <span><Avatar alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" align="left" /></span>
-      <span><Typography>GHI</Typography></span>
-        </div>
+        <div className={classes.image}>
+      <Avatar alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" align="left" style={{float:"left"}} />
+      <Typography style={{float:"left",marginLeft:"5px",paddingTop:"8px",fontWeight:"bold"}}>GHI</Typography><br /><br />
+      </div>
 
         <Typography variant="body2" align="left" style={{marginTop:"5px"}}>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
@@ -458,15 +464,15 @@ const  University=(props)=>{
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
         <div className={classes.question} align="left">
-        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"verdana"}} gutterBottom>
+        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"Arial"}} gutterBottom>
         Is it that hard to make money?
         </Typography>
 
         </div>
-        <div className={classes.image} align="left">
-      <span><Avatar alt="JKL" src="WP_Ironman-2560x1440_00000.jpg" align="left" /></span>
-      <span><Typography>JKL</Typography></span>
-        </div>
+        <div className={classes.image}>
+      <Avatar alt="JKL" src="WP_Ironman-2560x1440_00000.jpg" align="left" style={{float:"left"}} />
+      <Typography style={{float:"left",marginLeft:"5px",paddingTop:"8px",fontWeight:"bold"}}>JKL</Typography><br /><br />
+      </div>
 
         <Typography variant="body2" align="left" style={{marginTop:"5px"}}>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
@@ -520,10 +526,10 @@ function a11yProps(index) {
 
 const AntTabs = withStyles({
   root: {
-    borderBottom: '0px solid #2CE89A',
+    borderBottom: '0px solid #123800',
   },
   indicator: {
-    backgroundColor: '#2CE89A',
+    backgroundColor: '#123800',
   },
 })(Tabs);
 
@@ -550,15 +556,15 @@ const AntTab = withStyles(theme => ({
       '"Segoe UI Symbol"',
     ].join(','),
     '&:hover': {
-      color: '#2CE89A',
+      color: '#123800',
       opacity: 1,
     },
     '&$selected': {
-      color: '#2CE89A',
-      fontWeight: theme.typography.fontWeightMedium,
+      color: '#123800',
+      fontWeight: theme.typography.fontWeightBold,
     },
     '&:focus': {
-      color: '#2CE89A',
+      color: '#123800',
     },
   },
   selected: {},
@@ -579,10 +585,11 @@ export default function Forum() {
 
   return (
     <div className={classes.root} align="center"> 
-    <Paper component="form" className={classes.search}>
+    <Paper elevation={0} variant="outlined" component="form" className={classes.search}>
       <InputBase
         className={classes.input}
         placeholder="Search A Forum"
+        color="secondary"
       />
       <IconButton type="submit" className={classes.iconButton} aria-label="search">
         <SearchIcon />
@@ -590,8 +597,9 @@ export default function Forum() {
     </Paper>
       <div className={classes.demo1}>
           <Grid>
-          <Grid item xs = {4}></Grid>
-          <Grid item xs = {8}>    
+          <Grid item xs = {5}></Grid>
+          <Grid item xs = {7}>    
+          <Typography align="left" style={{color:"#123800",fontWeight:"bold",fontSize:"25px"}}>Feed</Typography>
         <AntTabs value={value} onChange={handleChange} aria-label="ant example" >
           <AntTab className="tabu" label="Trending" />
           <AntTab className="tabu" label="New" />
