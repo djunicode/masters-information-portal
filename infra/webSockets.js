@@ -13,9 +13,7 @@ const Chat = require('../models/chat');
 const { verifyJwt } = require("./jwt");
 
 function createServer(app) {
-  /**
-   * Enabling io connection using http server
-   */
+
   const server = http.Server(app);
   const io = SocketIO(server);
 
@@ -28,8 +26,15 @@ function createServer(app) {
   io.on('connection', (socket) => {
     logger.info(`Socket ${socket.id} connected`);
 
+        
+ /**
+ * @apiDefine WebSockets
+ */
+
+    
     /**
-     * @apiRoute WebSockets/authenticate
+     * @apiGroup WebSockets
+     * @api {WS} /authenticate User Authentication 
      * @apiDescription User Verification using the allotted JWT token during login
      * Authorized users shall proceed forward to chatting 
      */
@@ -50,11 +55,15 @@ function createServer(app) {
     })
 
     /**
-     * @apiRoute WebSockets/open chat
+     * @apiGroup WebSockets
+     * @api {WS} open_chat Joining the user to resp chat room
      * @apiDescription After authentication based on the unique chat_id exclusively 
      * provided to a pair of private chat user is searched in the db
      * If the chat is retrieved user shall successfully enter a room with unique chat_id 
-     * @apiRoute WebSocket/msg hist
+     * /
+     /** 
+     * @apiGroup WebSockets
+     * @api {WS} msg_hist Providing the old chats 
      * @apiDescription Once user successfully enters a chat room then the socket shall
      * send back the prior old chat messages(if any) via this socket call
      */
@@ -83,14 +92,10 @@ function createServer(app) {
 
 
     /**
-     * @apiRoute WebSockets/message
-     * @apiDescritpion This socket call shall enable live chat application between the two users
-     * On the 'message' socket call the messages sent by the user1 to user2 shall be fetched 
-     * and stored in the database of the chat schema
-     * It will basically check if the user is authenticated and then if the chat_id exists in the db
-     * If the chat object exists then the user message shall be stored in the db successfully 
-     * And at the same time it shall deploy another socket call to send the msg to the user2
-     * This facility enables live chatting
+     * @apiGroup WebSockets
+     * @api {WS} message For sending message for live chat
+     * @apiDescritpion It basically sends the messages sent by user1 to the server to be saved in the db and also 
+     * send the same chat msg to user2 to enable live chat
      */
     socket.on('message', async (message) => {
       console.log(message)
@@ -124,7 +129,8 @@ function createServer(app) {
       io.to(socketChatMap[socket]).send('message', message);
     });
   /**
-   * @apiRoute WebSockets/disconnect
+   * @apiGroup WebSockets
+   * @api {WS} disconnect Closing the socket connection
    * @apiDescription On this socket call the socket connection shall be terminated.
    * basically the array contents are deleted to again enable chat with different user in future. 
    */
