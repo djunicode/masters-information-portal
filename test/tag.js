@@ -19,7 +19,7 @@ describe(config.GROUP_TAG_TESTS, async () => {
       .request(server)
       .post('/api/tags/')
       .send({});
-    expect(tag1).to.have.status(400);
+    expect(tag1).to.have.status(401);
     expect(tag1.body).to.be.a('object');
     expect(tag1.body).to.not.have.property('tag');
     expect(tag1.body).to.have.property('name');

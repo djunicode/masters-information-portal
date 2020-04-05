@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const path = require('path');
 
 const logger = require('./config/logger');
+const { devProfile } = require('./config/morganConfig');
 const { directives, limiter, options } = require('./config/middlewares');
 
 const { userRouter, forumRouter, tagRouter, chatRouter } = require('./routes');
@@ -24,7 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.raw());
 
 // morgan
-app.use(morgan('dev'));
+app.use(morgan(devProfile));
 
 // express-rate-limit
 app.use(limiter);
