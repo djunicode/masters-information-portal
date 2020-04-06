@@ -114,11 +114,42 @@ const useStyles = makeStyles(theme => ({
   cardcontent:{
     margin:"5px",
     float:'left',
+    marginTop:"5px"
   },
   like:{
     textAlign:"left",
-    color:"black"
+    color:"black",
+    fontFamily:"arial",
   },
+  question:{
+    marginTop:"5px",
+    fontSize:"23px",
+    fontWeight:"bold",
+    fontFamily:"Arial"
+  },
+  username:{
+    float:"left",
+    marginLeft:"5px",
+    paddingTop:"8px",
+    fontWeight:"bold",
+  },
+  image:{
+    float:"left",
+  },
+  dislike:{
+    fontFamily:"arial",
+  },
+  button1:{
+    color: "#123800",
+    backgroundColor:"#8cd4af",
+    fontWeight:"bold",
+    margin:"5px",
+    opacity:"0.9",
+    borderRadius:"5px",
+    fontSize:"12px",
+    minWidth:"100px"
+  },
+
 }));
 
 function Trending() {
@@ -159,25 +190,21 @@ function Trending() {
   // const [selected, setSelected] = React.useState(false);
   
   return (
-    <div className={classes.root} align="center">
-        
-    
+    <div className={classes.root} align="center"> 
     <Paper className={classes.forumpage}>
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
-        <div className={classes.question} align="left">
-        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"Arial"}} gutterBottom>
-        What is better React or Angular?
-        </Typography>
-
-
+        <div>
+          <Typography className={classes.question} color="initial" align="left" gutterBottom>
+            What is better React or Angular?
+          </Typography>
         </div>
-        <div className={classes.image}>
-      <Avatar alt="ABC" src="WP_Ironman-2560x1440_00000.jpg" align="left" style={{float:"left"}} />
-      <Typography style={{float:"left",marginLeft:"5px",paddingTop:"8px",fontWeight:"bold"}}>ABC</Typography><br /><br />
+        <div>
+      <Avatar className={classes.image} alt="ABC" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Typography className={classes.username}>ABC</Typography><br /><br />
       </div>
         <div className={classes.content}>
-        <Typography variant="body1" align="left" style={{marginTop:"5px"}}>
+        <Typography variant="body1" align="left">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
         unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
         dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
@@ -190,27 +217,26 @@ function Trending() {
           <ThumbUpIcon />
           
       </IconButton>
-      <span className={classes.like} style={{fontFamily:"arial"}}>{like}</span>
+      <span className={classes.like}>{like}</span>
       <IconButton onClick={handleDislike} color={bg1}>
           <ThumbDownIcon/>
       </IconButton>
-      <span className={classes.dislike} style={{fontFamily:"arial"}}>{dislike}</span>
+      <span className={classes.dislike}>{dislike}</span>
       <IconButton >
           <CommentIcon/>
       </IconButton>
-
-      <IconButton>
+      <IconButton style={{marginRight:"150px"}}>
           <ShareIcon />
       </IconButton>
-      <span>
-        <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",marginRight:"5px",right:"-340px",opacity:"0.9",borderRadius:"5px",fontSize:"10px"
-            }} className={classes.button1}>Javascript</Button>
-              <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",right:"-345px",borderRadius:"5px",opacity:"0.9",fontSize:"10px"
-            }} className={classes.button1}>React</Button>
-
-
-        </span>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Javascript</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>React</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Angular</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Vue</Button>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Material UI</Button>
+      </div>
         </CardActions>
+        
     </Card>
     </Paper>
    
@@ -267,17 +293,17 @@ const  New=(props)=>{
     <Paper className={classes.forumpage}>
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
-        <div className={classes.question} align="left">
-        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"Arial"}} gutterBottom>
+        <div>
+        <Typography color="initial" align="left" className={classes.question} gutterBottom>
         What goes better with react,node or django?
         </Typography>
 
         </div>
-        <div className={classes.image}>
-      <Avatar alt="DEF" src="WP_Ironman-2560x1440_00000.jpg" align="left" style={{float:"left"}} />
-      <Typography style={{float:"left",marginLeft:"5px",paddingTop:"8px",fontWeight:"bold"}}>DEF</Typography><br /><br />
+        <div>
+      <Avatar alt="DEF" className={classes.image}  src="WP_Ironman-2560x1440_00000.jpg" align="left"  />
+      <Typography className={classes.username}>DEF</Typography><br /><br />
       </div>
-        <Typography variant="body2" align="left" style={{marginTop:"5px"}}>
+        <Typography variant="body2" align="left" >
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
         unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
         dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
@@ -289,26 +315,22 @@ const  New=(props)=>{
           <ThumbUpIcon />
           
       </IconButton>
-      <span className={classes.like} style={{fontFamily:"arial"}}>{like}</span>
+      <span className={classes.like}>{like}</span>
       <IconButton onClick={handleDislike} color={bg1}>
           <ThumbDownIcon/>
       </IconButton>
-      <span className={classes.dislike} style={{fontFamily:"arial"}}>{dislike}</span>
-      <IconButton >
+      <span className={classes.dislike}>{dislike}</span>
+      <IconButton  >
           <CommentIcon/>
-      </IconButton>
-
-      <IconButton>
+      </IconButton > 
+      <IconButton  style={{marginRight:"150px"}}>
           <ShareIcon />
       </IconButton>
-      <span>
-        <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",marginRight:"5px",right:"-340px",opacity:"0.9",borderRadius:"5px",fontSize:"10px"
-            }} className={classes.button1}>Bootstrap</Button>
-              <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",right:"-345px",borderRadius:"5px",opacity:"0.9",fontSize:"10px"
-            }} className={classes.button1}>Android</Button>
-
-
-        </span>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Bootstrap</Button>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Android</Button>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>React Native</Button>
+      </div>
         </CardActions>
     </Card>
     </Paper>
@@ -365,18 +387,18 @@ const  User=(props)=>{
     <Paper className={classes.forumpage}>
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
-        <div className={classes.question} align="left">
-        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"Arial"}} gutterBottom>
+        <div>
+        <Typography color="initial" align="left"className={classes.question} gutterBottom>
         Will Iron Man return?
         </Typography>
 
         </div>
-        <div className={classes.image}>
-      <Avatar alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" align="left" style={{float:"left"}} />
-      <Typography style={{float:"left",marginLeft:"5px",paddingTop:"8px",fontWeight:"bold"}}>GHI</Typography><br /><br />
+        <div>
+      <Avatar  className={classes.image} alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" align="left"  />
+      <Typography className={classes.username}>GHI</Typography><br /><br />
       </div>
 
-        <Typography variant="body2" align="left" style={{marginTop:"5px"}}>
+        <Typography variant="body2" align="left" >
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
         unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
         dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
@@ -388,26 +410,22 @@ const  User=(props)=>{
           <ThumbUpIcon />
           
       </IconButton>
-      <span className={classes.like} style={{fontFamily:"arial"}}>{like}</span>
+      <span className={classes.like} >{like}</span>
       <IconButton onClick={handleDislike} color={bg1}>
           <ThumbDownIcon/>
       </IconButton>
-      <span className={classes.dislike} style={{fontFamily:"arial"}}>{dislike}</span>
+      <span className={classes.dislike}>{dislike}</span>
       <IconButton >
           <CommentIcon/>
       </IconButton>
 
-      <IconButton>
+      <IconButton  style={{marginRight:"150px"}}>
           <ShareIcon />
       </IconButton>
-      <span>
-        <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",marginRight:"5px",right:"-340px",opacity:"0.9",borderRadius:"5px",fontSize:"10px"
-            }} className={classes.button1}>Django</Button>
-              <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",right:"-345px",borderRadius:"5px",opacity:"0.9",fontSize:"10px"
-            }} className={classes.button1}>Node</Button>
-
-
-        </span>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Django</Button>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Node</Button>
+      </div>
         </CardActions>
     </Card>
     </Paper>
@@ -463,18 +481,18 @@ const  University=(props)=>{
     <Paper className={classes.forumpage}>
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
-        <div className={classes.question} align="left">
-        <Typography color="initial" align="left" style={{marginTop:"5px",fontSize:"23px",fontWeight:"bold",fontFamily:"Arial"}} gutterBottom>
+        <div>
+        <Typography color="initial" align="left" className={classes.question} gutterBottom>
         Is it that hard to make money?
         </Typography>
 
         </div>
-        <div className={classes.image}>
-      <Avatar alt="JKL" src="WP_Ironman-2560x1440_00000.jpg" align="left" style={{float:"left"}} />
-      <Typography style={{float:"left",marginLeft:"5px",paddingTop:"8px",fontWeight:"bold"}}>JKL</Typography><br /><br />
+        <div >
+      <Avatar  className={classes.image}  alt="JKL" src="WP_Ironman-2560x1440_00000.jpg" align="left" />
+      <Typography className={classes.username}>JKL</Typography><br /><br />
       </div>
 
-        <Typography variant="body2" align="left" style={{marginTop:"5px"}}>
+        <Typography variant="body2" align="left">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
         unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
         dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
@@ -486,32 +504,25 @@ const  University=(props)=>{
           <ThumbUpIcon />
           
       </IconButton>
-      <span className={classes.like} style={{fontFamily:"arial"}}>{like}</span>
+      <span className={classes.like}>{like}</span>
       <IconButton onClick={handleDislike} color={bg1}>
           <ThumbDownIcon/>
       </IconButton>
-      <span className={classes.dislike} style={{fontFamily:"arial"}}>{dislike}</span>
+      <span className={classes.dislike}>{dislike}</span>
       <IconButton >
           <CommentIcon/>
       </IconButton>
 
-      <IconButton>
+      <IconButton  style={{marginRight:"150px"}}>
           <ShareIcon />
       </IconButton>
-      <span>
-        <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",marginRight:"5px",right:"-340px",opacity:"0.9",borderRadius:"5px",fontSize:"10px"
-            }} className={classes.button1}>Python</Button>
-              <Button disabled style={{color: "#123800",backgroundColor:"#8cd4af",fontWeight:"bold",right:"-345px",borderRadius:"5px",opacity:"0.9",fontSize:"10px"
-            }} className={classes.button1}>Html</Button>
-
-
-        </span>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1}style={{ color: "#123800",}}>Python</Button>
+     
+      </div>
         </CardActions>
     </Card>
     </Paper>
-   
-    
-    
     </div>
     
 
