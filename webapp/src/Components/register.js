@@ -1,10 +1,12 @@
-import React from 'react';
+import React,{useEffect} from 'react';
+import {getObjectId} from './tagRequests.js';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import CloseIcon from '@material-ui/icons/Close';
 import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete,{createFilterOptions} from '@material-ui/lab/Autocomplete';
 import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -36,29 +38,97 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+const axios = require('axios');
+const filter = createFilterOptions();
 function getSteps() {
     return ['Core Details', 'Other Details'];
 }
 
+export default function Register(props) {
 
-export default function Register() {
-    const [hasSaved, setHasSaved] = React.useState(false);
-    const [user, setUser] = React.useState({
-        name: '',
-        username: '',
-        email: '',
-        password: '',
-        university: '',
-        department: '',
-        gradDate: '2020-01-01',
-        bio: '',
-        domain: [],
-        tests: [{ name: '', date: '2020-01-01', score: '' }],
-        facebook: '',
-        twitter: '',
-        linkedIn: '',
-        github: '',
-        uniApplied: [{ name: '', course: '', status: '' }]
+  const[componentDidMount]=React.useState(0);
+
+  const [universityArr,setUniversityArr]=React.useState([]);
+  const [universityNames,setUniversityNames]=React.useState([]);
+  const [tagArr,setTagArr]=React.useState([]);
+  const [tagNames,setTagNames]=React.useState([]);  
+
+  useEffect(()=>{
+    if(!componentDidMount){
+      axios.get('/api/tags')
+      .then(function(response){
+        response.data.forEach((item,index)=>{
+          if(item.isSchool){
+            if(!universityArr.includes(item)){
+              setUniversityArr(universityArr=>[...universityArr,item])
+            }
+            if(!universityNames.includes(item.name)){
+              setUniversityNames(universityNames=>[...universityNames,item.name])
+            }
+          }
+          else{
+            if(!tagArr.includes(item)){
+              setTagArr(tagArr=>[...tagArr,item]);
+            }
+            if(!tagNames.includes(item.name)){
+              setTagNames(tagNames=>[...tagNames,item.name]);
+            }
+          }
+        });
+      })
+      .catch(function(error){
+        console.error(error)
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[componentDidMount])
+
+  const submitAxios = () => {
+    axios.post('/api/users/register', {
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      graduationDate: user.gradDate,
+      currentSchool: user.university,
+      department: user.department,
+
+      /* -------------- Optional Fields below: ------------------ */
+      bio: user.bio,
+      domains: user.domain,
+      testTimeline: user.tests,
+      linkedinUrl: user.linkedIn,
+      githubUrl: user.github,
+      facebookUrl: user.facebook,
+      twitterUrl: user.twitter,
+      accepts: user.accepts,
+      rejects: user.rejects
+    })
+    .then(function (response) {
+      console.log("Registration Successful");
+      props.setRegister(0);
+    })
+    .catch(function (error) {
+      console.log("Registration Failed");
+    });
+  }
+
+  const [user] = React.useState({
+      name: '',
+      email: '',
+      password: '',
+      university: '',
+      department: '',
+      gradDate: '2020-01-01',
+      bio: '',
+      domain: [],
+      tests: [{ name: '', date: '2020-01-01', score: '' }],
+      facebook: '',
+      twitter: '',
+      linkedIn: '',
+      github: '',
+      uniApplied: [{ name: '', status: '' }],
+      accepts: [],
+      rejects: []
     });
     const classes = useStyles();
     const [activeStep, setActiveStep] = React.useState(0);
@@ -90,16 +160,11 @@ export default function Register() {
     };
 
     const handleBack = () => {
-        if (!hasSaved) {
-            alert("You will loose any changes if you dont save!");
-            setHasSaved(true);
-        } else {
-            setActiveStep(prevActiveStep => prevActiveStep - 1);
-        }
+        setActiveStep(prevActiveStep => prevActiveStep - 1);
     };
 
     return (
-        <div className="App" style={{paddingTop:'45px'}}>
+      <div className="App" style={{paddingTop:'45px'}}>
       <Typography variant="h4" className={classes.header}><b>Register</b></Typography>
       <Grid container>
         <Grid item md={3}/>
@@ -134,7 +199,6 @@ export default function Register() {
             name:user.name,
             fname:!!user.name?user.name.slice(0,user.name.indexOf(' ')):'' ,
             lname:!!user.name?user.name.slice(user.name.indexOf(' ')+1,user.name.length):'',
-            username:user.username, 
             email:user.email,
             password:'',
             password_confirm:'',
@@ -169,12 +233,9 @@ export default function Register() {
             if (!values.lname){
               errors.lname = "Fill this field"
             }
-            if (!values.username){
-              errors.username = "Fill this field"
-            }
-            if (!values.university){
-              errors.university = "Fill this field"
-            }
+            // if (!values.university){
+            //   errors.university = "Fill this field"
+            // }
             if (!values.department){
               errors.department = "Fill this field"
             }
@@ -186,20 +247,16 @@ export default function Register() {
           onSubmit={(values, { setSubmitting }) => {
             values.name=values.fname+" "+values.lname;
             user.name=values.name;
-            user.username=values.username;
             user.email=values.email;
             user.password=values.password;
             user.university=values.university;
             user.department=values.department;
             user.gradDate=values.gradDate;
-            setUser(user);
             handleOpenMsg();
-            setHasSaved(false);
             setTimeout(() => {
               setSubmitting(false);
               handleNext();
             }, 1000);
-            console.log(user);
             //@Backend Submit Function for Sign-Up
         }}
         >
@@ -247,91 +304,99 @@ export default function Register() {
                    />
                 </Grid> 
              </Grid> 
-          <TextField 
-            name="username"
-            fullWidth
-            variant="filled"
-            label="Username" 
-            value={values.username}
-            placeholder="Enter your Username"
-            className={classes.textf}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={!!errors.username&&touched.username}
-            helperText={touched.username?errors.username:''}
-          /> 
-          <TextField 
-            name="email"
-            type="email" 
-            fullWidth
-            value={values.email}
-            variant="filled"
-            label="Email" 
-            placeholder="example@domain.com" 
-            className={classes.textf}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={!!errors.email&&touched.email}
-            helperText={touched.email?errors.email:''}
-          /> 
-          <TextField 
-            name="password"
-            type="password"  
-            label="Password" 
-            fullWidth
-            variant="filled" 
-            placeholder="Enter your password" 
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className={classes.textf}
-            error={!!errors.password&&touched.password}
-            helperText={touched.password?errors.password:'Minimum 8 charecters'}
-          /> 
-          <TextField 
-            name="password_confirm"
-            type="password" 
-            label="Confirm Password" 
-            fullWidth
-            variant="filled" 
-            placeholder="Re-Enter your password" 
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className={classes.textf}
-            error={!!errors.password_confirm&&touched.password_confirm}
-            helperText={touched.password_confirm?errors.password_confirm:''}
-          /> 
+            <TextField 
+              name="email"
+              type="email" 
+              fullWidth
+              value={values.email}
+              variant="filled"
+              label="Email" 
+              placeholder="example@domain.com" 
+              className={classes.textf}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={!!errors.email&&touched.email}
+              helperText={touched.email?errors.email:''}
+            /> 
+            <TextField 
+              name="password"
+              type="password"  
+              label="Password" 
+              fullWidth
+              variant="filled" 
+              placeholder="Enter your password" 
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={classes.textf}
+              error={!!errors.password&&touched.password}
+              helperText={touched.password?errors.password:'Minimum 8 charecters'}
+            /> 
+            <TextField 
+              name="password_confirm"
+              type="password" 
+              label="Confirm Password" 
+              fullWidth
+              variant="filled" 
+              placeholder="Re-Enter your password" 
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={classes.textf}
+              error={!!errors.password_confirm&&touched.password_confirm}
+              helperText={touched.password_confirm?errors.password_confirm:''}
+            /> 
+          </Grid>
         </Grid>
-      </Grid>
-      <br/>
-      <Divider/>
-      <Grid container>
+        <br/>
+        <Divider/>
+        <Grid container>
             <Grid item md={6}>
               <Typography variant="h5" style={{paddingTop:40}}> Current University</Typography>
             </Grid>
             <Grid item md={6}>
-          <TextField 
-            name="university"
-            variant="filled"
-            label="University Name" 
-            fullWidth
-            placeholder="Enter your MS University name" 
-            value={values.university}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className={classes.textf}
-            error={!!errors.university&&touched.university}
-            helperText={touched.university?errors.university:''}
-          /> 
+         <Autocomplete
+              options={universityNames} 
+              disableClearable
+              inputValue={!!values.university?values.university:''}
+              name="university"
+              onChange={(e, value) => {
+                setFieldValue("university", value)
+              }}
+              filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+                if (params.inputValue !== '' && !filtered.includes("Other")) {
+                  filtered.push("Other");
+                 }
+                  return filtered;
+              }}
+              onBlur={handleBlur}
+              className={classes.textf}
+              renderInput={params => (
+                <TextField 
+                  {...params} 
+                  name='university' 
+                  value={values.university} 
+                  onChange={handleChange} 
+                  onBlur={()=>(values.university=universityNames.includes(values.university)||values.university===''?values.university:"Other")} 
+                  error={!!errors.university&&touched.university} 
+                  helperText={!!touched.university?errors.university:''} 
+                  label="University" 
+                  margin="normal" 
+                  variant="filled" 
+                  fullWidth 
+                />
+              )}
+            />
           <Autocomplete
               freeSolo
+              disableClearable
               options={departments}
-              value={values.department}
+              inputValue={!!values.department?values.department:''}
               name="department"
               onChange={(e, value) => {
                 setFieldValue("department", value)
               }}
                 onBlur={handleBlur}
-            className={classes.textf}
+              className={classes.textf}
               renderInput={params => (
                 <TextField {...params} name='department' value={values.department} onChange={handleChange} error={!!errors.department&&touched.department} helperText={touched.department?errors.department:''}  label="Department" margin="normal" variant="filled" fullWidth />
               )}
@@ -383,23 +448,27 @@ export default function Register() {
             uniApplied: user.uniApplied,
             addDomain: '',
           }}
-          onSubmit={(values, { setSubmitting }) => {
+          onSubmit={async (values, { setSubmitting }) => {
             user.bio=values.bio;
-            user.domain=values.domain;
             user.tests=values.tests;
             user.facebook=values.facebook;
             user.twitter=values.twitter;
             user.linkedIn=values.linkedIn;
             user.github=values.github;
             user.uniApplied=values.uniApplied;
-            setUser(user);
-            setHasSaved(true);
-            handleOpenMsg();
-            setTimeout(() => {
-              setSubmitting(false);
-              handleNext();
-            }, 1000);   
-            console.log(user);
+            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
+            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
+            user.university= await getObjectId(universityNames,universityArr,user.university,true);
+            accepts.forEach(async (item,index)=>
+              user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
+            )
+            rejects.forEach(async (item,index)=>
+              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
+            )
+            values.domain.forEach(async (item,index)=>
+              user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
+            )
+            submitAxios();
             //@Backend Submit Function for Sign-Up
         }}
         >
@@ -439,26 +508,48 @@ export default function Register() {
               <Typography variant="h5"> Domains </Typography>
             </Grid>
             <Grid item xs={6}>
-              <TextField 
-                name='addDomain'
-                value={values.addDomain}
-                label="Domains"
-                placeholder="eg:Machine Learning, IOT"
-                fullWidth
-                variant="filled"
-                helperText="Press enter after adding each domain" 
-                onChange={handleChange}
-                onBlur={handleBlur}
-                onKeyPress={(event) => {
+             <Autocomplete
+              options={tagNames}
+              disableClearable
+              inputValue={!!values.addDomain?values.addDomain:''}
+              autoHighlight
+              getOptionDisabled={option => values.domain.includes(option)}
+              filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+                if (params.inputValue !== '' && !filtered.includes("Other")) {
+                  filtered.push("Other");
+                }
+                return filtered;
+              }}
+              name="addDomain"
+              onChange={(e, value) => {
+                setFieldValue("addDomain", value)
+              }}
+              onBlur={handleBlur}
+              renderInput={params => (
+                <TextField 
+                  {...params} 
+                  name='addDomain'
+                  value={values.addDomain}
+                  label="Domains"
+                  placeholder="eg:Machine Learning, IOT"
+                  fullWidth
+                  variant="filled"
+                  helperText="Press enter after adding each domain" 
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  onKeyPress={(event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
-                        if (values.addDomain.trim()){
+                        if (values.addDomain.trim() && !values.domain.includes(values.addDomain)){
                           setFieldValue('domain',[...values.domain,values.addDomain]);
                           setFieldValue('addDomain','');
                         }
                     }
-              }}
-          />
+                  }}
+                />
+              )}
+            />
             <br/>
             <br/>
             {values.domain.map((item,index)=>(
@@ -466,7 +557,9 @@ export default function Register() {
                 key={index}
                 label={item}
                 color="primary"
-                style={{marginRight:10}}
+                variant="outlined"
+                deleteIcon={<CloseIcon />}
+                style={{backgroundColor:'#E7F3EF',color:'#496961',marginRight:10,borderColor:'#E7F3EF',fontWeight:'bold'}}
                 onDelete={()=>setFieldValue('domain',values.domain.filter((domainName)=>domainName !==item))}
               />
             ))}
@@ -664,33 +757,38 @@ export default function Register() {
                       values.uniApplied.map((value,index) => (
                         <React.Fragment key={index}>
                           <div>
-                          <TextField 
-                            name={`uniApplied.${index}.name`}
-                            value={value.name}
+                          <Autocomplete
+                            options={universityNames} 
                             key={index}
-                            fullWidth
-                            type="text" 
-                            variant="filled"
-                            label="University Name" 
-                            placeholder="Enter the name" 
-                            onChange={handleChange}
+                            disableClearable
+                            inputValue={!!value.name?value.name:''}
+                            name={`uniApplied.${index}.name`}
+                            onChange={(e, value) => {
+                              setFieldValue(`uniApplied.${index}.name`, value)
+                            }}
+                            filterOptions={(options, params) => {
+                              const filtered = filter(options, params);
+                              if (params.inputValue !== ''&& !filtered.includes("Other")) {
+                              filtered.push("Other");
+                               }
+                                return filtered;
+                            }}
                             onBlur={handleBlur}
+                            renderInput={params => (
+                              <TextField {...params} 
+                                name={`uniApplied.${index}.name`} 
+                                value={value.name} 
+                                onChange={handleChange} 
+                                onBlur={()=>(value.name=universityNames.includes(value.name)||value.name===''?value.name:"Other")}
+                                label="University Name" 
+                                margin="normal" 
+                                variant="filled" 
+                                fullWidth 
+                              />
+                            )}
                           />
                         </div><br/>
                         <div>
-                          <TextField 
-                            label="Course"
-                            name={`uniApplied.${index}.course`} 
-                            placeholder="Course Name"
-                            key={index}
-                            value={value.course}
-                            fullWidth
-                            variant="filled" 
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                      </div><br/>
-                      <div>
                           <TextField 
                             select
                             label="Status"
@@ -705,13 +803,12 @@ export default function Register() {
                           >
                             <MenuItem value="Accepted">Accepted</MenuItem>
                             <MenuItem value="Rejected">Rejected</MenuItem>
-                            <MenuItem value="Prefer not to disclose">Prefer not to disclose</MenuItem>
                           </TextField>
                        </div><br/>
                       <Grid container spacing={2}>
                   {index===values.uniApplied.length-1?
                   <Grid item xs={6} style={{alignItems:'right'}}>
-                    <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',course:'',status:''})}>
+                    <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:''})}>
                           <AddIcon /> Add Application
                     </Button>
                   </Grid>
@@ -736,7 +833,7 @@ export default function Register() {
                   
                 :
                   <div>
-                    <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',course:'',status:''})}>
+                    <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:''})}>
                           <AddIcon /> Add University
                     </Button><br/>
                   </div>
@@ -747,18 +844,21 @@ export default function Register() {
           </Grid>
         </Grid>
         <Divider/><br/>
-        <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
+        <Button disabled={activeStep === 0} className={classes.button}
+          onClick={()=>{
+            handleBack();
+            user.bio=values.bio;
+            user.domain=values.domain;
+            user.tests=values.tests;
+            user.facebook=values.facebook;
+            user.twitter=values.twitter;
+            user.linkedIn=values.linkedIn;
+            user.github=values.github;
+            user.uniApplied=values.uniApplied;
+          }}
+        >
           Back
         </Button>
-        <Button 
-          type="submit" 
-          disabled={isSubmitting} 
-          variant="contained" 
-          color="primary"
-        >
-          Save Changes
-        </Button>
-        <br/><br/>
         <Button
           variant="contained"
           color="primary"
