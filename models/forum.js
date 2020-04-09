@@ -9,7 +9,7 @@ const forumSchema = new mongoose.Schema({
       validator: function(id) {
         return !this.isAnswer || !!id;
       },
-      message: 'parentId is reuired for an answers',
+      message: 'parentId is required for an answers',
       type: 'required',
       kind: 'required'
     }
