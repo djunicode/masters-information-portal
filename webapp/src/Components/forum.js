@@ -102,6 +102,7 @@ const useStyles = makeStyles(theme => ({
       // minHeight:'500px',
       padding:'5px',
       maxWidth:'800px',
+      margin:"15px",
   },
   content:
   {
@@ -120,6 +121,10 @@ const useStyles = makeStyles(theme => ({
     textAlign:"left",
     color:"black",
     fontFamily:"arial",
+    fontSize:"18px",
+    marginLeft:"5px",
+
+
   },
   question:{
     marginTop:"5px",
@@ -136,9 +141,6 @@ const useStyles = makeStyles(theme => ({
   image:{
     float:"left",
   },
-  dislike:{
-    fontFamily:"arial",
-  },
   button1:{
     color: "#123800",
     backgroundColor:"#8cd4af",
@@ -154,13 +156,12 @@ const useStyles = makeStyles(theme => ({
 
 function Trending() {
   const classes=useStyles();
-  
-  const [like, setLike] = useState(25);
-  const[bg,setBg]=useState("disabled");
-  const[bg1,setBg1]=useState("disabled");
-    const [dislike,setDislike] = useState(7);
+    function CustomLike(props){
+       const [like, setLike] = useState(props.like);
+      const[bg,setBg]=useState("disabled");
     const handleLike = e => {
-      if(like==25)
+
+      if(like==props.like)
       {
       const like1 = like +1; 
       setLike(like1);
@@ -168,30 +169,53 @@ function Trending() {
       }
       else
       {
-        const like2=like-1;
+        const like2 = like-1;
         setLike(like2);
         setBg("disabled");
       }
+    }
+      return(
+        <div>
+        <IconButton onClick={handleLike} color={bg}>
+          <ThumbUpIcon />
+          <div className={classes.like}>{like}</div>
+      </IconButton>
+    
+    </div>
+      )
     };
+     function CustomDislike(props){
+       const [dislike, setDislike] = useState(props.dislike);
+      const[bg1,setBg1]=useState("disabled");
     const handleDislike = e => {
-      if(dislike==7)
+
+      if(dislike==props.dislike)
       {
-        const dislike1 = dislike +1;  
-        setDislike(dislike1);
-        setBg1("secondary");
+      const dislike1 = dislike +1; 
+      setDislike(dislike1);
+      setBg1("secondary");      
       }
-      else{
-        const dislike2=dislike-1;
-        setDislike(dislike2)
+      else
+      {
+        const dislike2 = dislike-1;
+        setDislike(dislike2);
         setBg1("disabled");
       }
-      };
-  
+    }
+      return(
+        <div>
+        <IconButton onClick={handleDislike} color={bg1}>
+          <ThumbDownIcon />
+          <div className={classes.like}>{dislike}</div>
+      </IconButton>
+    </div>
+      )
+    };
   // const [selected, setSelected] = React.useState(false);
   
   return (
     <div className={classes.root} align="center"> 
-    <Paper className={classes.forumpage}>
+    <Paper className={classes.forumpage} >
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
         <div>
@@ -213,15 +237,8 @@ function Trending() {
 
       </CardContent>
       <CardActions disableSpacing>
-      <IconButton onClick={handleLike} color={bg}>
-          <ThumbUpIcon />
-          
-      </IconButton>
-      <span className={classes.like}>{like}</span>
-      <IconButton onClick={handleDislike} color={bg1}>
-          <ThumbDownIcon/>
-      </IconButton>
-      <span className={classes.dislike}>{dislike}</span>
+      <CustomLike like={7} />
+      <CustomDislike dislike={0} />
       <IconButton >
           <CommentIcon/>
       </IconButton>
@@ -239,8 +256,239 @@ function Trending() {
         
     </Card>
     </Paper>
+    <Paper className={classes.forumpage}>
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div>
+          <Typography className={classes.question} color="initial" align="left" gutterBottom>
+            Is django the best backend framework?
+          </Typography>
+        </div>
+        <div>
+      <Avatar className={classes.image} alt="abc" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Typography className={classes.username}>abc</Typography><br /><br />
+      </div>
+        <div className={classes.content}>
+        <Typography variant="body1" align="left">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+      </div>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <CustomLike like={25} />
+      <CustomDislike dislike={1} />
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+      <IconButton style={{marginRight:"150px"}}>
+          <ShareIcon />
+      </IconButton>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Django</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Flask</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Node</Button>
+      </div>
+        </CardActions>
+        
+    </Card>
+    </Paper>
+     <Paper className={classes.forumpage}>
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div>
+          <Typography className={classes.question} color="initial" align="left" gutterBottom>
+            Which code editor is best?
+          </Typography>
+        </div>
+        <div>
+      <Avatar className={classes.image} alt="XYZ" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Typography className={classes.username}>XYZ</Typography><br /><br />
+      </div>
+        <div className={classes.content}>
+        <Typography variant="body1" align="left">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+      </div>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <CustomLike like={101} />
+      <CustomDislike dislike={45} />
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+      <IconButton style={{marginRight:"150px"}}>
+          <ShareIcon />
+      </IconButton>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Sublime</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Vscode</Button>
+      </div>
+        </CardActions>
+        
+    </Card>
+    </Paper>
+
+    <Paper className={classes.forumpage} >
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div>
+          <Typography className={classes.question} color="initial" align="left" gutterBottom>
+            Will ML become an integral part of web development?
+          </Typography>
+        </div>
+        <div>
+      <Avatar className={classes.image} alt="ray" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Typography className={classes.username}>ray</Typography><br /><br />
+      </div>
+        <div className={classes.content}>
+        <Typography variant="body1" align="left">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+      </div>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <CustomLike like={90} />
+      <CustomDislike dislike={12} />
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+      <IconButton style={{marginRight:"150px"}}>
+          <ShareIcon />
+      </IconButton>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Machine Learning</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Web Development</Button>
+      </div>
+        </CardActions>
+        
+    </Card>
+    </Paper>
+
+    <Paper className={classes.forumpage}>
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div>
+          <Typography className={classes.question} color="initial" align="left" gutterBottom>
+              Scope of UI/UX?
+          </Typography>
+        </div>
+        <div>
+      <Avatar className={classes.image} alt="jake" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Typography className={classes.username}>jake</Typography><br /><br />
+      </div>
+        <div className={classes.content}>
+        <Typography variant="body1" align="left">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+      </div>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <CustomLike like={98} />
+      <CustomDislike dislike={25} />
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+      <IconButton style={{marginRight:"150px"}}>
+          <ShareIcon />
+      </IconButton>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>UI/UX</Button>
    
-    
+      </div>
+        </CardActions>
+        
+    </Card>
+    </Paper>
+   
+    <Paper className={classes.forumpage}>
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div>
+          <Typography className={classes.question} color="initial" align="left" gutterBottom>
+           Which is more important,competitive coding or web development?
+          </Typography>
+        </div>
+        <div>
+      <Avatar className={classes.image} alt="AMY" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Typography className={classes.username}>AMY</Typography><br /><br />
+      </div>
+        <div className={classes.content}>
+        <Typography variant="body1" align="left">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+      </div>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <CustomLike like={25} />
+      <CustomDislike dislike={29} />
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+      <IconButton style={{marginRight:"150px"}}>
+          <ShareIcon />
+      </IconButton>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>competitive coding</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Web Development</Button>
+      </div>
+        </CardActions>
+        
+    </Card>
+    </Paper>
+
+     <Paper className={classes.forumpage} >
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div>
+          <Typography className={classes.question} color="initial" align="left" gutterBottom>
+            When will be our exams cancel?
+          </Typography>
+        </div>
+        <div>
+      <Avatar className={classes.image} alt="student" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Typography className={classes.username}>Student</Typography><br /><br />
+      </div>
+        <div className={classes.content}>
+        <Typography variant="body1" align="left">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+      </div>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <CustomLike like={120} />
+      <CustomDislike dislike={2} />
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+      <IconButton style={{marginRight:"150px"}}>
+          <ShareIcon />
+      </IconButton>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>COVID-19</Button>
+      </div>
+        </CardActions>
+        
+    </Card>
+    </Paper>
+     
     
     </div>
     
@@ -252,37 +500,61 @@ function Trending() {
 const  New=(props)=>{
   const classes=useStyles();
   
-  const [like, setLike] = useState(15);
-  const[bg,setBg]=useState("disabled");
-  const[bg1,setBg1]=useState("disabled");
-    const [dislike,setDislike] = useState(5);
+  function CustomLike(props){
+       const [like, setLike] = useState(props.like);
+      const[bg,setBg]=useState("disabled");
     const handleLike = e => {
-      if(like==15)
+
+      if(like==props.like)
       {
       const like1 = like +1; 
       setLike(like1);
-      setBg("secondary");
+      setBg("secondary");      
       }
       else
       {
-        const like2=like-1;
+        const like2 = like-1;
         setLike(like2);
         setBg("disabled");
       }
+    }
+      return(
+        <div>
+        <IconButton onClick={handleLike} color={bg}>
+          <ThumbUpIcon />
+          <div className={classes.like}>{like}</div>
+      </IconButton>
+    
+    </div>
+      )
     };
+     function CustomDislike(props){
+       const [dislike, setDislike] = useState(props.dislike);
+      const[bg1,setBg1]=useState("disabled");
     const handleDislike = e => {
-      if(dislike==5)
+
+      if(dislike==props.dislike)
       {
-        const dislike1 = dislike +1;  
-        setDislike(dislike1);
-        setBg1("secondary");
+      const dislike1 = dislike +1; 
+      setDislike(dislike1);
+      setBg1("secondary");      
       }
-      else{
-        const dislike2=dislike-1;
-        setDislike(dislike2)
+      else
+      {
+        const dislike2 = dislike-1;
+        setDislike(dislike2);
         setBg1("disabled");
       }
-      };
+    }
+      return(
+        <div>
+        <IconButton onClick={handleDislike} color={bg1}>
+          <ThumbDownIcon />
+         <div className={classes.like}>{dislike}</div>
+      </IconButton>
+    </div>
+      )
+    };
   
   // const [selected, setSelected] = React.useState(false);
   
@@ -290,6 +562,44 @@ const  New=(props)=>{
     <div className={classes.root} align="center">
         
     
+    <Paper className={classes.forumpage}>
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div>
+        <Typography color="initial" align="left" className={classes.question} gutterBottom>
+        What is the best frontend language to use in a hackathon?
+        </Typography>
+
+        </div>
+        <div>
+      <Avatar alt="def" className={classes.image}  src="WP_Ironman-2560x1440_00000.jpg" align="left"  />
+      <Typography className={classes.username}>def</Typography><br /><br />
+      </div>
+        <Typography variant="body2" align="left" >
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <CustomLike like={55} />
+      <CustomDislike dislike={2} />
+      <IconButton>
+          <CommentIcon/>
+      </IconButton > 
+      <IconButton  style={{marginRight:"150px"}}>
+          <ShareIcon />
+      </IconButton>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>HTML</Button>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>React</Button>
+      
+      </div>
+        </CardActions>
+    </Card>
+    </Paper>
+
     <Paper className={classes.forumpage}>
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
@@ -311,16 +621,9 @@ const  New=(props)=>{
 
       </CardContent>
       <CardActions disableSpacing>
-      <IconButton onClick={handleLike} color={bg}>
-          <ThumbUpIcon />
-          
-      </IconButton>
-      <span className={classes.like}>{like}</span>
-      <IconButton onClick={handleDislike} color={bg1}>
-          <ThumbDownIcon/>
-      </IconButton>
-      <span className={classes.dislike}>{dislike}</span>
-      <IconButton  >
+      <CustomLike like={70} />
+      <CustomDislike dislike={19} />
+      <IconButton>
           <CommentIcon/>
       </IconButton > 
       <IconButton  style={{marginRight:"150px"}}>
@@ -335,6 +638,42 @@ const  New=(props)=>{
     </Card>
     </Paper>
    
+    <Paper className={classes.forumpage}>
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div>
+        <Typography color="initial" align="left" className={classes.question} gutterBottom>
+          Can github be tedious to work on in a hackathon?
+        </Typography>
+
+        </div>
+        <div>
+      <Avatar alt="UVW" className={classes.image}  src="WP_Ironman-2560x1440_00000.jpg" align="left"  />
+      <Typography className={classes.username}>UVW</Typography><br /><br />
+      </div>
+        <Typography variant="body2" align="left" >
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <CustomLike like={27} />
+      <CustomDislike dislike={5} />
+      <IconButton>
+          <CommentIcon/>
+      </IconButton > 
+      <IconButton  style={{marginRight:"150px"}}>
+          <ShareIcon />
+      </IconButton>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Github</Button>
+      
+      </div>
+        </CardActions>
+    </Card>
+    </Paper>
     
     
     </div>
@@ -345,38 +684,61 @@ const  New=(props)=>{
 
 const  User=(props)=>{
   const classes=useStyles();
-  
-  const [like, setLike] = useState(32);
-  const[bg,setBg]=useState("disabled");
-  const[bg1,setBg1]=useState("disabled");
-    const [dislike,setDislike] = useState(9);
+    function CustomLike(props){
+       const [like, setLike] = useState(props.like);
+      const[bg,setBg]=useState("disabled");
     const handleLike = e => {
-      if(like==32)
+
+      if(like==props.like)
       {
       const like1 = like +1; 
       setLike(like1);
-      setBg("secondary");
+      setBg("secondary");      
       }
       else
       {
-        const like2=like-1;
+        const like2 = like-1;
         setLike(like2);
         setBg("disabled");
       }
+    }
+      return(
+        <div>
+        <IconButton onClick={handleLike} color={bg}>
+          <ThumbUpIcon />
+          <div className={classes.like}>{like}</div>
+      </IconButton>
+    
+    </div>
+      )
     };
+     function CustomDislike(props){
+       const [dislike, setDislike] = useState(props.dislike);
+      const[bg1,setBg1]=useState("disabled");
     const handleDislike = e => {
-      if(dislike==9)
+
+      if(dislike==props.dislike)
       {
-        const dislike1 = dislike +1;  
-        setDislike(dislike1);
-        setBg1("secondary");
+      const dislike1 = dislike +1; 
+      setDislike(dislike1);
+      setBg1("secondary");      
       }
-      else{
-        const dislike2=dislike-1;
-        setDislike(dislike2)
+      else
+      {
+        const dislike2 = dislike-1;
+        setDislike(dislike2);
         setBg1("disabled");
       }
-      };
+    }
+      return(
+        <div>
+        <IconButton onClick={handleDislike} color={bg1}>
+          <ThumbDownIcon />
+         <div className={classes.like}>{dislike}</div>
+      </IconButton>
+    </div>
+      )
+    };
   
   // const [selected, setSelected] = React.useState(false);
   
@@ -406,15 +768,8 @@ const  User=(props)=>{
 
       </CardContent>
       <CardActions disableSpacing>
-      <IconButton onClick={handleLike} color={bg}>
-          <ThumbUpIcon />
-          
-      </IconButton>
-      <span className={classes.like} >{like}</span>
-      <IconButton onClick={handleDislike} color={bg1}>
-          <ThumbDownIcon/>
-      </IconButton>
-      <span className={classes.dislike}>{dislike}</span>
+     <CustomLike like={50} />
+     <CustomDislike dislike={16} />
       <IconButton >
           <CommentIcon/>
       </IconButton>
@@ -423,8 +778,47 @@ const  User=(props)=>{
           <ShareIcon />
       </IconButton>
       <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Django</Button>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Node</Button>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Mark 42</Button>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Stark</Button>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Endgame</Button>
+      </div>
+        </CardActions>
+    </Card>
+    </Paper>
+        <Paper className={classes.forumpage}>
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div>
+        <Typography color="initial" align="left"className={classes.question} gutterBottom>
+          When will nova come in MCU?
+        </Typography>
+
+        </div>
+        <div>
+      <Avatar  className={classes.image} alt="ghi" src="WP_Ironman-2560x1440_00000.jpg" align="left"  />
+      <Typography className={classes.username}>ghi</Typography><br /><br />
+      </div>
+
+        <Typography variant="body2" align="left" >
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      </Typography>
+
+      </CardContent>
+      <CardActions disableSpacing>
+     <CustomLike like={81} />
+     <CustomDislike dislike={52} />
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+
+      <IconButton  style={{marginRight:"150px"}}>
+          <ShareIcon />
+      </IconButton>
+      <div style={{marginLeft:"auto"}}>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>MCU</Button>
+      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Nova</Button>
       </div>
         </CardActions>
     </Card>
@@ -439,38 +833,61 @@ const  User=(props)=>{
 };
 const  University=(props)=>{
   const classes=useStyles();
-  
-  const [like, setLike] = useState(71);
-  const[bg,setBg]=useState("disabled");
-  const[bg1,setBg1]=useState("disabled");
-    const [dislike,setDislike] = useState(0);
+  function CustomLike(props){
+       const [like, setLike] = useState(props.like);
+      const[bg,setBg]=useState("disabled");
     const handleLike = e => {
-      if(like==71)
+
+      if(like==props.like)
       {
       const like1 = like +1; 
       setLike(like1);
-      setBg("secondary");
+      setBg("secondary");      
       }
       else
       {
-        const like2=like-1;
+        const like2 = like-1;
         setLike(like2);
         setBg("disabled");
       }
+    }
+      return(
+        <div>
+        <IconButton onClick={handleLike} color={bg}>
+          <ThumbUpIcon />
+          <div className={classes.like}>{like}</div>
+      </IconButton>
+    
+    </div>
+      )
     };
+     function CustomDislike(props){
+       const [dislike, setDislike] = useState(props.dislike);
+      const[bg1,setBg1]=useState("disabled");
     const handleDislike = e => {
-      if(dislike==0)
+
+      if(dislike==props.dislike)
       {
-        const dislike1 = dislike +1;  
-        setDislike(dislike1);
-        setBg1("secondary");
+      const dislike1 = dislike +1; 
+      setDislike(dislike1);
+      setBg1("secondary");      
       }
-      else{
-        const dislike2=dislike-1;
-        setDislike(dislike2)
+      else
+      {
+        const dislike2 = dislike-1;
+        setDislike(dislike2);
         setBg1("disabled");
       }
-      };
+    }
+      return(
+        <div>
+        <IconButton onClick={handleDislike} color={bg1}>
+          <ThumbDownIcon />
+          <div className={classes.like}>{dislike}</div>
+      </IconButton>
+    </div>
+      )
+    };
   
   // const [selected, setSelected] = React.useState(false);
   
@@ -500,15 +917,8 @@ const  University=(props)=>{
 
       </CardContent>
       <CardActions disableSpacing>
-      <IconButton onClick={handleLike} color={bg}>
-          <ThumbUpIcon />
-          
-      </IconButton>
-      <span className={classes.like}>{like}</span>
-      <IconButton onClick={handleDislike} color={bg1}>
-          <ThumbDownIcon/>
-      </IconButton>
-      <span className={classes.dislike}>{dislike}</span>
+      <CustomLike like={99} />
+      <CustomDislike dislike={12} />
       <IconButton >
           <CommentIcon/>
       </IconButton>
