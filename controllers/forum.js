@@ -4,7 +4,22 @@ const Tag=require("../models/tag")
 const logger = require('../config/logger');
 
 /**
- * @route POST "/api/forum"
+ * @apiGroup Forum
+ * @api {POST} /api/forum
+ * @apiDescription Post a Forum
+ * @apiPermission isLoggedIn
+ * @apiParams None
+ * @apiSuccess (201) {ObjectID} parentId -Id of the corresponding Forum (if the current document is an answer)
+ * @apiSuccess (201) {Boolean} isAnswer -Whether it is an answer or a question
+ * @apiSuccess (201) {String} title -Title of the forum (if the current document is a question)
+ * @apiSuccess (201) {String} text -Textbody of the forum/Answers (depending on isAnswer)
+ * @apiSuccess (201) {Date} createdAt -Time at which the forum was created
+ * @apiSuccess (201) {Date} updatedAt -Time at which the forum was updated
+ * @apiSuccess (201) {ObjectID} author -The author of the forum
+ * @apiSuccess (201) [{ObjectID}] upvoters -Array of objectIds of upvoters
+ * @apiSuccess (201) [{ObjectID}] downvoters -Array of objectIds of downvoters
+ * @apiSuccess (201) [{ObjectID}] tags - Array of objectIds of Tags
+ * @apiSuccess (201) [{ObjectID}] answers - Array of objectIds of Answers
  */
 exports.create = async (req, res) => {
   const doc = await Forum.create(req.body);
@@ -20,8 +35,22 @@ exports.create = async (req, res) => {
 };
 
 /**
- * @route GET "/api/forum?slugs[]=node&title=xyz"
- * Extra query parameter - slugs: [String], array of tag slugs
+ * @apiGroup Forum
+ * @api {GET} /api/forum?slugs[]=node&title=xyz
+ * @apiDescription Get all Forums in db
+ * @apiPermission isLoggedIn
+ * @apiParams slugs: [String], array of tag slugs and title 
+ * @apiSuccess (200) {ObjectID} parentId -Id of the corresponding Forum (if the current document is an answer)
+ * @apiSuccess (200) {Boolean} isAnswer -Whether it is an answer or a question
+ * @apiSuccess (200) {String} title -Title of the forum (if the current document is a question)
+ * @apiSuccess (200) {String} text -Textbody of the forum/Answers (depending on isAnswer)
+ * @apiSuccess (200) {Date} createdAt -Time at which the forum was created
+ * @apiSuccess (200) {Date} updatedAt -Time at which the forum was updated
+ * @apiSuccess (200) {ObjectID} author -The author of the forum
+ * @apiSuccess (200) [{ObjectID}] upvoters -Array of objectIds of upvoters
+ * @apiSuccess (200) [{ObjectID}] downvoters -Array of objectIds of downvoters
+ * @apiSuccess (200) [{ObjectID}] tags - Array of objectIds of Tags
+ * @apiSuccess (200) [{ObjectID}] answers - Array of objectIds of Answers
  */
 exports.getAll = async (req, res) => {
   let queryFilter = req.query;
@@ -49,7 +78,22 @@ exports.getAll = async (req, res) => {
 };
 
 /**
- * @route GET "/api/forum/:id"
+ * @apiGroup Forum
+ * @api {GET} /api/forum/:id
+ * @apiDescription Get a Forum by its id
+ * @apiPermission None
+ * @apiParams id of the Forum
+ * @apiSuccess (200) {ObjectID} parentId -Id of the corresponding Forum
+ * @apiSuccess (200) {Boolean} isAnswer -Whether it is an answer
+ * @apiSuccess (200) {String} title -Title of the forum
+ * @apiSuccess (200) {String} text -Textbody of the forum/Answers
+ * @apiSuccess (200) {Date} createdAt -Time at which the forum was created
+ * @apiSuccess (200) {Date} updatedAt -Time at which the forum was updated
+ * @apiSuccess (200) {ObjectID} author -The author of the forum
+ * @apiSuccess (200) [{ObjectID}] upvoters -Array of objectIds of upvoters
+ * @apiSuccess (200) [{ObjectID}] downvoters -Array of objectIds of downvoters
+ * @apiSuccess (200) [{ObjectID}] tags - Array of objectIds of Tags
+ * @apiSuccess (200) [{ObjectID}] answers - Array of objectIds of Answers
  */
 exports.getById = async (req, res) => {
   const { id } = req.params;
@@ -65,7 +109,12 @@ exports.getById = async (req, res) => {
 };
 
 /**
- * @route POST "/api/forum/:id/upvote"
+ * @apiGroup Forum
+ * @api {POST} /api/forum/:id/upvote
+ * @apiDescription Upvote a Forum by its id
+ * @apiPermission isLoggedIn
+ * @apiParams id of the forum
+ * @apiSuccess (201) {} empty object
  */
 exports.upvoteById = async (req, res) => {
   const { id } = req.params;
@@ -96,7 +145,12 @@ exports.upvoteById = async (req, res) => {
 };
 
 /**
- * @route POST "/api/forum/:id/downvote"
+ * @apiGroup Forum
+ * @api {POST} /api/forum/:id/downvote
+ * @apiDescription Downvote a Forum by its id
+ * @apiPermission isLoggedIn
+ * @apiParams id of the forum
+ * @apiSuccess (201) {} empty object
  */
 exports.downvoteById = async (req, res) => {
   const { id } = req.params;
@@ -124,7 +178,12 @@ exports.downvoteById = async (req, res) => {
 };
 
 /**
- * @route POST "/api/forum/:id/pin"
+ * @apiGroup Forum
+ * @api {POST} /api/forum/:id/pin
+ * @apiDescription Pin a Forum by its id
+ * @apiPermission isLoggedIn
+ * @apiParams id of the forum
+ * @apiSuccess (201) {} empty object
  */
 exports.pinById = async (req, res) => {
   const { id } = req.params;
@@ -147,7 +206,22 @@ exports.pinById = async (req, res) => {
 };
 
 /**
- * @route PUT "/api/forum/:id"
+ * @apiGroup Forum
+ * @api {PUT} /api/forum/:id
+ * @apiDescription Update a Forum by its id
+ * @apiPermission LoggedIn and isOwner
+ * @apiParams id of the Forum
+ * @apiSuccess (200) {ObjectID} parentId -Id of the corresponding Forum
+ * @apiSuccess (200) {Boolean} isAnswer -Whether it is an answer
+ * @apiSuccess (200) {String} title -Title of the forum
+ * @apiSuccess (200) {String} text -Textbody of the forum/Answers
+ * @apiSuccess (200) {Date} createdAt -Time at which the forum was created
+ * @apiSuccess (200) {Date} updatedAt -Time at which the forum was updated
+ * @apiSuccess (200) {ObjectID} author -The author of the forum
+ * @apiSuccess (200) [{ObjectID}] upvoters -Array of objectIds of upvoters
+ * @apiSuccess (200) [{ObjectID}] downvoters -Array of objectIds of downvoters
+ * @apiSuccess (200) [{ObjectID}] tags - Array of objectIds of Tags
+ * @apiSuccess (200) [{ObjectID}] answers - Array of objectIds of Answers
  */
 exports.updateById = async (req, res) => {
   const { id } = req.params;
@@ -163,7 +237,12 @@ exports.updateById = async (req, res) => {
 };
 
 /**
- * @route DELETE "/api/forum/:id"
+ * @apiGroup Forum
+ * @api {DELETE} /api/forum/:id 
+ * @apiDescription Delete a Forum by its id
+ * @apiPermission LoggedIn and isOwner
+ * @apiParams id of the Forum
+ * @apiSuccess (200) {String} msg Contains value "ok"
  */
 exports.deleteById = async (req, res) => {
   const { id } = req.params;
