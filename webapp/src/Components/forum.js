@@ -61,8 +61,9 @@ const useStyles1 = makeStyles(theme => ({
       // borderRadius:'25px',
       width:'300px',
       textAlign:"center",
-      margin:'5px',
+      // margin:'5px',
       backgroundColor:"#F8F8F8",
+      display:"flex",
   },
   paper: {
     padding: theme.spacing(2),
@@ -75,7 +76,7 @@ const useStyles1 = makeStyles(theme => ({
 
 
 const useStyles = makeStyles(theme => ({
-    root: {
+  root: {
     flexGrow: 1,
     // maxWidth:1100,
     // float:'right',
@@ -88,20 +89,17 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
+    
   },
   iconButton: {
     padding: 10,
   },
-  search:{
-      borderRadius:'25px',
-      width:'300px',
 
-  },
   forumpage:{
       // marginTop:'10px',
       // minHeight:'500px',
       padding:'5px',
-      maxWidth:'800px',
+      maxWidth:'1000px',
       margin:"15px",
   },
   content:
@@ -1006,7 +1004,14 @@ export default function Forum() {
 
   return (
     <div className={classes.root} align="center"> 
-    <Paper elevation={0} variant="outlined" component="form" className={classes.search}>
+    
+      <div className={classes.demo1}>
+       
+          <Grid>
+          <Grid item xs = {3}></Grid>
+          <Grid item xs = {9}>    
+          <Typography align="left" style={{color:"#123800",fontWeight:"bold",fontSize:"30px",marginLeft:"10px"}}>Feed</Typography>
+          <Paper elevation={0} variant="outlined" component="form" className={classes.search}>
       <InputBase
         className={classes.input}
         placeholder="Search A Forum"
@@ -1016,11 +1021,6 @@ export default function Forum() {
         <SearchIcon />
       </IconButton>
     </Paper>
-      <div className={classes.demo1}>
-          <Grid>
-          <Grid item xs = {5}></Grid>
-          <Grid item xs = {7}>    
-          <Typography align="left" style={{color:"#123800",fontWeight:"bold",fontSize:"25px"}}>Feed</Typography>
         <AntTabs value={value} onChange={handleChange} aria-label="ant example" >
           <AntTab className="tabu" label="Trending" />
           <AntTab className="tabu" label="New" />
