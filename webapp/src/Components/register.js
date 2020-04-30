@@ -1,5 +1,5 @@
 import React,{useEffect} from 'react';
-import {getObjectId} from './tagRequests.js';
+import {getObjectId,getTag} from '../Helpers/fetchRequests.js';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -55,30 +55,14 @@ export default function Register(props) {
 
   useEffect(()=>{
     if(!componentDidMount){
-      axios.get('/api/tags')
-      .then(function(response){
-        response.data.forEach((item,index)=>{
-          if(item.isSchool){
-            if(!universityArr.includes(item)){
-              setUniversityArr(universityArr=>[...universityArr,item])
-            }
-            if(!universityNames.includes(item.name)){
-              setUniversityNames(universityNames=>[...universityNames,item.name])
-            }
-          }
-          else{
-            if(!tagArr.includes(item)){
-              setTagArr(tagArr=>[...tagArr,item]);
-            }
-            if(!tagNames.includes(item.name)){
-              setTagNames(tagNames=>[...tagNames,item.name]);
-            }
-          }
-        });
-      })
-      .catch(function(error){
-        console.error(error)
-      });
+      async function fetchData(){
+        var tags = await getTag()
+        setUniversityArr(tags.universityArr)
+        setUniversityNames(tags.universityNames)
+        setTagArr(tags.tagArr)
+        setTagNames(tags.tagNames)
+      }
+      fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[componentDidMount])
