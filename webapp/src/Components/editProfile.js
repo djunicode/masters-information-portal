@@ -1,5 +1,5 @@
 import React,{useEffect} from 'react';
-import {getTagById,getObjectId} from './tagRequests.js';
+import {getTagById,getObjectId,getTag,getUserInfo} from '../Helpers/fetchRequests.js';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
 const filter = createFilterOptions();
 function EditProfile(props) {
 
-	const [user] = React.useState({
+	const [user,setUser] = React.useState({
     	pic: '',
         name: '',
         username: '',
@@ -87,82 +87,24 @@ function EditProfile(props) {
 
 	const[token1,setToken1]=React.useState(null);
 	useEffect(()=>{
-		const token = Cookies.get('jwt');
-		setToken1(token)
-		if(!mounted){
-		   axios.get('/api/tags')
-		      	.then(function(res){
-		        res.data.forEach((item)=>{
-		          if(item.isSchool){
-		            if(!universityArr.includes(item)){
-		              setUniversityArr(universityArr=>[...universityArr,item])
-		              universityArr.push(item)
-		            }
-		            if(!universityNames.includes(item.name)){
-		              universityNames.push(item.name)
-		              setUniversityNames(universityNames)
-		            }
-		          }
-		          else{
-		            if(!tagArr.includes(item)){
-		              tagArr.push(item)
-		              setTagArr(tagArr)
-		            }
-		            if(!tagNames.includes(item.name)){
-		              tagNames.push(item.name)
-		              setTagNames(tagNames)
-		            }
-		          }
-		        });
+		//Fetch data function definition
+		async function fetchData(){
+			const token = Cookies.get('jwt');
+			setToken1(token)
+			if(!mounted){
+				var tags = await getTag()
+				setUniversityArr(tags.universityArr)
+			   	setUniversityNames(tags.universityNames)
+			   	setTagArr(tags.tagArr)
+			   	setTagNames(tags.tagNames)
 				if(!!token){
-			 	axios.get('api/users/me/', {
-				    headers: {
-				      Authorization: token
-				    }
-				  })
-				  .then(function (response) {
-				  	user.id=response.data._id
-				    user.email=response.data.email;
-				    user.name=response.data.name;
-				    user.bio=response.data.bio;
-				    user.tests=response.data.timeline;
-				    response.data.timeline.forEach((item,index)=>{
-				    	user.tests[index].name=item.name;
-				    	user.tests[index].score=item.score;
-				    	user.tests[index].date=item.date.slice(0,10);
-				    })
-				    user.department=response.data.department;
-				    user.gradDate=response.data.graduationDate.slice(0,10);
-				    user.university=response.data.currentSchool;
-				    response.data.accepts.forEach(async (item,index)=>{
-		      			var obj={};
-		            	obj.name=getTagById(item,universityArr);
-		            	obj.status="Accepted";
-		            	user.uniApplied.push(obj);
-		            })
-		            response.data.rejects.forEach(async (item,index)=>{
-		              	var obj={};
-		                obj.name=getTagById(item,universityArr);
-		                obj.status="Rejected";
-		                user.uniApplied.push(obj);
-		          	})
-				    user.github=response.data.githubUrl;
-				    user.facebook=response.data.facebookUrl;
-				    user.linkedIn=response.data.linkedinUrl;
-				    user.twitter=response.data.twitterUrl;
-				    response.data.domains.forEach(async (item,index)=>{
-		                user.domain.push(getTagById(item,tagArr));
-		          	});
-				    user.accepts=response.accepts;
-				    user.rejects=response.rejects;
+			 		var userInfo = await getUserInfo(token,tags.tagArr,tags.universityArr)
+			 		setUser(userInfo)
 					setMounted(true);
-				  })
-				  .catch(function (error) {
-				    console.log("Failed to fetch user details");
-				  });  
-				}
-		    });
+			  	} 
+			}
 		}
+		fetchData();	//Calling fetchData function
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[])
 
