@@ -201,7 +201,7 @@ function NavBar(props) {
                 <Divider />
                 <NavLink
                     className={classes.link}
-                    to='/'
+                    to='/resources'
                 >
                     <ListItem button>
                         <ListItemIcon>
