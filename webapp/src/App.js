@@ -29,7 +29,6 @@ function App() {
       return
     }
     else{
-    console.log(1)
       axios.post('/api/users/refresh/',{
         refreshToken: refToken
       })
