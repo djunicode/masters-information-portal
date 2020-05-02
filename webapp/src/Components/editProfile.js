@@ -79,12 +79,10 @@ function EditProfile(props) {
     });
 
 	const [mounted,setMounted] = React.useState(false);
-
 	const [universityArr,setUniversityArr]=React.useState([]);
     const [universityNames,setUniversityNames]=React.useState([]);
     const [tagArr,setTagArr]=React.useState([]);
     const [tagNames,setTagNames]=React.useState([]);  
-
 	const[token1,setToken1]=React.useState(null);
 	useEffect(()=>{
 		//Fetch data function definition
