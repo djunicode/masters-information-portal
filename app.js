@@ -33,7 +33,7 @@ app.use(limiter);
 // helmet
 app.use(helmet());
 app.use(helmet.contentSecurityPolicy({ directives }));
-app.use(helmet.noCache());
+// app.use(helmet.noCache()); //helmet noCache is deprecated
 
 // cors
 app.use(cors(options));
