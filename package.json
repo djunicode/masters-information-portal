@@ -7,6 +7,9 @@
   "private": false,
   "main": "index.js",
   "scripts": {
+    "build": "npm run build-backend && npm run build-frontend",
+    "build-backend": "npm install && npm run doc",
+    "build-frontend": "cd ./webapp && npm install && npm run build && cd ..",
     "start": "node index.js",
     "start:dev": "nodemon index.js",
     "test": "mocha",

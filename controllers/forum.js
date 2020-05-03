@@ -30,7 +30,7 @@ exports.create = async (req, res) => {
   if (req.body.isAnswer) {
     const forum = await Forum.findByIdAndUpdate(req.body.parentId, { $push: { answers: doc._id } });
     logger.info(
-      `Created answer ${doc._id} to question ${forum._id} posted by user ${req.body.author}`,
+      `Created answer ${doc._id} to question ${forum._id} posted by user ${req.body.author}`
     );
   }
 
@@ -43,7 +43,7 @@ exports.create = async (req, res) => {
  * @api {GET} /api/forum?slugs[]=node&title=xyz Get questions/ answers
  * @apiDescription Get all Forums in db. Can also filter by tag slugs (slugs[]=node,harvard,stanford).
  * @apiPermission isLoggedIn
- * @apiParams slugs: [String], array of tag slugs and title
+ * @apiParam slugs: [String], array of tag slugs and title
  * @apiSuccess (200) {ObjectID} parentId -Id of the corresponding Forum (if the current document is an answer)
  * @apiSuccess (200) {Boolean} isAnswer -Whether it is an answer or a question
  * @apiSuccess (200) {String} title -Title of the forum (if the current document is a question)
@@ -86,7 +86,7 @@ exports.getAll = async (req, res) => {
  * @api {GET} /api/forum/:id Get a question/ answer
  * @apiDescription Get a Forum by its id
  * @apiPermission None
- * @apiParams id of the Forum
+ * @apiParam id of the Forum
  * @apiSuccess (200) {ObjectID} parentId -Id of the corresponding Forum
  * @apiSuccess (200) {Boolean} isAnswer -Whether it is an answer
  * @apiSuccess (200) {String} title -Title of the forum
@@ -117,7 +117,7 @@ exports.getById = async (req, res) => {
  * @api {POST} /api/forum/:id/upvote Upvote a question/ answer
  * @apiDescription Upvote a Forum by its id
  * @apiPermission isLoggedIn
- * @apiParams id of the forum
+ * @apiParam id of the forum
  * @apiSuccess (201) {None} No object
  */
 exports.upvoteById = async (req, res) => {
@@ -153,7 +153,7 @@ exports.upvoteById = async (req, res) => {
  * @api {POST} /api/forum/:id/downvote Downvote a question/ answer
  * @apiDescription Downvote a Forum by its id
  * @apiPermission isLoggedIn
- * @apiParams id of the forum
+ * @apiParam id of the forum
  * @apiSuccess (201) {None} No object
  */
 exports.downvoteById = async (req, res) => {
@@ -186,7 +186,7 @@ exports.downvoteById = async (req, res) => {
  * @api {POST} /api/forum/:id/pin Pin a question/ answer to user profile
  * @apiDescription Pin a Forum by its id
  * @apiPermission isLoggedIn
- * @apiParams id of the forum
+ * @apiParam id of the forum
  * @apiSuccess (201) {None} No object
  */
 exports.pinById = async (req, res) => {
@@ -214,7 +214,7 @@ exports.pinById = async (req, res) => {
  * @api {PUT} /api/forum/:id
  * @apiDescription Update a Forum by its id
  * @apiPermission LoggedIn and isOwner
- * @apiParams id of the Forum
+ * @apiParam id of the Forum
  * @apiSuccess (200) {ObjectID} parentId -Id of the corresponding Forum
  * @apiSuccess (200) {Boolean} isAnswer -Whether it is an answer
  * @apiSuccess (200) {String} title -Title of the forum
@@ -245,7 +245,7 @@ exports.updateById = async (req, res) => {
  * @api {DELETE} /api/forum/:id Delete a question/ answer
  * @apiDescription Delete a Forum by its id
  * @apiPermission LoggedIn and isOwner
- * @apiParams id of the Forum
+ * @apiParam id of the Forum
  * @apiSuccess (200) {String} msg - Contains value "ok"
  */
 exports.deleteById = async (req, res) => {

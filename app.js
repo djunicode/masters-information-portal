@@ -38,14 +38,6 @@ app.use(helmet.contentSecurityPolicy({ directives }));
 // cors
 app.use(cors(options));
 
-// Server static assests if in producition
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'webapp', 'build')));
-  app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'webapp', 'build', 'index.html'));
-  });
-}
-
 // --- Routes
 app.use('/api/users', userRouter);
 app.use('/api/tags', tagRouter);
@@ -55,6 +47,11 @@ app.use('/api/forum', forumRouter);
 // --- Documentation
 app.use('/docs/models', express.static(path.join(__dirname, '/docs/models')));
 app.use('/docs/routes', express.static(path.join(__dirname, '/docs/routes')));
+
+app.use(express.static(path.join(__dirname, 'webapp', 'build')));
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'webapp', 'build', 'index.html'));
+});
 
 // TODO: add 404 resource not found route
 
