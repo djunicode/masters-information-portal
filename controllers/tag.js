@@ -2,7 +2,8 @@ const Tag = require('../models/tag');
 const logger = require('../config/logger');
 
 /**
- * @apiDefine Tag
+ * @apiDefine Tag Tag
+ * Developed by Jay and Yashodhan
  */
 
 /**

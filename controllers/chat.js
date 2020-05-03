@@ -2,14 +2,14 @@ const Chat = require('../models/chat');
 const logger = require('../config/logger');
 
 /**
- * @apiDefine Chat
+ * @apiDefine Chat Chat
+ * Developed by Heth
  */
-
 
 
  /** 
  * @apiGroup Chat
- * @api {POST} /api/chats/
+ * @api {POST} /api/chats/ Create new chat
  * @apiDescription Create new chat object
  * @apiPermission All logged in users with jwt token 
  * @apiParam Sender ObjectID
