@@ -9,7 +9,7 @@ const forumSchema = new mongoose.Schema({
       validator: function(id) {
         return !this.isAnswer || !!id;
       },
-      message: 'parentId is reuired for an answers',
+      message: 'parentId is required for an answers',
       type: 'required',
       kind: 'required'
     }
@@ -54,5 +54,8 @@ const forumSchema = new mongoose.Schema({
     }
   ]
 });
+
+// Indexing the forum model for search
+forumSchema.index({title:"text",text:"text"},{weight:{title:3,text:2}})
 
 module.exports = mongoose.model('Forum', forumSchema);
