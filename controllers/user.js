@@ -99,7 +99,7 @@ exports.login = async (req, res) => {
  * @apiSuccess (200) {String} token JWT Token
  * */
 exports.refresh = async (req, res) => {
-  if ((req.body.refreshToken) && (req.body.refreshToken in tokenList)) {
+  if (req.body.refreshToken && req.body.refreshToken in tokenList) {
     const token = await createJwt({ _id: tokenList[req.body.refreshToken].id });
     res.status(200).send({
       token,
