@@ -11,7 +11,7 @@ router.post('/register', asyncHandler(controller.register));
 router.post('/login', asyncHandler(controller.login));
 router.post('/refresh',asyncHandler(controller.refresh))
 router.post('/upload',authRequired,upload.single('avatar'),asyncHandler(controller.uploadProfilePhoto));
-router.get('/me', authRequired,hasRoles([roles.ADMIN]),asyncHandler(controller.getProfile));
+router.get('/me', authRequired,asyncHandler(controller.getProfile));
 router.get('/:id', asyncHandler(controller.getById));
 router.get('/:id/avatar', asyncHandler(controller.getProfilePhoto));
 router.put('/me', authRequired, asyncHandler(controller.updateProfile));
