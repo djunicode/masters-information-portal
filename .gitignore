@@ -112,6 +112,3 @@ dist
 .vscode
 .vscode-test
 
-# npm lock file, would prefer yarn locks
-package-lock.json
-yarn.lock
