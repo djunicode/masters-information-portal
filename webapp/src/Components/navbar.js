@@ -210,7 +210,7 @@ function NavBar(props) {
                 
                 {props.loggedIn?
                 <React.Fragment>
-                    <ListItem button onClick={()=>{Cookies.remove('jwt');props.setLoggedIn(0)}}>
+                    <ListItem button onClick={()=>{Cookies.remove('jwt');Cookies.remove('refreshToken');props.setLoggedIn(0)}}>
                         <ListItemIcon>
                             <AccountCircleIcon />
                         </ListItemIcon>
