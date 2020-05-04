@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+import defaultProfileIcon from '../../assets/images/profile-icon.png';
 import Toolbar from '@material-ui/core/Toolbar';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -102,7 +103,7 @@ function NavBar(props) {
                 <React.Fragment>
                     <br/>
                         <div align="center">
-                            <img src={url} alt="Avatar" onError={()=>{setUrl('https://www.nicepng.com/png/full/202-2024580_png-file-profile-icon-vector-png.png')}} height={120} width={120} style={{borderRadius:"50%"}}/>
+                            <img src={url} alt="Avatar" onError={()=>{setUrl(defaultProfileIcon)}} height={120} width={120} style={{borderRadius:"50%"}}/>
                         </div>
                     <Typography variant="h6" style={{textAlign:"center"}}>{name}</Typography>
                     <br/>

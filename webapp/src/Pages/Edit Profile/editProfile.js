@@ -1,5 +1,6 @@
 import React,{useEffect} from 'react';
-import {getTagById,getObjectId,getTag,getUserInfo} from '../Helpers/fetchRequests.js';
+import {getTagById,getObjectId,getTag,getUserInfo} from '../../Helpers/fetchRequests.js';
+import CheckLogin from '../../Helpers/checkLogin.js'
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -100,6 +101,9 @@ function EditProfile(props) {
 			 		setUser(userInfo)
 					setMounted(true);
 			  	} 
+			  	else{
+			  		setMounted(true)
+			  	}
 			}
 		}
 		fetchData();	//Calling fetchData function
@@ -121,7 +125,7 @@ function EditProfile(props) {
     const departments = ["Computers", "IT", "Mechanical", "Bio-Med", "Production", "Electronics", "EXTC", "Chemical", "Civil", "Aeronautical", "Mining", "Agricultural", "Metallurgical"];
     return (
 		<React.Fragment>
-		  {!props.loggedIn?<Redirect to='/' />:null}
+		  <CheckLogin/>
 		  <div className={classes.root} style={{paddingTop:'45px'}}>
       		<div align="center">
       			<Typography variant="h4" className={classes.header}><b>Edit Profile</b></Typography><br/><br/>
@@ -166,9 +170,9 @@ function EditProfile(props) {
 			            if (values.gradDate.trim()===''){
 			            	errors.gradDate = "Cannot be empty"
 			            }
-			            // if (values.university.trim()===''){
-			            // 	errors.university = "Cannot be empty"
-			            // }
+			            if (values.university.trim()===''){
+			            	errors.university = "Cannot be empty"
+			            }
 			            return errors;
 			          }}
 			          onSubmit={async (values, { setSubmitting }) => {
@@ -381,13 +385,6 @@ function EditProfile(props) {
               options={tagNames}
               disableClearable
               inputValue={!!values.addDomain?values.addDomain:''}
-              filterOptions={(options, params) => {
-				  const filtered = filter(options, params);
-					if (params.inputValue !== ''&& !filtered.includes("Other")) {
-					filtered.push("Other");
-				   }
-				    return filtered;
-			  }}
               autoHighlight
               getOptionDisabled={option => values.domain.includes(option)}
               name="addDomain"
