@@ -10,7 +10,7 @@ if (parsedEnv.error) {
 }
 
 const config = {
-	port: Number(process.env.PORT) || 3000,
+	port: Number(process.env.PORT) || 8000,
 	host: process.env.HOST || 'localhost',
 	jwtSecret: process.env.JWT_SECRET,
 	jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,

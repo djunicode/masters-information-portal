@@ -1,5 +1,6 @@
 import React from 'react';
 import RootRouter from './Components/router';
+import Hidden from '@material-ui/core/Hidden';
 import {MuiThemeProvider,createMuiTheme} from '@material-ui/core';
 import {blue} from '@material-ui/core/colors';
 import Cookies from 'js-cookie';
@@ -22,8 +23,8 @@ function App() {
 
   //Function to be called while Refreshing a token
   const handleTokenRefresh = () => {
-    const refToken = Cookies.get('refToken')
-    if(!refToken || !!Cookies.get('jwt')){
+    const refToken = Cookies.get('refreshToken')
+    if(!refToken){
       setLoggedIn(0);
       return
     }
@@ -42,7 +43,7 @@ function App() {
   };
 
   React.useEffect(()=>{
-        const token = Cookies.get('jwt');
+        const token = Cookies.get('jwt')
         if(!!token){
           axios.get('api/users/me/', {
             headers: {
@@ -64,7 +65,14 @@ function App() {
   return (
     <div className="App">
 		  <MuiThemeProvider theme={theme}>
-    		<RootRouter loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>
+        <Hidden smDown implementation="css">
+          <div style={{marginLeft:250}}>
+    		    <RootRouter loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>
+          </div>
+        </Hidden>
+        <Hidden smUp implementation="css">
+          <RootRouter loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>
+        </Hidden>
     	</MuiThemeProvider>
     </div>
   );

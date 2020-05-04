@@ -78,12 +78,12 @@ export const getTag = async () => {
 */
 export const getUserInfo = async(token,tagArr,universityArr) => {
 	if(!!token){
-		try{
-	 		var response = await axios.get('api/users/me/', {
+ 		var response = await axios.get('api/users/me/', {
 		    headers: {
 		      Authorization: token
 		    }
-		  })
+	  	})
+		try{
 			var user = {
 		    	pic: '',
 		        name: '',
@@ -106,27 +106,29 @@ export const getUserInfo = async(token,tagArr,universityArr) => {
 		    user.email=response.data.email;
 		    user.name=response.data.name;
 		    user.bio=response.data.bio;
-		    user.tests=response.data.timeline;
-		    response.data.timeline.forEach((item,index)=>{
-		    	user.tests[index].name=item.name;
-		    	user.tests[index].score=item.score;
+		    user.tests=response.data.testTimeline;
+		    user.tests.forEach((item,index)=>{
 		    	user.tests[index].date=item.date.slice(0,10);
 		    })
 		    user.department=response.data.department;
 		    user.gradDate=response.data.graduationDate.slice(0,10);
 		    user.university=response.data.currentSchool;
-		    response.data.accepts.forEach(async (item,index)=>{
-	  			var obj={};
-	        	obj.name=getTagById(item,universityArr);
-	        	obj.status="Accepted";
-	        	user.uniApplied.push(obj);
-	        })
-	        response.data.rejects.forEach(async (item,index)=>{
-	          	var obj={};
-	            obj.name=getTagById(item,universityArr);
-	            obj.status="Rejected";
-	            user.uniApplied.push(obj);
-	      	})
+		    if(response.data.accepts.length>0){
+		   		response.data.accepts.forEach(async (item,index)=>{
+	  				var obj={};
+	       		 	obj.name=getTagById(item,universityArr);
+	     	   		obj.status="Accepted";
+	        		user.uniApplied.push(obj);
+	        	})
+			}
+			if(response.data.rejects.length>0){
+		        response.data.rejects.forEach(async (item,index)=>{
+		          	var obj={};
+	    	        obj.name=getTagById(item,universityArr);
+	       		    obj.status="Rejected";
+	    	        user.uniApplied.push(obj);
+	    	  	})
+	    	}
 		    user.github=response.data.githubUrl;
 		    user.facebook=response.data.facebookUrl;
 		    user.linkedIn=response.data.linkedinUrl;

@@ -79,12 +79,10 @@ function EditProfile(props) {
     });
 
 	const [mounted,setMounted] = React.useState(false);
-
 	const [universityArr,setUniversityArr]=React.useState([]);
     const [universityNames,setUniversityNames]=React.useState([]);
     const [tagArr,setTagArr]=React.useState([]);
     const [tagNames,setTagNames]=React.useState([]);  
-
 	const[token1,setToken1]=React.useState(null);
 	useEffect(()=>{
 		//Fetch data function definition
@@ -355,30 +353,30 @@ function EditProfile(props) {
 	      </Grid>
 	      <Divider/>
         <Grid container className={classes.container}>
-            <Grid item xs={6} style={{paddingTop:30}}>
+            <Grid item md={6} style={{paddingTop:30}}>
               <Typography variant="h5"> Biography </Typography>
             </Grid>
-            <Grid item xs={6}>
-          <TextField 
-            name="bio"
-            label="Bio"
-            value={values.bio}
-            placeholder="Describe Yourself"
-            fullWidth
-            multiline
-            rows={4}
-            variant="filled"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            />
-          </Grid>
-        </Grid>
-        <Divider/>
-        <Grid container className={classes.container}>
-            <Grid item xs={6}>
+            <Grid item md={6}>
+	          <TextField 
+	            name="bio"
+	            label="Bio"
+	            value={values.bio}
+	            placeholder="Describe Yourself"
+	            fullWidth
+	            multiline
+	            rows={4}
+	            variant="filled"
+	            onChange={handleChange}
+	            onBlur={handleBlur}
+	            />
+	          </Grid>
+	        </Grid>
+	        <Divider/>
+	        <Grid container className={classes.container}>
+            <Grid item md={6}>
               <Typography variant="h5" style={{paddingTop:10}}> Domains </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item md={6}>
               <Autocomplete
               options={tagNames}
               disableClearable
@@ -438,10 +436,10 @@ function EditProfile(props) {
         </Grid>
         <Divider/>
         <Grid container className={classes.container}>
-            <Grid item xs={6}>
+            <Grid item md={6}>
               <Typography variant="h5" style={{marginTop: 15}}>Timeline of Tests </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item md={6}>
           <FieldArray
                   name="tests"
                   render={arrayHelpers => (
@@ -464,7 +462,7 @@ function EditProfile(props) {
                           />
                         </div><br/>
                         <Grid container spacing={2}>
-                          <Grid item xs={6}>
+                          <Grid item md={6}>
                             <TextField
                               type="date" 
                               label="Date"
@@ -477,7 +475,7 @@ function EditProfile(props) {
                               onBlur={handleBlur}
                             />
                           </Grid>
-                          <Grid item xs={6}>
+                          <Grid item md={6}>
                             <TextField
                               type="number" 
                               label="Score"
@@ -494,15 +492,15 @@ function EditProfile(props) {
                        
                       
                   {index===values.tests.length-1?
-                  <Grid item xs={6} style={{alignItems:'right'}}>
+                  <Grid item md={6} style={{alignItems:'right'}}>
                     <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',date:'2020-01-01',score:''})}>
                           <AddIcon /> Add Test
                     </Button>
                   </Grid>
                   :
-                  <Grid item xs={3}></Grid>
+                  <Grid item md={3}></Grid>
                   }
-                  <Grid item xs={6}>
+                  <Grid item md={6}>
                   <Button 
                         key={index}
                         className={classes.btn}
@@ -532,10 +530,10 @@ function EditProfile(props) {
 	</Grid> 
 	<Divider/>
 	<Grid container className={classes.container}>
-            <Grid item xs={6}>
+            <Grid item md={6}>
               <Typography variant="h5" style={{paddingTop:15}}> Social Links </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item md={6}>
               <div>
             <TextField 
               name="facebook" 
@@ -616,10 +614,10 @@ function EditProfile(props) {
       </Grid>
 		<Divider/>
 	 	<Grid container className={classes.container}>
-            <Grid item xs={6}>
+            <Grid item md={6}>
               <Typography variant="h5" style={{marginTop: 15}}> University Applications </Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item md={6}>
           	<FieldArray
               name="uniApplied"
               render={arrayHelpers => (
@@ -678,15 +676,15 @@ function EditProfile(props) {
                    </div><br/>
                   <Grid container spacing={2}>
               {index===values.uniApplied.length-1?
-              <Grid item xs={8} style={{alignItems:'right'}}>
+              <Grid item md={8} style={{alignItems:'right'}}>
                 <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:''})}>
                       <AddIcon /> Add Applicaiton
                 </Button>
               </Grid>
               :
-              <Grid item xs={3}></Grid>
+              <Grid item md={3}></Grid>
               }
-              <Grid item xs={4}>
+              <Grid item md={4}>
               <Button 
                     key={index}
                     className={classes.btn}
