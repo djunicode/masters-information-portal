@@ -67,6 +67,7 @@ export default function LoginPage(props){
 			        return errors;
 			      }}
 			      onSubmit={(values, { setSubmitting }) => {
+			      	//Submit Function for login
 			        axios.post('/api/users/login', {
 				      email: values.email,
 				      password: values.password
@@ -83,7 +84,6 @@ export default function LoginPage(props){
 					    setShowWarning(true);
 
 					  });  
-			        //@Backend submit func for login
 			    }}>
 			    {({ isSubmitting ,handleChange,handleBlur,touched,errors}) => (
 			    	<Form autoComplete="off"> 

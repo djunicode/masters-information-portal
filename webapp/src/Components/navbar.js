@@ -1,13 +1,9 @@
-//@Backend 
-//setLoggedIn(1);  if user is logged in
-//setLoggedIn(0);  if no user logged in
-//I wish to use the above function whenever the user is loggedIn, this will display profile & logout instead of login
-
 import React, {useEffect} from 'react';
 import Toolbar from '@material-ui/core/Toolbar';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Hidden from '@material-ui/core/Hidden';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -106,9 +102,9 @@ function NavBar(props) {
                 <React.Fragment>
                     <br/>
                         <div align="center">
-                            <img src={url} alt="Avatar" onError={()=>{setUrl('https://www.nicepng.com/png/full/202-2024580_png-file-profile-icon-vector-png.png')}} height={200} width={200} style={{borderRadius:"50%"}}/>
+                            <img src={url} alt="Avatar" onError={()=>{setUrl('https://www.nicepng.com/png/full/202-2024580_png-file-profile-icon-vector-png.png')}} height={120} width={120} style={{borderRadius:"50%"}}/>
                         </div>
-                    <Typography variant="h6" style={{textAlign:"center"}}>Hi, {name}</Typography>
+                    <Typography variant="h6" style={{textAlign:"center"}}>{name}</Typography>
                     <br/>
                 </React.Fragment>
                 :
@@ -214,7 +210,7 @@ function NavBar(props) {
                 
                 {props.loggedIn?
                 <React.Fragment>
-                    <ListItem button onClick={()=>{Cookies.remove('jwt');props.setLoggedIn(0)}}>
+                    <ListItem button onClick={()=>{Cookies.remove('jwt');Cookies.remove('refreshToken');props.setLoggedIn(0)}}>
                         <ListItemIcon>
                             <AccountCircleIcon />
                         </ListItemIcon>
@@ -235,23 +231,17 @@ function NavBar(props) {
             <div className={classes.root}>
                 <AppBar position='static'>
                     <Toolbar>
-                        <IconButton
-                            onClick={toggleDrawer('left', true)}
-                            edge='start'
-                            color='inherit'
-                            className={classes.menuButton}
-                            aria-label="menu"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Drawer
-                            open={state.left}
-                            onClose={toggleDrawer('left', false)}
-                            classes={{ paper: classes.paper }}
-                        >
-                            {sideList('left')}
-                        </Drawer>
-
+                        <Hidden smUp implementation="css">
+                            <IconButton
+                                onClick={toggleDrawer('left', true)}
+                                edge='start'
+                                color='inherit'
+                                className={classes.menuButton}
+                                aria-label="menu"
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                        </Hidden>
                         <Typography variant='h4' className={classes.title}>
                             <NavLink
                                 className={classes.linkHeader}
@@ -274,7 +264,7 @@ function NavBar(props) {
                                     className={classes.linkHeader}
                                     to='/'
                                 >
-                                    <Button size='large' color='inherit' onClick={()=>{Cookies.remove('jwt');props.setLoggedIn(0)}}>
+                                    <Button size='large' color='inherit' onClick={()=>{Cookies.remove('jwt');props.setLoggedIn(0);Cookies.remove('refreshToken')}}>
                                         Logout
                                     </Button>
                                 </NavLink>
@@ -282,8 +272,28 @@ function NavBar(props) {
                     </Toolbar>
                 </AppBar>
             </div>
-            <br />
-            <br />
+            <Hidden smUp implementation="css">
+                <Drawer
+                    open={state.left}
+                    onClose={toggleDrawer('left', false)}
+                    classes={{ paper: classes.paper }}
+                    ModalProps={{
+                      keepMounted: true, // Better open performance on mobile.
+                    }}
+                >
+                    {sideList('left')}
+                </Drawer>
+            </Hidden>
+            <Hidden smDown implementation="css">
+                <Drawer
+                    classes={{ paper: classes.paper }}
+                    variant='permanent'
+                >
+                    {sideList('left')}
+                </Drawer>
+            </Hidden>
+            <br/>
+            <br/>
         </React.Fragment>
     );
 }
