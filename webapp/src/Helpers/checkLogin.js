@@ -11,7 +11,7 @@ export default function CheckLogin(){
 		else{
 			setLoggedIn(false)
 		}
-	})
+	},[])
 	return(
 		<React.Fragment>
 			{!loggedIn?<Redirect to='/' />:null}

@@ -25,7 +25,6 @@ import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import RemoveIcon from '@material-ui/icons/Remove';
 import AddIcon from '@material-ui/icons/Add';
-import {Redirect} from 'react-router-dom';
 import Cookies from 'js-cookie';
 const axios = require('axios');
 const useStyles = makeStyles(theme => ({
