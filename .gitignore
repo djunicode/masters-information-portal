@@ -1,10 +1,15 @@
 # Logs
 logs
 *.log
+*.idea
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+
+#Documentation
+docs/routes/
+docs/models/
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -104,7 +109,9 @@ dist
 .tern-port
 
 # Stores VSCode versions used for testing VSCode extensions
+.vscode
 .vscode-test
 
 # npm lock file, would prefer yarn locks
 package-lock.json
+yarn.lock
