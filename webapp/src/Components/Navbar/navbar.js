@@ -18,6 +18,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import EditIcon from '@material-ui/icons/Edit';
 import ForumIcon from '@material-ui/icons/Forum';
 import DescriptionIcon from '@material-ui/icons/Description';
+import PostAddIcon from '@material-ui/icons/PostAdd';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import { NavLink } from 'react-router-dom';
@@ -211,6 +212,18 @@ function NavBar(props) {
                 
                 {props.loggedIn?
                 <React.Fragment>
+                    <Divider />
+                    <NavLink
+                        className={classes.link}
+                        to='/add-resource'
+                    >
+                        <ListItem button>
+                            <ListItemIcon>
+                                <PostAddIcon />
+                            </ListItemIcon>
+                            <Typography>Add Resources</Typography>
+                        </ListItem>
+                    </NavLink>
                     <ListItem button onClick={()=>{Cookies.remove('jwt');Cookies.remove('refreshToken');props.setLoggedIn(0)}}>
                         <ListItemIcon>
                             <AccountCircleIcon />
