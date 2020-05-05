@@ -87,11 +87,15 @@ const useStyles = makeStyles((theme) => ({
     padding: '10px',
     borderRadius: 10,
     alignSelf: 'flex-end',
+    width: '80%',
+    wordWrap: 'break-word',
   },
   recieved: {
     backgroundColor: '#eff0e9',
     padding: '10px',
     borderRadius: 10,
+    width: '80%',
+    wordWrap: 'break-word',
   },
   info: {
     fontSize: '25px',
@@ -132,6 +136,11 @@ function Messages(props) {
       text:
         'About Company: Pehchan is a one-stop solution for all your requirements of business gifts, recognition gifts, customizedt-shirts, uniforms, and all other promotional gift items. At Pehchan, we strive for ultimate customer satisfaction through high quality and prompt services. Our efforts are reflected inthe long-standing business relationship with our clients.',
       class: 'my_mess',
+    },
+    {
+      text:
+        'About Company: Pehchan is a one-stop solution for all your requirements of business gifts, recognition gifts, customizedt-shirts, uniforms, and all other promotional gift items. At Pehchan, we strive for ultimate customer satisfaction through high quality and prompt services. Our efforts are reflected inthe long-standing business relationship with our clients.',
+      class: 'received',
     },
   ]);
 
@@ -264,31 +273,39 @@ function Messages(props) {
                 autoComplete="off"
                 style={{ float: 'right' }}
               >
-                <InputBase
-                  id="compose_input"
-                  className={classes.input}
-                  placeholder="Write a message"
-                  onChange={handleChange}
-                />
-                <input
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  id="icon-button-file"
-                  type="file"
-                />
-                <label htmlFor="icon-button-file">
-                  <IconButton aria-label="upload picture" component="span">
-                    <AttachFileIcon />
-                  </IconButton>
-                </label>
-
-                <IconButton onClick={handleOpen} className={classes.icon}>
-                  <MoodIcon />
-                </IconButton>
-
-                <IconButton type="submit" onClick={getText} className={classes.icon}>
-                  <SendIcon />
-                </IconButton>
+                <Grid container spacing={1}>
+                  <Grid sm={9}>
+                    <InputBase
+                      id="compose_input"
+                      className={classes.input}
+                      placeholder="Write a message"
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid sm={1}>
+                    <input
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      id="icon-button-file"
+                      type="file"
+                    />
+                    <label htmlFor="icon-button-file">
+                      <IconButton aria-label="upload picture" component="span">
+                        <AttachFileIcon />
+                      </IconButton>
+                    </label>
+                  </Grid>
+                  <Grid sm={1}>
+                    <IconButton onClick={handleOpen} className={classes.icon}>
+                      <MoodIcon />
+                    </IconButton>
+                  </Grid>
+                  <Grid sm={1}>
+                    <IconButton type="submit" onClick={getText} className={classes.icon}>
+                      <SendIcon />
+                    </IconButton>
+                  </Grid>
+                </Grid>
               </form>
               <Modal
                 aria-labelledby="simple-modal-title"
