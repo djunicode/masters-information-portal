@@ -11,6 +11,8 @@ import FullWidthTabs from './profpage3';
 function RootRouter(props) {
   const renderLogin = () => <Login loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn} />;
   const renderEditProfile = () => <EditProfile loggedIn={props.loggedIn} />;
+  const renderChat = () => <Messages loggedIn={props.loggedIn} />;
+  const renderAddResource = () => <AddResource loggedIn={props.loggedIn} />;
 
   return (
     <Router>
@@ -22,8 +24,8 @@ function RootRouter(props) {
         <Route exact path="/edit" component={renderEditProfile} />
         <Route exact path="/resources" component={Resources} />
         <Route exact path="/forum" component={Forum} />
-        <Route exact path="/chat" component={Messages} />
-        <Route exact path="/add-resource" component={AddResource} />
+        <Route exact path="/chat" component={renderChat} />
+        <Route exact path="/add-resource" component={renderAddResource} />
       </Switch>
     </Router>
   );

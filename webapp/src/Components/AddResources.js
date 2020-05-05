@@ -6,7 +6,6 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
 import IconButton from '@material-ui/core/IconButton';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { Redirect } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,74 +39,75 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AddResources(props) {
   const classes = useStyles();
-  const isMobileView = useMediaQuery('(min-width:450px)');
 
   return (
     <div>
-      {props.loggedIn ? null : <Redirect to="/" />}
+      {props.loggedIn ? (
+        <Paper className={classes.paper}>
+          <h1 className={classes.header}>Add Resources</h1>
+          <br />
+          <hr className={classes.width} />
+          <br />
+          <Grid container spacing={1}>
+            <Grid alignItems="center" classes={classes.width} item xs={6}>
+              <h2>Details</h2>
+            </Grid>
+            <Grid classes={classes.width} item xs={6}>
+              <form className={classes.root} noValidate autoComplete="off">
+                <TextField
+                  className={classes.textField}
+                  id="filled-basic"
+                  label="Title"
+                  variant="filled"
+                />
+                <br />
 
-      <Paper className={classes.paper}>
-        <h1 className={classes.header}>Add Resources</h1>
-        <br />
-        <hr className={classes.width} />
-        <br />
-        <Grid container spacing={1}>
-          <Grid alignItems="center" classes={classes.width} item xs={6}>
-            <h2>Details</h2>
+                <TextField
+                  className={classes.textField}
+                  id="filled-multiline-static"
+                  label="Description"
+                  multiline
+                  rows={7}
+                  variant="filled"
+                />
+                <br />
+                <TextField
+                  className={classes.textField}
+                  id="filled-basic"
+                  label="Link"
+                  variant="filled"
+                />
+                <br />
+
+                <TextField
+                  className={classes.textField}
+                  id="filled-basic"
+                  label="Type"
+                  variant="filled"
+                />
+                <br />
+                <input
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  id="icon-button-file"
+                  type="file"
+                />
+                <label htmlFor="icon-button-file">
+                  <IconButton aria-label="upload picture" component="span">
+                    <CloudUploadOutlinedIcon style={{ height: '80px', width: '80px' }} />
+                  </IconButton>
+                </label>
+                <br />
+                <Button type="submit" variant="contained" className={classes.button}>
+                  Add
+                </Button>
+              </form>
+            </Grid>
           </Grid>
-          <Grid classes={classes.width} item xs={6}>
-            <form className={classes.root} noValidate autoComplete="off">
-              <TextField
-                className={classes.textField}
-                id="filled-basic"
-                label="Title"
-                variant="filled"
-              />
-              <br />
-
-              <TextField
-                className={classes.textField}
-                id="filled-multiline-static"
-                label="Description"
-                multiline
-                rows={7}
-                variant="filled"
-              />
-              <br />
-              <TextField
-                className={classes.textField}
-                id="filled-basic"
-                label="Link"
-                variant="filled"
-              />
-              <br />
-
-              <TextField
-                className={classes.textField}
-                id="filled-basic"
-                label="Type"
-                variant="filled"
-              />
-              <br />
-              <input
-                accept="image/*"
-                style={{ display: 'none' }}
-                id="icon-button-file"
-                type="file"
-              />
-              <label htmlFor="icon-button-file">
-                <IconButton aria-label="upload picture" component="span">
-                  <CloudUploadOutlinedIcon style={{ height: '80px', width: '80px' }} />
-                </IconButton>
-              </label>
-              <br />
-              <Button type="submit" variant="contained" className={classes.button}>
-                Add
-              </Button>
-            </form>
-          </Grid>
-        </Grid>
-      </Paper>
+        </Paper>
+      ) : (
+        <Redirect to="/" />
+      )}
     </div>
   );
 }

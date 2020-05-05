@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -100,9 +100,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Messages(props) {
+  useEffect(() => {
+    console.log(props.loggedIn);
+  });
+
   const classes = useStyles();
   const [text, setText] = useState('');
-  const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [people, setPeople] = useState([
@@ -192,114 +195,117 @@ function Messages(props) {
   };
   return (
     <div className={classes.root}>
-      {/* {props.loggedIn ? null : <Redirect to="/" />} */}
-      <Grid container spacing={1}>
-        <Grid xs={6} item md={3}>
-          <Paper className={classes.paper}>
-            <div style={{ textAlign: 'center' }}>
-              <img style={{ width: '225px' }} src={img} alt="eh" />
-              <h2>UI/UX Designer</h2>
-            </div>
-            <hr />
-            <div>
-              <h2>Information</h2>
-              <div style={{ margin: '5px' }}>
-                <LinkedInIcon />
-                <span className={classes.info}>John</span>
+      {props.loggedIn ? (
+        <Grid container spacing={1}>
+          <Grid xs={6} item md={3}>
+            <Paper className={classes.paper}>
+              <div style={{ textAlign: 'center' }}>
+                <img style={{ width: '225px' }} src={img} alt="eh" />
+                <h2>UI/UX Designer</h2>
               </div>
-              <div style={{ margin: '5px' }}>
-                <GitHubIcon />
-                <span className={classes.info}>John98</span>
-              </div>
-              <div style={{ margin: '5px' }}>
-                <MailOutlineIcon />
-                <span className={classes.info}>john@gmail.com</span>
-              </div>
-            </div>
-          </Paper>
-        </Grid>
-        <Grid item xs={6} md={3}>
-          <Paper className={classes.paper}>
-            <div className={classes.search_form}>
-              <SearchIcon className={classes.search_icon} />
-              <InputBase className={classes.search} placeholder="Search" />
-            </div>
-
-            <div style={{ overflowX: 'auto' }}>
-              {people.map((each) => (
-                <div className={classes.chat_block}>
-                  <img className={classes.profile_img} src={img} alt="eh" />
-                  <h3 className={classes.anch}>
-                    <a className={classes.anch} href="1">
-                      {each.name}
-                    </a>
-                  </h3>
-                  <p>This is a sample message.This is a sample message.</p>
-                </div>
-              ))}
-            </div>
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <Paper className={classes.paper}>
-            <h1>John Philips</h1>
-            <hr />
-            <div id="box" className={classes.conversation}>
-              {message.map((mess) =>
-                mess.class === 'my_mess' ? (
-                  <p className={classes.my_mess}>{mess.text}</p>
-                ) : (
-                  <p className={classes.recieved}>{mess.text}</p>
-                )
-              )}
-            </div>
-            <form
-              className={classes.input_form}
-              onSubmit={getText}
-              noValidate
-              autoComplete="off"
-              style={{ float: 'right' }}
-            >
-              <InputBase
-                id="compose_input"
-                className={classes.input}
-                placeholder="Write a message"
-                onChange={handleChange}
-              />
-              <input
-                accept="image/*"
-                style={{ display: 'none' }}
-                id="icon-button-file"
-                type="file"
-              />
-              <label htmlFor="icon-button-file">
-                <IconButton aria-label="upload picture" component="span">
-                  <AttachFileIcon />
-                </IconButton>
-              </label>
-
-              <IconButton onClick={handleOpen} className={classes.icon}>
-                <MoodIcon />
-              </IconButton>
-
-              <IconButton type="submit" onClick={getText} className={classes.icon}>
-                <SendIcon />
-              </IconButton>
-            </form>
-            <Modal
-              aria-labelledby="simple-modal-title"
-              aria-describedby="simple-modal-description"
-              open={open}
-              onClose={handleClose}
-            >
+              <hr />
               <div>
-                <Picker onEmojiClick={onEmojiClick} skinTone={SKIN_TONE_MEDIUM_DARK} />]
+                <h2>Information</h2>
+                <div style={{ margin: '5px' }}>
+                  <LinkedInIcon />
+                  <span className={classes.info}>John</span>
+                </div>
+                <div style={{ margin: '5px' }}>
+                  <GitHubIcon />
+                  <span className={classes.info}>John98</span>
+                </div>
+                <div style={{ margin: '5px' }}>
+                  <MailOutlineIcon />
+                  <span className={classes.info}>john@gmail.com</span>
+                </div>
               </div>
-            </Modal>
-          </Paper>
+            </Paper>
+          </Grid>
+          <Grid item xs={6} md={3}>
+            <Paper className={classes.paper}>
+              <div className={classes.search_form}>
+                <SearchIcon className={classes.search_icon} />
+                <InputBase className={classes.search} placeholder="Search" />
+              </div>
+
+              <div style={{ overflowX: 'auto' }}>
+                {people.map((each) => (
+                  <div className={classes.chat_block}>
+                    <img className={classes.profile_img} src={img} alt="eh" />
+                    <h3 className={classes.anch}>
+                      <a className={classes.anch} href="1">
+                        {each.name}
+                      </a>
+                    </h3>
+                    <p>This is a sample message.This is a sample message.</p>
+                  </div>
+                ))}
+              </div>
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Paper className={classes.paper}>
+              <h1>John Philips</h1>
+              <hr />
+              <div id="box" className={classes.conversation}>
+                {message.map((mess) =>
+                  mess.class === 'my_mess' ? (
+                    <p className={classes.my_mess}>{mess.text}</p>
+                  ) : (
+                    <p className={classes.recieved}>{mess.text}</p>
+                  )
+                )}
+              </div>
+              <form
+                className={classes.input_form}
+                onSubmit={getText}
+                noValidate
+                autoComplete="off"
+                style={{ float: 'right' }}
+              >
+                <InputBase
+                  id="compose_input"
+                  className={classes.input}
+                  placeholder="Write a message"
+                  onChange={handleChange}
+                />
+                <input
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  id="icon-button-file"
+                  type="file"
+                />
+                <label htmlFor="icon-button-file">
+                  <IconButton aria-label="upload picture" component="span">
+                    <AttachFileIcon />
+                  </IconButton>
+                </label>
+
+                <IconButton onClick={handleOpen} className={classes.icon}>
+                  <MoodIcon />
+                </IconButton>
+
+                <IconButton type="submit" onClick={getText} className={classes.icon}>
+                  <SendIcon />
+                </IconButton>
+              </form>
+              <Modal
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+                open={open}
+                onClose={handleClose}
+              >
+                <div>
+                  <Picker onEmojiClick={onEmojiClick} skinTone={SKIN_TONE_MEDIUM_DARK} />]
+                </div>
+              </Modal>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
+      ) : (
+        <Redirect to="/" />
+      )}
     </div>
   );
 }
