@@ -1,6 +1,6 @@
 import React from 'react';
 import Register from './register.js';
-import LoginSVGLogo from './loginLogo.js';
+import LoginSVGLogo from '../../assets/svg/loginLogo.js';
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';

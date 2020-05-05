@@ -1,5 +1,5 @@
 import React,{useEffect} from 'react';
-import {getObjectId,getTag} from '../Helpers/fetchRequests.js';
+import {getObjectId,getTag} from '../../Helpers/fetchRequests.js';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -217,9 +217,9 @@ export default function Register(props) {
             if (!values.lname){
               errors.lname = "Fill this field"
             }
-            // if (!values.university){
-            //   errors.university = "Fill this field"
-            // }
+            if (!values.university){
+              errors.university = "Fill this field"
+            }
             if (!values.department){
               errors.department = "Fill this field"
             }
@@ -228,7 +228,7 @@ export default function Register(props) {
             }
             return errors;
           }}
-          onSubmit={(values, { setSubmitting }) => {
+          onSubmit={(values, { setSubmitting }) => {  //Submit First page of form
             values.name=values.fname+" "+values.lname;
             user.name=values.name;
             user.email=values.email;
@@ -241,7 +241,6 @@ export default function Register(props) {
               setSubmitting(false);
               handleNext();
             }, 1000);
-            //@Backend Submit Function for Sign-Up
         }}
         >
         {({ isSubmitting ,handleChange,handleBlur,values,errors,touched,setFieldValue}) => (
@@ -452,8 +451,7 @@ export default function Register(props) {
             values.domain.forEach(async (item,index)=>
               user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
             )
-            submitAxios();
-            //@Backend Submit Function for Sign-Up
+            submitAxios();  //Submit function for signup
         }}
         >
         {({ isSubmitting ,handleChange,handleBlur,values,setFieldValue}) => (
@@ -498,13 +496,6 @@ export default function Register(props) {
               inputValue={!!values.addDomain?values.addDomain:''}
               autoHighlight
               getOptionDisabled={option => values.domain.includes(option)}
-              filterOptions={(options, params) => {
-                const filtered = filter(options, params);
-                if (params.inputValue !== '' && !filtered.includes("Other")) {
-                  filtered.push("Other");
-                }
-                return filtered;
-              }}
               name="addDomain"
               onChange={(e, value) => {
                 setFieldValue("addDomain", value)

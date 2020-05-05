@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+import defaultProfileIcon from '../../assets/images/profile-icon.png';
 import Toolbar from '@material-ui/core/Toolbar';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -17,6 +18,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import EditIcon from '@material-ui/icons/Edit';
 import ForumIcon from '@material-ui/icons/Forum';
 import DescriptionIcon from '@material-ui/icons/Description';
+import PostAddIcon from '@material-ui/icons/PostAdd';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import { NavLink } from 'react-router-dom';
@@ -102,7 +104,7 @@ function NavBar(props) {
                 <React.Fragment>
                     <br/>
                         <div align="center">
-                            <img src={url} alt="Avatar" onError={()=>{setUrl('https://www.nicepng.com/png/full/202-2024580_png-file-profile-icon-vector-png.png')}} height={120} width={120} style={{borderRadius:"50%"}}/>
+                            <img src={url} alt="Avatar" onError={()=>{setUrl(defaultProfileIcon)}} height={120} width={120} style={{borderRadius:"50%"}}/>
                         </div>
                     <Typography variant="h6" style={{textAlign:"center"}}>{name}</Typography>
                     <br/>
@@ -210,6 +212,18 @@ function NavBar(props) {
                 
                 {props.loggedIn?
                 <React.Fragment>
+                    <Divider />
+                    <NavLink
+                        className={classes.link}
+                        to='/add-resource'
+                    >
+                        <ListItem button>
+                            <ListItemIcon>
+                                <PostAddIcon />
+                            </ListItemIcon>
+                            <Typography>Add Resources</Typography>
+                        </ListItem>
+                    </NavLink>
                     <ListItem button onClick={()=>{Cookies.remove('jwt');Cookies.remove('refreshToken');props.setLoggedIn(0)}}>
                         <ListItemIcon>
                             <AccountCircleIcon />
