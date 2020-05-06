@@ -29,7 +29,7 @@ const NotificationSchema =new mongoose.Schema({
     model:{
         type: String,
         required: true,
-        enum: ['Forum', 'chat']
+        enum: ['Forum', 'Chat']
     }
     
 
