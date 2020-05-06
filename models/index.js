@@ -9,4 +9,5 @@ module.exports = {
   Tag,
   Forum,
   Chat,
+  Notification
 };
