@@ -19,7 +19,7 @@ const theme = createMuiTheme({
 
 function App() {
 
-  const [loggedIn, setLoggedIn] = React.useState(1);
+  const [loggedIn, setLoggedIn] = React.useState(0);
 
   //Function to be called while Refreshing a token
   const handleTokenRefresh = () => {
@@ -45,18 +45,11 @@ function App() {
   React.useEffect(()=>{
         const token = Cookies.get('jwt')
         if(!!token){
-          axios.get('api/users/me/', {
-            headers: {
-              Authorization: token
-            }
-          })
-          .then(function (response) {
-            setLoggedIn(1);
-          })
-          .catch(function (error) {
-            setLoggedIn(0);
-          }); 
+          setLoggedIn(1);
         }
+        else if(!!Cookies.get('refreshToken')){
+          setLoggedIn(0);
+        } 
         else{
             handleTokenRefresh();
         }

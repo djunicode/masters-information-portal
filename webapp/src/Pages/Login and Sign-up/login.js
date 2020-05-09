@@ -1,7 +1,6 @@
 import React from 'react';
-import Register from './register.js';
-import LoginSVGLogo from '../../assets/svg/loginLogo.js';
-import { makeStyles } from '@material-ui/core/styles';
+import {ReactComponent as LoginSVGLogo} from '../../assets/svg/loginLogo.svg';
+import {makeStyles} from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -13,7 +12,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
-import {Redirect} from 'react-router-dom';
+import {Redirect,Link} from 'react-router-dom';
 import Cookies from 'js-cookie';
 //Individual Imports to reduce bundle size
 
@@ -43,123 +42,114 @@ export default function LoginPage(props){
 		showPassword===0?setShowPassword(1):setShowPassword(0);
 	}
     const [showWarning, setShowWarning] = React.useState(false);
-	const [register,setRegister] = React.useState(0);
     return (
 		<div className={classes.root}>
 			{props.loggedIn?<Redirect to='/' />:null}
-    		{register===0?
-		      <Grid container alignItems="center" style={{marginTop: 40}} justify="center">
-		      	<Grid item md={6}>
-		      		<LoginSVGLogo/>
-		      	</Grid>
-		      	<Grid item md={6}>
-		      	<Typography variant="h4"><b>Login</b></Typography>
-		        <Formik 
-		        	initialValues={{ email: '', password: '' }}
-		        	validate={values => {
-			        const errors = {};
-			        if (!values.email) {
-			        	errors.email = "Required"
-			        }
-			        if (!values.password){
-			        	errors.password = 'Required';
-			        }
-			        return errors;
-			      }}
-			      onSubmit={(values, { setSubmitting }) => {
-			      	//Submit Function for login
-			        axios.post('/api/users/login', {
-				      email: values.email,
-				      password: values.password
-					  })
-					  .then(function (response) {
-					    Cookies.set('jwt',response.data.token,{expires: 1});
-					    Cookies.set('refreshToken',response.data.refreshToken,{expires: 7})
-					    props.setLoggedIn(1);
-					  })
-					  .catch(function (error) {
-				        setTimeout(() => {
-				          setSubmitting(false);
-				        }, 1000);
-					    setShowWarning(true);
+	      <Grid container alignItems="center" style={{marginTop: 40}} justify="center">
+	      	<Grid item md={6}>
+	      		<LoginSVGLogo/>
+	      	</Grid>
+	      	<Grid item md={6}>
+	      	<Typography variant="h4"><b>Login</b></Typography>
+	        <Formik 
+	        	initialValues={{ email: '', password: '' }}
+	        	validate={values => {
+		        const errors = {};
+		        if (!values.email) {
+		        	errors.email = "Required"
+		        }
+		        if (!values.password){
+		        	errors.password = 'Required';
+		        }
+		        return errors;
+		      }}
+		      onSubmit={(values, { setSubmitting }) => {
+		      	//Submit Function for login
+		        axios.post('/api/users/login', {
+			      email: values.email,
+			      password: values.password
+				  })
+				  .then(function (response) {
+				    Cookies.set('jwt',response.data.token,{expires: 1});
+				    Cookies.set('refreshToken',response.data.refreshToken,{expires: 7})
+				    props.setLoggedIn(1);
+				  })
+				  .catch(function (error) {
+			        setTimeout(() => {
+			          setSubmitting(false);
+			        }, 1000);
+				    setShowWarning(true);
 
-					  });  
-			    }}>
-			    {({ isSubmitting ,handleChange,handleBlur,touched,errors}) => (
-			    	<Form autoComplete="off"> 
-			    		<Snackbar 
-			              open={showWarning} 
-			              autoHideDuration={750} 
-			              onClose={()=>setShowWarning(false)}
-			            >
-			              <Alert variant="filled" severity="error">
-						  	Invalid Email or Password
-						  </Alert>
-			            </Snackbar>
-			        	<TextField 
-			        		name="email"
-			        		label="Email" 
-			        		type="email"
-			        		style = {{width: 300}}
-			        		color="secondary" 
-			        		variant="filled" 
-			        		className={classes.textf}
-			        		placeholder="Email"
-			        		onChange={handleChange}
-			        		onBlur={handleBlur}
-			        		helperText={touched.email?errors.email:''}
-			        		error={!!errors.email&&touched.email}
-			        	/> <br/>
-			        	<TextField 
-			        		name="password" 
-			        		type={showPassword ? 'text' : 'password'}
-			        		color="secondary" 
-			        		style = {{width: 300}}
-			        		label="Password" 
-			        		variant="filled" 
-			        		placeholder="Enter your password" 
-			        		className={classes.textf}
-			        		onChange={handleChange}
-			        		onBlur={handleBlur}
-			        		error={!!errors.password&&touched.password}
-			        		helperText={touched.password?errors.password:''}
-			        		InputProps={{
-					          endAdornment: (
-					            <InputAdornment position="end">
-					            	<IconButton
-					                  aria-label="toggle password visibility"
-					                  onClick={togglePassword}
-					                >
-					              	{showPassword ? <Visibility /> : <VisibilityOff />}
-					              	</IconButton>
-					            </InputAdornment>
-					          ),
-					        }}
-			        	/> <br/><br/>
-			        	<Button 
-			        		type="submit" 
-			        		disabled={isSubmitting}
-			        		variant="contained" 
-			        		color="primary" 
-			        		style={{width:295,height:42,borderRadius:25}}
-			        	> 
-			        		Log In 
-			        	</Button>
-		        	</Form>
-        		)}
+				  });  
+		    }}>
+		    {({ isSubmitting ,handleChange,handleBlur,touched,errors}) => (
+		    	<Form autoComplete="off"> 
+		    		<Snackbar 
+		              open={showWarning} 
+		              autoHideDuration={750} 
+		              onClose={()=>setShowWarning(false)}
+		            >
+		              <Alert variant="filled" severity="error">
+					  	Invalid Email or Password
+					  </Alert>
+		            </Snackbar>
+		        	<TextField 
+		        		name="email"
+		        		label="Email" 
+		        		type="email"
+		        		style = {{width: 300}}
+		        		color="secondary" 
+		        		variant="filled" 
+		        		className={classes.textf}
+		        		placeholder="Email"
+		        		onChange={handleChange}
+		        		onBlur={handleBlur}
+		        		helperText={touched.email?errors.email:''}
+		        		error={!!errors.email&&touched.email}
+		        	/> <br/>
+		        	<TextField 
+		        		name="password" 
+		        		type={showPassword ? 'text' : 'password'}
+		        		color="secondary" 
+		        		style = {{width: 300}}
+		        		label="Password" 
+		        		variant="filled" 
+		        		placeholder="Enter your password" 
+		        		className={classes.textf}
+		        		onChange={handleChange}
+		        		onBlur={handleBlur}
+		        		error={!!errors.password&&touched.password}
+		        		helperText={touched.password?errors.password:''}
+		        		InputProps={{
+				          endAdornment: (
+				            <InputAdornment position="end">
+				            	<IconButton
+				                  aria-label="toggle password visibility"
+				                  onClick={togglePassword}
+				                >
+				              	{showPassword ? <Visibility /> : <VisibilityOff />}
+				              	</IconButton>
+				            </InputAdornment>
+				          ),
+				        }}
+		        	/> <br/><br/>
+		        	<Button 
+		        		type="submit" 
+		        		disabled={isSubmitting}
+		        		variant="contained" 
+		        		color="primary" 
+		        		style={{width:295,height:42,borderRadius:25}}
+		        	> 
+		        		Log In 
+		        	</Button>
+	        	</Form>
+    		)}
 	        </Formik><br/>	
 	        <Typography>
-	        	New User? <Button onClick={()=>setRegister(1)}><Typography><b>Register</b></Typography></Button>
+	        	New User? <Link to='/register' style={{color:'#496961'}}><b>Register</b></Link>
 	        </Typography>
-	        </Grid>
-	      </Grid>
-	      :
-	      <React.Fragment>
-	      	<Register register={register} setRegister={setRegister}/>
-        	<br/><Typography>Already have an account? <Button onClick={()=>setRegister(0)}><b>Sign In</b></Button></Typography>
-	      </React.Fragment>
-
-	  }
+        </Grid>
+      </Grid>
     </div>
     );
 }
