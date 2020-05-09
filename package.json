@@ -12,7 +12,7 @@
     "build-frontend": "cd ./webapp && npm install && npm run build && cd ..",
     "start": "node index.js",
     "start:dev": "nodemon index.js",
-    "test": "mocha",
+    "test": "mocha --timeout 50000 --exit",
     "doc": "npm run apidoc && npm run jsdoc",
     "apidoc": "apidoc -i controllers/ -i infra/ -o docs/routes",
     "jsdoc": "jsdoc -c jsdoc.json",

@@ -10,6 +10,8 @@ import Messages from '../Messages';
 import AddResource from '../AddResources';
 import FullWidthTabs from '../profpage3';
 import Home from '../../Pages/Homepage/home.js';
+import SearchProfiles from '../profile3';
+import UniversityPage from '../universitypage'
 function RootRouter(props){
 
     const renderLogin = () => <Login loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn}/>;
@@ -30,6 +32,8 @@ function RootRouter(props){
                 <Route exact path='/forum' component={Forum} />
 				<Route exact path="/chat" component={renderChat} />
 				<Route exact path="/add-resource" component={renderAddResource} />
+	    <Route exact path='/search' component={SearchProfiles}/>
+	    <Route exact path="/university" component={UniversityPage} />
 				<Route component = {invalidRoute} />
             </Switch>
         </Router>

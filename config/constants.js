@@ -2,11 +2,11 @@ const path = require('path');
 const dotEnv = require('dotenv');
 
 const parsedEnv = dotEnv.config({
-	path: path.join(__dirname, '../.env.development'),
+  path: path.join(__dirname, '../.env.development'),
 });
 
 if (parsedEnv.error) {
-	throw parsedEnv.error;
+  throw parsedEnv.error;
 }
 
 const config = {
