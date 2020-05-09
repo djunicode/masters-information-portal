@@ -24,7 +24,21 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import AddIcon from '@material-ui/icons/Add';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
+import {Redirect,Link} from 'react-router-dom';
+import Cookies from 'js-cookie';
 const useStyles = makeStyles(theme => ({
+    root: {
+      backgroundColor: theme.palette.background.paper,
+      textAlign: 'center',
+      maxWidth: 1111,
+      minHeight: 440,
+      margin: 'auto',
+      marginTop: 20,
+      paddingTop: 10,
+      marginBottom: 20,
+      paddingBottom: 20,
+      flexGrow: 1
+    },
     textf: {
         marginTop: 20
     },
@@ -44,10 +58,10 @@ function getSteps() {
     return ['Core Details', 'Other Details'];
 }
 
-export default function Register(props) {
+export default function Register() {
 
-  const[componentDidMount]=React.useState(0);
-
+  const [componentDidMount]=React.useState(0);
+  const [redirect,setRedirect]=React.useState(false);
   const [universityArr,setUniversityArr]=React.useState([]);
   const [universityNames,setUniversityNames]=React.useState([]);
   const [tagArr,setTagArr]=React.useState([]);
@@ -66,6 +80,12 @@ export default function Register(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[componentDidMount])
+ // eslint-disable-next-line
+  React.useEffect(()=>{
+    if(!!Cookies.get('jwt')){
+      setRedirect(true);
+    }
+  })
 
   const submitAxios = () => {
     axios.post('/api/users/register', {
@@ -89,7 +109,7 @@ export default function Register(props) {
     })
     .then(function (response) {
       console.log("Registration Successful");
-      props.setRegister(0);
+      setRegistered(true)
     })
     .catch(function (error) {
       console.log("Registration Failed");
@@ -124,6 +144,7 @@ export default function Register(props) {
     const isStepSkipped = step => {
         return skipped.has(step);
     };
+    const [registered,setRegistered]=React.useState(false);
     const [showSuccess, setShowSuccess] = React.useState(false);
     const handleOpenMsg = () => {
         setShowSuccess(true);
@@ -148,7 +169,9 @@ export default function Register(props) {
     };
 
     return (
-      <div className="App" style={{paddingTop:'45px'}}>
+      <div className={classes.root} style={{paddingTop:'45px'}}>
+      {registered?<Redirect to='/login'/>:null}
+      {redirect?<Redirect to='/'/>:null}
       <Typography variant="h4" className={classes.header}><b>Register</b></Typography>
       <Grid container>
         <Grid item md={3}/>
@@ -847,7 +870,8 @@ export default function Register(props) {
     </Formik>
   </div>
   }
+  <br/><Typography>Already have an account? <Link to='/login' style={{color:'#496961'}}> <b>Sign In</b></Link></Typography>
   </Box> 
   </div>
-    );
+  );
 }
