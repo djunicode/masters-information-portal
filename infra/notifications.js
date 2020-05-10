@@ -1,5 +1,5 @@
 const Notification = require('../models/notification');
-const templates = require('../constants/notifications');
+const constants = require('../constants/notifications');
 
 /**
  *
@@ -8,13 +8,13 @@ const templates = require('../constants/notifications');
  * @param {String} forumId id of the corresponding post
  */
 const createForumNotification = async (fromUser, toUser, forumId) => {
-  let body = {
+  const body = {
     fromUser,
     toUser,
-    title: 'Forum',
-    message: templates.forumTemplate({ user: fromUser, question: forumId }),
+    title: constants.MODEL_FORUM,
+    message: constants.forumTemplate({ user: fromUser, question: forumId }),
     eventId: forumId,
-    model: 'Forum',
+    model: constants.MODEL_FORUM,
   };
   const notification = await Notification.create(body);
   return notification;
@@ -31,17 +31,17 @@ const createChatNotification = async (fromUser, toUser, chatId) => {
     fromUser: fromUser,
     toUser: toUser,
     eventId: chatId,
-    model: 'Chat',
+    model: constants.MODEL_CHAT,
     read: false,
   });
   if (!!existingNotification) return existingNotification; // As there is already an unread chat notification for the given chat, No need to create a new
   let body = {
     fromUser,
     toUser,
-    title: 'Chat',
-    message: templates.chatTemplate({ user: fromUser }),
+    title: constants.MODEL_CHAT,
+    message: constants.chatTemplate({ user: fromUser }),
     eventId: chatId,
-    model: 'Chat',
+    model: constants.MODEL_CHAT,
   };
   const notification = await Notification.create(body);
   return notification;
@@ -68,7 +68,7 @@ const createVoteNotification = async (fromUser, toUser, forumId, voteType) => {
     let ret = await Notification.findByIdAndUpdate(
       doc._id,
       {
-        message: templates.voteTemplateNumbered({
+        message: constants.voteTemplateNumbered({
           number: num + 1,
           voteType: voteType,
           forumId: forumId,
@@ -87,7 +87,7 @@ const createVoteNotification = async (fromUser, toUser, forumId, voteType) => {
     eventId: forumId,
   });
 
-  if (docs.length === templates.MAX_VOTE_LIMIT) {
+  if (docs.length === constants.MAX_VOTE_LIMIT) {
     await Notification.deleteMany({
       toUser: toUser,
       read: false,
@@ -99,12 +99,12 @@ const createVoteNotification = async (fromUser, toUser, forumId, voteType) => {
       toUser: toUser,
       title: 'Numbered' + voteType,
       eventId: forumId,
-      message: templates.voteTemplateNumbered({
-        number: templates.MAX_VOTE_LIMIT + 1,
+      message: constants.voteTemplateNumbered({
+        number: constants.MAX_VOTE_LIMIT + 1,
         voteType: voteType,
         forumId: forumId,
       }),
-      model: 'Forum',
+      model: constants.MODEL_FORUM,
     });
     return notification;
   }
@@ -115,9 +115,9 @@ const createVoteNotification = async (fromUser, toUser, forumId, voteType) => {
     fromUser: fromUser,
     toUser: toUser,
     title: voteType,
-    message: templates.voteTemplateNamed({ user: fromUser, voteType: voteType, forumId: forumId }),
+    message: constants.voteTemplateNamed({ user: fromUser, voteType: voteType, forumId: forumId }),
     eventId: forumId,
-    model: 'Forum',
+    model: constants.MODEL_CHAT,
   });
 
   return notification;

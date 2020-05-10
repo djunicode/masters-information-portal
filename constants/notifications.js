@@ -1,22 +1,25 @@
-const lodash = require('lodash');
+const _ = require('lodash');
 
 const MAX_VOTE_LIMIT = 10;
 
-const upvote = 'Upvoted';
-const downvote = 'Downvoted';
+const UPVOTE = 'Upvoted';
+const DOWNVOTE = 'Downvoted';
 
-const chatTemplate = lodash.template('<%= user %> has messaged you.');
-const forumTemplate = lodash.template(
-  '<%= user %> posted an answer for your question <%= question %>'
-);
-const voteTemplateNamed = lodash.template('<%= user %> <%= voteType => your <%= forumId %>');
-const voteTemplateNumbered = lodash.template(
+const MODEL_FORUM = 'Forum';
+const MODEL_CHAT = 'Chat';
+
+const chatTemplate = _.template('<%= user %> has messaged you.');
+const forumTemplate = _.template('<%= user %> posted an answer for your question <%= question %>');
+const voteTemplateNamed = _.template('<%= user %> <%= voteType => your <%= forumId %>');
+const voteTemplateNumbered = _.template(
   '<%= number %> users have  <%= voteType => your <%= forumId %>'
 );
 
 module.exports = {
-  upvote,
-  downvote,
+  UPVOTE,
+  DOWNVOTE,
+  MODEL_FORUM,
+  MODEL_CHAT,
   chatTemplate,
   forumTemplate,
   voteTemplateNamed,
