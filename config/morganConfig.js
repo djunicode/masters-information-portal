@@ -24,7 +24,7 @@ const getColor = (status) => {
   if (status >= 500) return serverError;
 };
 
-//*:method :url :status :response-time ms - :res[content-length]
+//* :method :url :status :response-time ms - :res[content-length]
 const devProfile = (tokens, req, res) => {
   let color = getColor(tokens.status(req, res));
   if (!color) color = info;
@@ -32,7 +32,7 @@ const devProfile = (tokens, req, res) => {
     color(tokens.method(req, res)),
     chalk.white(tokens.url(req, res)),
     color(tokens.status(req, res)),
-    color(tokens['response-time'](req, res) + ' ms'),
+    color(`${tokens['response-time'](req, res)} ms`),
     '- :',
     color(tokens.res(req, res, 'content-length')),
   ].join(' ');

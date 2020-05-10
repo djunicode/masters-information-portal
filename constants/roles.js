@@ -1,5 +1,5 @@
-const ADMIN='admin';
+const ADMIN = 'admin';
 
-module.exports={
-ADMIN
+module.exports = {
+  ADMIN,
 };

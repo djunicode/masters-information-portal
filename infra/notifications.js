@@ -28,14 +28,14 @@ const createForumNotification = async (fromUser, toUser, forumId) => {
  */
 const createChatNotification = async (fromUser, toUser, chatId) => {
   const existingNotification = await Notification.findOne({
-    fromUser: fromUser,
-    toUser: toUser,
+    fromUser,
+    toUser,
     eventId: chatId,
     model: constants.MODEL_CHAT,
     read: false,
   });
-  if (!!existingNotification) return existingNotification; // As there is already an unread chat notification for the given chat, No need to create a new
-  let body = {
+  if (existingNotification) return existingNotification; // As there is already an unread chat notification for the given chat, No need to create a new
+  const body = {
     fromUser,
     toUser,
     title: constants.MODEL_CHAT,
@@ -55,23 +55,23 @@ const createChatNotification = async (fromUser, toUser, chatId) => {
  * @param {} voteType Use constants/notifications.js upvote/downvote
  */
 const createVoteNotification = async (fromUser, toUser, forumId, voteType) => {
-  //First check if numbered vote exists
-  let doc = await Notification.findOne({
-    toUser: toUser,
+  // First check if numbered vote exists
+  const doc = await Notification.findOne({
+    toUser,
     read: false,
-    title: 'Numbered' + voteType,
+    title: `Numbered${voteType}`,
     eventId: forumId,
   });
   // We found an existing numbered notification
-  if (!!doc) {
-    let num = doc.message.match(/\d+/g).map(Number)[0]; // Extract Number of existing Notification from the message.
-    let ret = await Notification.findByIdAndUpdate(
+  if (doc) {
+    const num = doc.message.match(/\d+/g).map(Number)[0]; // Extract Number of existing Notification from the message.
+    const ret = await Notification.findByIdAndUpdate(
       doc._id,
       {
         message: constants.voteTemplateNumbered({
           number: num + 1,
-          voteType: voteType,
-          forumId: forumId,
+          voteType,
+          forumId,
         }),
       },
       { new: true }
@@ -79,9 +79,9 @@ const createVoteNotification = async (fromUser, toUser, forumId, voteType) => {
     return ret;
   }
 
-  //If no numbered notification was existing we check if the total number of named notification is at tipping point
-  let docs = await Notification.find({
-    toUser: toUser,
+  // If no numbered notification was existing we check if the total number of named notification is at tipping point
+  const docs = await Notification.find({
+    toUser,
     read: false,
     title: voteType,
     eventId: forumId,
@@ -89,36 +89,38 @@ const createVoteNotification = async (fromUser, toUser, forumId, voteType) => {
 
   if (docs.length === constants.MAX_VOTE_LIMIT) {
     await Notification.deleteMany({
-      toUser: toUser,
+      toUser,
       read: false,
       title: voteType,
       eventId: forumId,
     });
 
-    let notification = await Notification.create({
-      toUser: toUser,
-      title: 'Numbered' + voteType,
+    const notification = await Notification.create({
+      toUser,
+      title: `Numbered${voteType}`,
       eventId: forumId,
       message: constants.voteTemplateNumbered({
         number: constants.MAX_VOTE_LIMIT + 1,
-        voteType: voteType,
-        forumId: forumId,
+        voteType,
+        forumId,
       }),
       model: constants.MODEL_FORUM,
     });
     return notification;
   }
 
-  //The Named notifications are below tipping point, so we add another one.
+  // The Named notifications are below tipping point, so we add another one.
 
-  let notification = await Notification.create({
-    fromUser: fromUser,
-    toUser: toUser,
+  const notification = await Notification.create({
+    fromUser,
+    toUser,
     title: voteType,
-    message: constants.voteTemplateNamed({ user: fromUser, voteType: voteType, forumId: forumId }),
+    message: constants.voteTemplateNamed({ user: fromUser, voteType, forumId }),
     eventId: forumId,
     model: constants.MODEL_CHAT,
   });
 
   return notification;
 };
+
+module.exports = { createChatNotification, createForumNotification, createVoteNotification };

@@ -9,7 +9,7 @@ mongoose.set('useFindAndModify', false);
 module.exports = {
   dbConnection: async () => {
     try {
-      let dbConnUrl = process.env.NODE_ENV === 'test' ? dbTestConnectionUrl : dbConnectionUrl;
+      const dbConnUrl = process.env.NODE_ENV === 'test' ? dbTestConnectionUrl : dbConnectionUrl;
 
       await mongoose.connect(dbConnUrl, {
         useNewUrlParser: true,
