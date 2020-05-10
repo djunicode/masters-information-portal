@@ -143,6 +143,19 @@ color: #333333;
 
 
   }
+  .search{
+
+    font-family: 'Lato','sans-serif';
+font-style: normal;
+font-weight: bold;
+height:0px;
+font-size: 32px;
+
+text-align:left;
+color: #124034; 
+
+
+  }
   .likesv{
     text-align:left;
   }
@@ -206,7 +219,18 @@ text-align:left;
     border-radius: 10px;
     border: 2px solid #E84B2C;
   }
-  
+  .unidet{
+    font-family: Lato;
+font-style: normal;
+font-weight: bold;
+font-size: 32px;
+line-height: 3px;
+text-align: center;
+
+/* Grey-Very Dark */
+
+color: #124034;
+  }
   
   
 
@@ -217,6 +241,13 @@ text-align:left;
     left:10px;
     
     
+    }
+    .buttonprof1{
+
+      position:relative;
+      left:350px;
+      top:-100px;
+
     }
     .personname2{
 
@@ -230,7 +261,7 @@ text-align:left;
     .icons{
 
       position:relative;
-      top:100px;
+      top:140px;
       left:-370px;
     }
     .persontitle2{
@@ -250,6 +281,30 @@ text-align:left;
 
       height:auto;
     }
+    .buttonprof{
+  position:relative;
+  left:100px;
+  top:-40px;
+}
+.personname3{
+  position:relative;
+  left:15px;
+}
+.persontitle4{
+  position:relative;
+  left:15px;
+}
+.persondesc4{
+  position:relative;
+  left:15px;
+}
+.imagenew1{
+  position:relative;
+  left:10px;
+  
+}
+
+
   }
 
 .imagenew{
@@ -265,6 +320,16 @@ text-align:left;
     
     
 }
+.imagenew1{
+
+    border-radius: 50%;
+    height:70px;
+    width:70px;
+    
+    float:right;
+    position:relative;
+    top:-35px;
+}
 .total1{
 
    
@@ -279,6 +344,27 @@ color: #124034;
 text-align: left;
 font-family: 'Lato', sans-serif;
 
+}
+.un{
+  font-family: Lato;
+font-style: normal;
+font-weight: bold;
+font-size: 48px;
+line-height: 40px;
+text-align: left;
+
+/* Grey-Very Dark */
+
+color: #124034;
+}
+.ud{
+  font-family: Lato;
+font-style: normal;
+font-weight: normal;
+font-size: 24px;
+line-height: 40px;
+color: #4F4F4F;
+text-align:left;
 }
 .personname2{
 height:40px;
@@ -308,7 +394,35 @@ font-family: 'Lato', sans-serif;
 
 color: #124034;
 }
+.personname3{
+  font-family: Lato;
+font-style: normal;
+font-weight: normal;
+font-size: 28px;
+line-height: 6px;
+text-align:left;
+color: #333333;
+}
+.personname4{
+  font-family: Lato;
+font-style: normal;
+font-weight: normal;
+font-size: 28px;
+line-height: 30px;
+text-align:left;
+color: #333333;
+}
 
+.persontitle4{
+
+  font-family: Lato;
+font-style: normal;
+font-weight: normal;
+font-size: 28px;
+line-height: 4px;
+color: #828282;
+text-align:left;
+}
 .persontitle3{
 
   
@@ -351,6 +465,23 @@ font-family: 'Lato', sans-serif;
 color: #496961;
 
 }
+.persondesc4{
+
+    text-align: left;
+    font-family: Lato;
+font-style: normal;
+font-weight: normal;
+font-size: 24px;
+
+line-height: 29px;
+font-family: 'Lato', sans-serif;
+
+/* Grey-Dark */
+
+color: #496961;
+
+}
+
 .persondesc3{
 
     text-align: center;
@@ -420,6 +551,29 @@ border-radius: 10px;
   }
 
   .buttonuniv{
+
+    font-style: normal;
+font-weight: 900;
+font-size: 12.8px;
+line-height: 15px;
+width:100px;
+height:50px;
+font-family: 'Lato', sans-serif;
+
+  }
+
+.buttonprof{
+
+    font-style: normal;
+font-weight: 900;
+font-size: 12.8px;
+line-height: 15px;
+width:100px;
+height:50px;
+font-family: 'Lato', sans-serif;
+
+  }
+.buttonprof1{
 
     font-style: normal;
 font-weight: 900;

@@ -11,8 +11,10 @@ const expect = chai.use(chaiHttp).expect;
 
 let user, token, forum;
 describe(config.GROUP_FORUM_TESTS, () => {
-  beforeEach(async () => {
+  before(async () => {
     await dbConnection();
+  });
+  beforeEach(async () => {
     await User.deleteMany({});
     await Forum.deleteMany({});
     const res1 = await chai
@@ -33,15 +35,12 @@ describe(config.GROUP_FORUM_TESTS, () => {
         title: 'TestTitle',
         text: 'TestText',
         author: user._id,
-        isAnswer: false
+        isAnswer: false,
       });
     forum = res3.body;
   });
   it(config.TEST_UNAUTHENTICATED_REQ, async () => {
-    const res1 = await chai
-      .request(server)
-      .post('/api/forum')
-      .send({});
+    const res1 = await chai.request(server).post('/api/forum').send({});
     expect(res1).to.have.status(401);
   });
 
@@ -164,13 +163,11 @@ describe(config.GROUP_FORUM_TESTS, () => {
         title: 'TestTitle',
         text: 'TestText',
         author: user._id,
-        isAnswer: true
+        isAnswer: true,
       });
     expect(res1).to.have.status(400);
     expect(res1.body).to.have.property('parentId');
-    expect(res1.body.parentId.kind)
-      .to.be.a('string')
-      .eql('required');
+    expect(res1.body.parentId.kind).to.be.a('string').eql('required');
   });
 
   it(config.TEST_VALID_ANSWER, async () => {
@@ -182,32 +179,24 @@ describe(config.GROUP_FORUM_TESTS, () => {
         text: 'TestAnsText',
         author: user._id,
         isAnswer: true,
-        parentId: forum._id
+        parentId: forum._id,
       });
     expect(res1).to.have.status(201);
-    expect(res1.body)
-      .to.have.property('author')
-      .eql(user._id);
-    expect(res1.body)
-      .to.have.property('parentId')
-      .eql(forum._id);
-    expect(res1.body)
-      .to.have.property('isAnswer')
-      .eql(true);
-    expect(res1.body)
-      .to.have.property('title')
-      .eql('');
-    expect(res1.body)
-      .to.have.property('text')
-      .eql('TestAnsText');
+    expect(res1.body).to.have.property('author').eql(user._id);
+    expect(res1.body).to.have.property('parentId').eql(forum._id);
+    expect(res1.body).to.have.property('isAnswer').eql(true);
+    expect(res1.body).to.have.property('title').eql('');
+    expect(res1.body).to.have.property('text').eql('TestAnsText');
 
     //* Check if answer id is added to forum question
     const res2 = await chai.request(server).get(`/api/forum/${forum._id}`);
     expect(res2).to.have.status(200);
-    expect(res2.body)
-      .to.have.property('answers')
-      .to.be.a('array');
+    expect(res2.body).to.have.property('answers').to.be.a('array');
     expect(Array.from(res2.body.answers).length === 1).to.be.eql(true);
     expect(JSON.stringify(res2.body.answers[0])).to.be.eql(JSON.stringify(res1.body._id));
+  });
+  after(async () => {
+    await User.deleteMany({});
+    await Forum.deleteMany({});
   });
 });
