@@ -12,7 +12,6 @@ import IconButton from '@material-ui/core/IconButton';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import { Redirect } from 'react-router-dom';
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(5),
@@ -50,6 +49,11 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'arial',
     fontSize: '18px',
     marginLeft: '5px',
+  },
+  reply_para: {
+    fontSize: '18px',
+    marginTop: '0',
+    marginBottom: '0px',
   },
   reply_box: {
     borderLeft: '5px solid #c3c7c4 ',
@@ -131,80 +135,84 @@ function CustomDislike(props) {
 function Questions_Detail(props) {
   const classes = useStyles();
 
-  return (
+  return props.loggedIn ? (
     <div>
-      {props.loggedIn ? (
-        <Paper className={classes.paper}>
-          <h1 style={{ marginBottom: '20px' }}>Question Question</h1>
-          <Grid container spacing={1}>
-            <Grid sm={1}>
-              <img className={classes.profile_img} src={img} alt="eh" />
-            </Grid>
-            <Grid style={{ marginLeft: '2%' }} sm={4}>
-              <h3 style={{ marginTop: '1px', marginBottom: '1px' }}>Lorem Ipsum</h3>
-              <p style={{ marginTop: '1px' }}>March 1</p>
-            </Grid>
+      <Paper className={classes.paper}>
+        <h1 style={{ marginBottom: '20px' }}>Question Question</h1>
+        <Grid container spacing={1}>
+          <Grid sm={1}>
+            <img className={classes.profile_img} src={img} alt="eh" />
           </Grid>
-          <p className={classes.main_ans}>
-            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print,
-            graphic or web designs. The passage is attributed to an unknown typesetter in the 15th
-            century Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying
-            out print, graphic or web designs. The passage is attributed to an unknown typesetter in
-            the 15th century Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in
-            laying out print, graphic or web designs. The passage is attributed to an unknown
-            typesetter in the 15th century. The passage is attributed to an unknown typesetter in
-            the 15th century Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in
-            laying out print, graphic or web designs. The passage is attributed to an unknown
-            typesetter in the 15th century.
-          </p>
-          <Grid style={{ marginTop: '30px' }} container>
-            <Grid md={1}>
-              <img className={classes.profile_img} src={img} alt="eh" />
-            </Grid>
-            <Grid style={{ marginLeft: '2%' }} md={8}>
-              <TextField
-                id="filled-multiline-static"
-                multiline
-                style={{
-                  width: '100%',
-                  marginBottom: '20px',
-                  borderRadius: '10px',
-                }}
-                rows={4}
-                placeholder="Type something here"
-                variant="filled"
-              />
-            </Grid>
-            <Grid container>
-              <CustomLike reply={false} like={7} />
-              <CustomDislike reply={false} dislike={0} />
-              <IconButton>
-                <CommentIcon />
-              </IconButton>
-              <IconButton style={{ marginRight: '150px' }}>
-                <ShareIcon />
-              </IconButton>
-              <div>
-                <Button disabled className={classes.button1} style={{ color: '#123800' }}>
-                  Javascript
-                </Button>
-                <Button disabled className={classes.button1} style={{ color: '#123800' }}>
-                  React
-                </Button>
-                <Button disabled className={classes.button1} style={{ color: '#123800' }}>
-                  Angular
-                </Button>
-                <Button disabled className={classes.button1} style={{ color: '#123800' }}>
-                  Vue
-                </Button>
-                <Button disabled className={classes.button1} style={{ color: '#123800' }}>
-                  Material UI
-                </Button>
-              </div>
-            </Grid>
+          <Grid style={{ marginLeft: '2%' }} sm={4}>
+            <h3 style={{ marginTop: '1px', marginBottom: '1px' }}>Lorem Ipsum</h3>
+            <p style={{ marginTop: '1px' }}>March 1</p>
           </Grid>
-          {/*Reply Section*/}
-          <hr />
+        </Grid>
+        <p className={classes.main_ans}>
+          Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print,
+          graphic or web designs. The passage is attributed to an unknown typesetter in the 15th
+          century Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out
+          print, graphic or web designs. The passage is attributed to an unknown typesetter in the
+          15th century Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying
+          out print, graphic or web designs. The passage is attributed to an unknown typesetter in
+          the 15th century. The passage is attributed to an unknown typesetter in the 15th century
+          Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print,
+          graphic or web designs. The passage is attributed to an unknown typesetter in the 15th
+          century.
+        </p>
+        <Grid spacing={1} style={{ marginTop: '30px' }} container>
+          <Grid md={1}>
+            <img className={classes.profile_img} src={img} alt="eh" />
+          </Grid>
+          <Grid style={{ marginLeft: '2%' }} md={8}>
+            <TextField
+              id="reply_text"
+              multiline
+              style={{
+                width: '100%',
+                marginBottom: '20px',
+                borderRadius: '10px',
+              }}
+              rows={4}
+              placeholder="Type something here"
+              variant="filled"
+            />
+          </Grid>
+        </Grid>
+        <Grid container>
+          <Grid sm={2}>
+            <Button variant="contained">Reply</Button>
+          </Grid>
+          <CustomLike reply={false} like={7} />
+          <CustomDislike reply={false} dislike={0} />
+          <IconButton>
+            <CommentIcon />
+          </IconButton>
+          <IconButton style={{ marginRight: '150px' }}>
+            <ShareIcon />
+          </IconButton>
+          <div>
+            <Button disabled className={classes.button1} style={{ color: '#123800' }}>
+              Javascript
+            </Button>
+            <Button disabled className={classes.button1} style={{ color: '#123800' }}>
+              React
+            </Button>
+            <Button disabled className={classes.button1} style={{ color: '#123800' }}>
+              Angular
+            </Button>
+            <Button disabled className={classes.button1} style={{ color: '#123800' }}>
+              Vue
+            </Button>
+            <Button disabled className={classes.button1} style={{ color: '#123800' }}>
+              Material UI
+            </Button>
+          </div>
+        </Grid>
+
+        {/*Reply Section*/}
+        <hr />
+        <div id="question_reply">
           <Grid style={{ marginTop: '30px', marginBottom: '5px' }} container>
             <Grid sm={1}>
               <img className={classes.profile_img_reply} src={img} alt="eh" />
@@ -214,7 +222,7 @@ function Questions_Detail(props) {
               <p style={{ marginTop: '1px' }}>March 1</p>
             </Grid>
           </Grid>
-          <p style={{ fontSize: '18px', marginTop: '0', marginBottom: '0px' }}>
+          <p className={classes.reply_para} style={{}}>
             Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print,
             graphic or web designs. The passage is attributed to an unknown typesetter in the 15th
             century Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying
@@ -233,72 +241,72 @@ function Questions_Detail(props) {
             <CustomLike reply={true} like={7} />
             <CustomDislike reply={true} dislike={0} />
           </CardActions>
+        </div>
 
-          <div class={classes.reply_box}>
-            <div style={{ marginLeft: '5%' }}>
-              <Grid style={{ marginTop: '30px', marginBottom: '5px' }} container>
-                <Grid sm={1}>
-                  <img className={classes.profile_img_reply} src={img} alt="eh" />
-                </Grid>
-                <Grid sm={4}>
-                  <h4 style={{ marginTop: '1px', marginBottom: '1px' }}>Lorem Ipsum</h4>
-                  <p style={{ marginTop: '1px' }}>March 1</p>
-                </Grid>
+        <div class={classes.reply_box}>
+          <div style={{ marginLeft: '5%' }}>
+            <Grid style={{ marginTop: '30px', marginBottom: '5px' }} container>
+              <Grid sm={1}>
+                <img className={classes.profile_img_reply} src={img} alt="eh" />
               </Grid>
-              <p style={{ fontSize: '18px', marginTop: '0', marginBottom: '0' }}>
-                Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out
-                print, graphic or web designs. The passage is attributed to an unknown typesetter in
-                the 15th century Lorem ipsum, or lipsum as it is sometimes known, is dummy text used
-                in laying out print, graphic or web designs. The passage is attributed to an unknown
-                typesetter in the 15th century Lorem ipsum, or lipsum as it is sometimes known, is
-                dummy text used in laying out print, graphic or web designs. The passage is
-                attributed to an unknown typesetter in the 15th century. The passage is attributed
-                to an unknown typesetter in the 15th century Lorem ipsum, or lipsum as it is
-                sometimes known, is dummy text used in laying out print, graphic or web designs. The
-                passage is attributed to an unknown typesetter in the 15th century.
-              </p>
-              <CardActions style={{ marginTop: '0', marginBottom: '0' }} disableSpacing>
-                <Button>Reply</Button>
-                <h3>3h</h3>
-                <CustomLike reply={'true'} like={7} />
-                <CustomDislike reply={'true'} dislike={0} />
-              </CardActions>
-            </div>
-            <div style={{ marginLeft: '5%' }}>
-              <Grid style={{ marginTop: '30px', marginBottom: '5px' }} container>
-                <Grid sm={1}>
-                  <img className={classes.profile_img_reply} src={img} alt="eh" />
-                </Grid>
-                <Grid sm={4}>
-                  <h4 style={{ marginTop: '1px', marginBottom: '1px' }}>Lorem Ipsum</h4>
-                  <p style={{ marginTop: '1px' }}>March 1</p>
-                </Grid>
+              <Grid sm={4}>
+                <h4 style={{ marginTop: '1px', marginBottom: '1px' }}>Lorem Ipsum</h4>
+                <p style={{ marginTop: '1px' }}>March 1</p>
               </Grid>
-              <p style={{ fontSize: '18px', marginTop: '0', marginBottom: '0' }}>
-                Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out
-                print, graphic or web designs. The passage is attributed to an unknown typesetter in
-                the 15th century Lorem ipsum, or lipsum as it is sometimes known, is dummy text used
-                in laying out print, graphic or web designs. The passage is attributed to an unknown
-                typesetter in the 15th century Lorem ipsum, or lipsum as it is sometimes known, is
-                dummy text used in laying out print, graphic or web designs. The passage is
-                attributed to an unknown typesetter in the 15th century. The passage is attributed
-                to an unknown typesetter in the 15th century Lorem ipsum, or lipsum as it is
-                sometimes known, is dummy text used in laying out print, graphic or web designs. The
-                passage is attributed to an unknown typesetter in the 15th century.
-              </p>
-              <CardActions style={{ marginTop: '0', marginBottom: '0' }} disableSpacing>
-                <Button>Reply</Button>
-                <h3>3h</h3>
-                <CustomLike reply={'true'} like={7} />
-                <CustomDislike reply={'true'} dislike={0} />
-              </CardActions>
-            </div>
+            </Grid>
+            <p style={{ fontSize: '18px', marginTop: '0', marginBottom: '0' }}>
+              Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out
+              print, graphic or web designs. The passage is attributed to an unknown typesetter in
+              the 15th century Lorem ipsum, or lipsum as it is sometimes known, is dummy text used
+              in laying out print, graphic or web designs. The passage is attributed to an unknown
+              typesetter in the 15th century Lorem ipsum, or lipsum as it is sometimes known, is
+              dummy text used in laying out print, graphic or web designs. The passage is attributed
+              to an unknown typesetter in the 15th century. The passage is attributed to an unknown
+              typesetter in the 15th century Lorem ipsum, or lipsum as it is sometimes known, is
+              dummy text used in laying out print, graphic or web designs. The passage is attributed
+              to an unknown typesetter in the 15th century.
+            </p>
+            <CardActions style={{ marginTop: '0', marginBottom: '0' }} disableSpacing>
+              <Button>Reply</Button>
+              <h3>3h</h3>
+              <CustomLike reply={'true'} like={7} />
+              <CustomDislike reply={'true'} dislike={0} />
+            </CardActions>
           </div>
-        </Paper>
-      ) : (
-        <Redirect to="/" />
-      )}
+          <div style={{ marginLeft: '5%' }}>
+            <Grid style={{ marginTop: '30px', marginBottom: '5px' }} container>
+              <Grid sm={1}>
+                <img className={classes.profile_img_reply} src={img} alt="eh" />
+              </Grid>
+              <Grid sm={4}>
+                <h4 style={{ marginTop: '1px', marginBottom: '1px' }}>Lorem Ipsum</h4>
+                <p style={{ marginTop: '1px' }}>March 1</p>
+              </Grid>
+            </Grid>
+            <p style={{ fontSize: '18px', marginTop: '0', marginBottom: '0' }}>
+              Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out
+              print, graphic or web designs. The passage is attributed to an unknown typesetter in
+              the 15th century Lorem ipsum, or lipsum as it is sometimes known, is dummy text used
+              in laying out print, graphic or web designs. The passage is attributed to an unknown
+              typesetter in the 15th century Lorem ipsum, or lipsum as it is sometimes known, is
+              dummy text used in laying out print, graphic or web designs. The passage is attributed
+              to an unknown typesetter in the 15th century. The passage is attributed to an unknown
+              typesetter in the 15th century Lorem ipsum, or lipsum as it is sometimes known, is
+              dummy text used in laying out print, graphic or web designs. The passage is attributed
+              to an unknown typesetter in the 15th century.
+            </p>
+            <CardActions style={{ marginTop: '0', marginBottom: '0' }} disableSpacing>
+              <Button>Reply</Button>
+              <h3>3h</h3>
+              <CustomLike reply={'true'} like={7} />
+              <CustomDislike reply={'true'} dislike={0} />
+            </CardActions>
+          </div>
+        </div>
+      </Paper>
     </div>
+  ) : (
+    <Redirect to="/" />
   );
 }
 
