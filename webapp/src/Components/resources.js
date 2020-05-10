@@ -1,4 +1,4 @@
-import React,{useState,Component} from 'react';
+import React from 'react';
 import { makeStyles, useTheme ,withStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -63,6 +63,14 @@ const useStyles1 = makeStyles(theme => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
+  icon:{
+    margin: 0,
+ top: 'auto',
+ right: 20,
+ bottom: 20,
+ left: 'auto',
+ position: 'fixed',
+ },
 }));
 
 
@@ -73,14 +81,14 @@ const useStyles = makeStyles(theme => ({
         flexGrow:1,
         height:"100vh",
         background:"none",
-        marginLeft:"100px",
+        marginLeft:"50px",
         marginRight:"50px",
 
 
     },
     card:{
-        width:'350px',
-        minHeight:'320px',
+        width:'300px',
+        minHeight:'250px',
         margin:"20px",
     },
 
@@ -98,14 +106,7 @@ const useStyles = makeStyles(theme => ({
     image:{
       float:"left",
     },
-    icon:{
-       margin: 0,
-    top: 'auto',
-    right: 25,
-    bottom: 40,
-    left: 'auto',
-    position: 'fixed',
-    }
+   
   
 }));
 
@@ -114,14 +115,14 @@ function All() {
   return(
         <Paper elevation={0} className={classes.root}>
           
-          <Grid container spacing={4}>
+          <Grid container spacing={6}>
             <Grid item xs={4}>
             <Card className={classes.card} raised="true">
             <CardContent>
             <Typography className={classes.title} gutterBottom>
                Title
             </Typography><br /><br />
-            <Avatar className={classes.image} alt="ABC" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+            <Avatar className={classes.image} alt="ABC" align="left"/>
             <Typography className={classes.username}>ABC</Typography><br /> <br />
             <Typography variant="body1" align="left">
             Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
@@ -138,7 +139,7 @@ function All() {
             <Typography className={classes.title} gutterBottom>
                Title
             </Typography><br /><br />
-            <Avatar className={classes.image} alt="ABC" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+            <Avatar className={classes.image} alt="ABC"  align="left"/>
             <Typography className={classes.username}>ABC</Typography><br /> <br />
             <Typography variant="body1" align="left">
             Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
@@ -155,7 +156,7 @@ function All() {
             <Typography className={classes.title} gutterBottom>
                Title
             </Typography><br /><br />
-            <Avatar className={classes.image} alt="ABC" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+            <Avatar className={classes.image} alt="ABC" align="left"/>
             <Typography className={classes.username}>ABC</Typography><br /> <br />
             <Typography variant="body1" align="left">
             Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
@@ -174,7 +175,7 @@ function All() {
             <Typography className={classes.title} gutterBottom>
                Title
             </Typography><br /><br />
-            <Avatar className={classes.image} alt="DEF" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+            <Avatar className={classes.image} alt="DEF" align="left"/>
             <Typography className={classes.username}>DEF</Typography><br /> <br />
             <Typography variant="body1" align="left">
             Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
@@ -191,8 +192,8 @@ function All() {
             <Typography className={classes.title} gutterBottom>
                Title
             </Typography><br /><br />
-            <Avatar className={classes.image} alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
-            <Typography className={classes.username}>GHI</Typography><br /> <br />
+            <Avatar className={classes.image} alt="DEF" align="left"/>
+            <Typography className={classes.username}>DEF</Typography><br /> <br />
             <Typography variant="body1" align="left">
             Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
             </Typography>
@@ -208,8 +209,8 @@ function All() {
             <Typography className={classes.title} gutterBottom>
                Title
             </Typography><br /><br />
-            <Avatar className={classes.image} alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
-            <Typography className={classes.username}>GHI</Typography><br /> <br />
+            <Avatar className={classes.image} alt="DEF" align="left"/>
+            <Typography className={classes.username}>DEF</Typography><br /> <br />
             <Typography variant="body1" align="left">
             Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
             </Typography>
@@ -227,7 +228,7 @@ function All() {
             <Typography className={classes.title} gutterBottom>
                Title
             </Typography><br /><br />
-            <Avatar className={classes.image} alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+            <Avatar className={classes.image} alt="GHI"  align="left"/>
             <Typography className={classes.username}>GHI</Typography><br /> <br />
             <Typography variant="body1" align="left">
             Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
@@ -244,7 +245,7 @@ function All() {
             <Typography className={classes.title} gutterBottom>
                Title
             </Typography><br /><br />
-            <Avatar className={classes.image} alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+            <Avatar className={classes.image} alt="GHI" align="left"/>
             <Typography className={classes.username}>GHI</Typography><br /> <br />
             <Typography variant="body1" align="left">
             Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
@@ -261,7 +262,7 @@ function All() {
             <Typography className={classes.title} gutterBottom>
                Title
             </Typography><br /><br />
-            <Avatar className={classes.image} alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+            <Avatar className={classes.image} alt="GHI"  align="left"/>
             <Typography className={classes.username}>GHI</Typography><br /> <br />
             <Typography variant="body1" align="left">
             Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
@@ -275,9 +276,7 @@ function All() {
             </Card>
             </Grid>
          </Grid>
-         <Fab className={classes.icon} color="primary" aria-label="add">
-            <AddIcon />
-          </Fab>
+       
         </Paper>
   );
 };
@@ -286,14 +285,342 @@ function All() {
 const  New=(props)=>{
   const classes=useStyles();
   return(
-    <h1>HEll</h1>
+    <Paper elevation={0} className={classes.root}>
+          
+    <Grid container spacing={6}>
+      <Grid item xs={4}>
+      <Card className={classes.card} raised="true">
+      <CardContent>
+      <Typography className={classes.title} gutterBottom>
+         Title
+      </Typography><br /><br />
+      <Avatar className={classes.image} alt="ABC" align="left"/>
+      <Typography className={classes.username}>ABC</Typography><br /> <br />
+      <Typography variant="body1" align="left">
+      Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+      </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="medium" color="primary">
+          Resource Link
+        </Button>
+      </CardActions>
+      </Card>
+      <Card className={classes.card} raised="true">
+      <CardContent>
+      <Typography className={classes.title} gutterBottom>
+         Title
+      </Typography><br /><br />
+      <Avatar className={classes.image} alt="ABC"  align="left"/>
+      <Typography className={classes.username}>ABC</Typography><br /> <br />
+      <Typography variant="body1" align="left">
+      Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+      </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="medium" color="primary">
+          Resource Link
+        </Button>
+      </CardActions>
+      </Card>
+      <Card className={classes.card} raised="true">
+      <CardContent>
+      <Typography className={classes.title} gutterBottom>
+         Title
+      </Typography><br /><br />
+      <Avatar className={classes.image} alt="ABC" align="left"/>
+      <Typography className={classes.username}>ABC</Typography><br /> <br />
+      <Typography variant="body1" align="left">
+      Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+      </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="medium" color="primary">
+          Resource Link
+        </Button>
+      </CardActions>
+      </Card>
+      </Grid>
+      <Grid item xs={4}>
+      <Card className={classes.card} raised="true">
+      <CardContent>
+      <Typography className={classes.title} gutterBottom>
+         Title
+      </Typography><br /><br />
+      <Avatar className={classes.image} alt="DEF" align="left"/>
+      <Typography className={classes.username}>DEF</Typography><br /> <br />
+      <Typography variant="body1" align="left">
+      Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+      </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="medium" color="primary">
+          Resource Link
+        </Button>
+      </CardActions>
+      </Card>
+      <Card className={classes.card} raised="true"> 
+      <CardContent>
+      <Typography className={classes.title} gutterBottom>
+         Title
+      </Typography><br /><br />
+      <Avatar className={classes.image} alt="DEF" align="left"/>
+      <Typography className={classes.username}>DEF</Typography><br /> <br />
+      <Typography variant="body1" align="left">
+      Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+      </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="medium" color="primary">
+          Resource Link
+        </Button>
+      </CardActions>
+      </Card>
+      <Card className={classes.card} raised="true"> 
+      <CardContent>
+      <Typography className={classes.title} gutterBottom>
+         Title
+      </Typography><br /><br />
+      <Avatar className={classes.image} alt="DEF" align="left"/>
+      <Typography className={classes.username}>DEF</Typography><br /> <br />
+      <Typography variant="body1" align="left">
+      Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+      </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="medium" color="primary">
+          Resource Link
+        </Button>
+      </CardActions>
+      </Card>
+      </Grid>
+      <Grid item xs={4}>
+      <Card className={classes.card} raised="true"> 
+      <CardContent>
+      <Typography className={classes.title} gutterBottom>
+         Title
+      </Typography><br /><br />
+      <Avatar className={classes.image} alt="GHI"  align="left"/>
+      <Typography className={classes.username}>GHI</Typography><br /> <br />
+      <Typography variant="body1" align="left">
+      Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+      </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="medium" color="primary">
+          Resource Link
+        </Button>
+      </CardActions>
+      </Card>
+      <Card className={classes.card} raised="true"> 
+      <CardContent>
+      <Typography className={classes.title} gutterBottom>
+         Title
+      </Typography><br /><br />
+      <Avatar className={classes.image} alt="GHI" align="left"/>
+      <Typography className={classes.username}>GHI</Typography><br /> <br />
+      <Typography variant="body1" align="left">
+      Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+      </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="medium" color="primary">
+          Resource Link
+        </Button>
+      </CardActions>
+      </Card>
+      <Card className={classes.card} raised="true"> 
+      <CardContent>
+      <Typography className={classes.title} gutterBottom>
+         Title
+      </Typography><br /><br />
+      <Avatar className={classes.image} alt="GHI"  align="left"/>
+      <Typography className={classes.username}>GHI</Typography><br /> <br />
+      <Typography variant="body1" align="left">
+      Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+      </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="medium" color="primary">
+          Resource Link
+        </Button>
+      </CardActions>
+      </Card>
+      </Grid>
+   </Grid>
+  
+  </Paper>
 );
 };
 
 const  Books=(props)=>{
     const classes=useStyles();
     return(
-        <h1>HEl</h1>
+      <Paper elevation={0} className={classes.root}>
+          
+          <Grid container spacing={6}>
+            <Grid item xs={4}>
+            <Card className={classes.card} raised="true">
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="ABC" align="left"/>
+            <Typography className={classes.username}>ABC</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            <Card className={classes.card} raised="true">
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="ABC"  align="left"/>
+            <Typography className={classes.username}>ABC</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            <Card className={classes.card} raised="true">
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="ABC" align="left"/>
+            <Typography className={classes.username}>ABC</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            </Grid>
+            <Grid item xs={4}>
+            <Card className={classes.card} raised="true">
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="DEF" align="left"/>
+            <Typography className={classes.username}>DEF</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            <Card className={classes.card} raised="true"> 
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="DEF" align="left"/>
+            <Typography className={classes.username}>DEF</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            <Card className={classes.card} raised="true"> 
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="DEF" align="left"/>
+            <Typography className={classes.username}>DEF</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            </Grid>
+            <Grid item xs={4}>
+            <Card className={classes.card} raised="true"> 
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="GHI"  align="left"/>
+            <Typography className={classes.username}>GHI</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            <Card className={classes.card} raised="true"> 
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="GHI" align="left"/>
+            <Typography className={classes.username}>GHI</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            <Card className={classes.card} raised="true"> 
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="GHI"  align="left"/>
+            <Typography className={classes.username}>GHI</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            </Grid>
+         </Grid>
+        
+        </Paper>
   );
 };
 
@@ -301,25 +628,353 @@ const  Books=(props)=>{
 const  Lists=(props)=>{
     const classes=useStyles();
     return(
-        <h1>HE</h1>
+      <Paper elevation={0} className={classes.root}>
+          
+      <Grid container spacing={6}>
+        <Grid item xs={4}>
+        <Card className={classes.card} raised="true">
+        <CardContent>
+        <Typography className={classes.title} gutterBottom>
+           Title
+        </Typography><br /><br />
+        <Avatar className={classes.image} alt="ABC" align="left"/>
+        <Typography className={classes.username}>ABC</Typography><br /> <br />
+        <Typography variant="body1" align="left">
+        Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+        </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="medium" color="primary">
+            Resource Link
+          </Button>
+        </CardActions>
+        </Card>
+        <Card className={classes.card} raised="true">
+        <CardContent>
+        <Typography className={classes.title} gutterBottom>
+           Title
+        </Typography><br /><br />
+        <Avatar className={classes.image} alt="ABC"  align="left"/>
+        <Typography className={classes.username}>ABC</Typography><br /> <br />
+        <Typography variant="body1" align="left">
+        Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+        </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="medium" color="primary">
+            Resource Link
+          </Button>
+        </CardActions>
+        </Card>
+        <Card className={classes.card} raised="true">
+        <CardContent>
+        <Typography className={classes.title} gutterBottom>
+           Title
+        </Typography><br /><br />
+        <Avatar className={classes.image} alt="ABC" align="left"/>
+        <Typography className={classes.username}>ABC</Typography><br /> <br />
+        <Typography variant="body1" align="left">
+        Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+        </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="medium" color="primary">
+            Resource Link
+          </Button>
+        </CardActions>
+        </Card>
+        </Grid>
+        <Grid item xs={4}>
+        <Card className={classes.card} raised="true">
+        <CardContent>
+        <Typography className={classes.title} gutterBottom>
+           Title
+        </Typography><br /><br />
+        <Avatar className={classes.image} alt="DEF" align="left"/>
+        <Typography className={classes.username}>DEF</Typography><br /> <br />
+        <Typography variant="body1" align="left">
+        Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+        </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="medium" color="primary">
+            Resource Link
+          </Button>
+        </CardActions>
+        </Card>
+        <Card className={classes.card} raised="true"> 
+        <CardContent>
+        <Typography className={classes.title} gutterBottom>
+           Title
+        </Typography><br /><br />
+        <Avatar className={classes.image} alt="DEF" align="left"/>
+        <Typography className={classes.username}>DEF</Typography><br /> <br />
+        <Typography variant="body1" align="left">
+        Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+        </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="medium" color="primary">
+            Resource Link
+          </Button>
+        </CardActions>
+        </Card>
+        <Card className={classes.card} raised="true"> 
+        <CardContent>
+        <Typography className={classes.title} gutterBottom>
+           Title
+        </Typography><br /><br />
+        <Avatar className={classes.image} alt="DEF" align="left"/>
+        <Typography className={classes.username}>DEF</Typography><br /> <br />
+        <Typography variant="body1" align="left">
+        Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+        </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="medium" color="primary">
+            Resource Link
+          </Button>
+        </CardActions>
+        </Card>
+        </Grid>
+        <Grid item xs={4}>
+        <Card className={classes.card} raised="true"> 
+        <CardContent>
+        <Typography className={classes.title} gutterBottom>
+           Title
+        </Typography><br /><br />
+        <Avatar className={classes.image} alt="GHI"  align="left"/>
+        <Typography className={classes.username}>GHI</Typography><br /> <br />
+        <Typography variant="body1" align="left">
+        Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+        </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="medium" color="primary">
+            Resource Link
+          </Button>
+        </CardActions>
+        </Card>
+        <Card className={classes.card} raised="true"> 
+        <CardContent>
+        <Typography className={classes.title} gutterBottom>
+           Title
+        </Typography><br /><br />
+        <Avatar className={classes.image} alt="GHI" align="left"/>
+        <Typography className={classes.username}>GHI</Typography><br /> <br />
+        <Typography variant="body1" align="left">
+        Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+        </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="medium" color="primary">
+            Resource Link
+          </Button>
+        </CardActions>
+        </Card>
+        <Card className={classes.card} raised="true"> 
+        <CardContent>
+        <Typography className={classes.title} gutterBottom>
+           Title
+        </Typography><br /><br />
+        <Avatar className={classes.image} alt="GHI"  align="left"/>
+        <Typography className={classes.username}>GHI</Typography><br /> <br />
+        <Typography variant="body1" align="left">
+        Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+        </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="medium" color="primary">
+            Resource Link
+          </Button>
+        </CardActions>
+        </Card>
+        </Grid>
+     </Grid>
+     
+    </Paper>
   );
 };
 
 const  Forms=(props)=>{
     const classes=useStyles();
     return(
-        <h1>H</h1>
+      <Paper elevation={0} className={classes.root}>
+          
+          <Grid container spacing={6}>
+            <Grid item xs={4}>
+            <Card className={classes.card} raised="true">
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="ABC" align="left"/>
+            <Typography className={classes.username}>ABC</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            <Card className={classes.card} raised="true">
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="ABC"  align="left"/>
+            <Typography className={classes.username}>ABC</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            <Card className={classes.card} raised="true">
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="ABC" align="left"/>
+            <Typography className={classes.username}>ABC</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            </Grid>
+            <Grid item xs={4}>
+            <Card className={classes.card} raised="true">
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="DEF" align="left"/>
+            <Typography className={classes.username}>DEF</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            <Card className={classes.card} raised="true"> 
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="DEF" align="left"/>
+            <Typography className={classes.username}>DEF</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            <Card className={classes.card} raised="true"> 
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="DEF" align="left"/>
+            <Typography className={classes.username}>DEF</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            </Grid>
+            <Grid item xs={4}>
+            <Card className={classes.card} raised="true"> 
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="GHI"  align="left"/>
+            <Typography className={classes.username}>GHI</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            <Card className={classes.card} raised="true"> 
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="GHI" align="left"/>
+            <Typography className={classes.username}>GHI</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            <Card className={classes.card} raised="true"> 
+            <CardContent>
+            <Typography className={classes.title} gutterBottom>
+               Title
+            </Typography><br /><br />
+            <Avatar className={classes.image} alt="GHI"  align="left"/>
+            <Typography className={classes.username}>GHI</Typography><br /> <br />
+            <Typography variant="body1" align="left">
+            Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century 
+            </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" color="primary">
+                Resource Link
+              </Button>
+            </CardActions>
+            </Card>
+            </Grid>
+         </Grid>
+        
+        </Paper>
   );
 
 };
 
 
-function a11yProps(index) {
-  return {
-    id: `full-width-tab-${index}`,
-    'aria-controls': `full-width-tabpanel-${index}`,
-  };
-}
+// function a11yProps(index) {
+//   return {
+//     id: `full-width-tab-${index}`,
+//     'aria-controls': `full-width-tabpanel-${index}`,
+//   };
+// }
 
 const AntTabs = withStyles({
   root: {
@@ -429,6 +1084,9 @@ export default function Resources() {
             <Forms />
         </TabPanel>
       </SwipeableViews>
+      <Fab className={classes.icon} color="primary" aria-label="add">
+            <AddIcon />
+      </Fab>
     </div>
   );
 }

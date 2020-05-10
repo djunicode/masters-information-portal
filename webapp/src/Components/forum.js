@@ -1,4 +1,4 @@
-import React,{useState,Component} from 'react';
+import React,{useState} from 'react';
 import { makeStyles, useTheme ,withStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -159,7 +159,7 @@ function Trending() {
       const[bg,setBg]=useState("disabled");
     const handleLike = e => {
 
-      if(like==props.like)
+      if(like===props.like)
       {
       const like1 = like +1; 
       setLike(like1);
@@ -187,7 +187,7 @@ function Trending() {
       const[bg1,setBg1]=useState("disabled");
     const handleDislike = e => {
 
-      if(dislike==props.dislike)
+      if(dislike===props.dislike)
       {
       const dislike1 = dislike +1; 
       setDislike(dislike1);
@@ -222,7 +222,7 @@ function Trending() {
           </Typography>
         </div>
         <div>
-      <Avatar className={classes.image} alt="ABC" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Avatar className={classes.image} alt="ABC" align="left"/>
       <Typography className={classes.username}>ABC</Typography><br /><br />
       </div>
         <div className={classes.content}>
@@ -263,7 +263,7 @@ function Trending() {
           </Typography>
         </div>
         <div>
-      <Avatar className={classes.image} alt="abc" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Avatar className={classes.image} alt="abc"  align="left"/>
       <Typography className={classes.username}>abc</Typography><br /><br />
       </div>
         <div className={classes.content}>
@@ -302,7 +302,7 @@ function Trending() {
           </Typography>
         </div>
         <div>
-      <Avatar className={classes.image} alt="XYZ" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Avatar className={classes.image} alt="XYZ" align="left"/>
       <Typography className={classes.username}>XYZ</Typography><br /><br />
       </div>
         <div className={classes.content}>
@@ -341,7 +341,7 @@ function Trending() {
           </Typography>
         </div>
         <div>
-      <Avatar className={classes.image} alt="ray" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Avatar className={classes.image} alt="ray"  align="left"/>
       <Typography className={classes.username}>ray</Typography><br /><br />
       </div>
         <div className={classes.content}>
@@ -380,7 +380,7 @@ function Trending() {
           </Typography>
         </div>
         <div>
-      <Avatar className={classes.image} alt="jake" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Avatar className={classes.image} alt="jake" align="left"/>
       <Typography className={classes.username}>jake</Typography><br /><br />
       </div>
         <div className={classes.content}>
@@ -419,7 +419,7 @@ function Trending() {
           </Typography>
         </div>
         <div>
-      <Avatar className={classes.image} alt="AMY" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Avatar className={classes.image} alt="AMY"  align="left"/>
       <Typography className={classes.username}>AMY</Typography><br /><br />
       </div>
         <div className={classes.content}>
@@ -458,7 +458,7 @@ function Trending() {
           </Typography>
         </div>
         <div>
-      <Avatar className={classes.image} alt="student" src="WP_Ironman-2560x1440_00000.jpg" align="left"/>
+      <Avatar className={classes.image} alt="student" align="left"/>
       <Typography className={classes.username}>Student</Typography><br /><br />
       </div>
         <div className={classes.content}>
@@ -503,7 +503,7 @@ const  New=(props)=>{
       const[bg,setBg]=useState("disabled");
     const handleLike = e => {
 
-      if(like==props.like)
+      if(like===props.like)
       {
       const like1 = like +1; 
       setLike(like1);
@@ -531,7 +531,7 @@ const  New=(props)=>{
       const[bg1,setBg1]=useState("disabled");
     const handleDislike = e => {
 
-      if(dislike==props.dislike)
+      if(dislike===props.dislike)
       {
       const dislike1 = dislike +1; 
       setDislike(dislike1);
@@ -570,7 +570,7 @@ const  New=(props)=>{
 
         </div>
         <div>
-      <Avatar alt="def" className={classes.image}  src="WP_Ironman-2560x1440_00000.jpg" align="left"  />
+      <Avatar alt="def" className={classes.image}  align="left"  />
       <Typography className={classes.username}>def</Typography><br /><br />
       </div>
         <Typography variant="body2" align="left" >
@@ -608,7 +608,7 @@ const  New=(props)=>{
 
         </div>
         <div>
-      <Avatar alt="DEF" className={classes.image}  src="WP_Ironman-2560x1440_00000.jpg" align="left"  />
+      <Avatar alt="DEF" className={classes.image}   align="left"  />
       <Typography className={classes.username}>DEF</Typography><br /><br />
       </div>
         <Typography variant="body2" align="left" >
@@ -646,7 +646,7 @@ const  New=(props)=>{
 
         </div>
         <div>
-      <Avatar alt="UVW" className={classes.image}  src="WP_Ironman-2560x1440_00000.jpg" align="left"  />
+      <Avatar alt="UVW" className={classes.image}  align="left"  />
       <Typography className={classes.username}>UVW</Typography><br /><br />
       </div>
         <Typography variant="body2" align="left" >
@@ -687,7 +687,7 @@ const  User=(props)=>{
       const[bg,setBg]=useState("disabled");
     const handleLike = e => {
 
-      if(like==props.like)
+      if(like===props.like)
       {
       const like1 = like +1; 
       setLike(like1);
@@ -715,7 +715,7 @@ const  User=(props)=>{
       const[bg1,setBg1]=useState("disabled");
     const handleDislike = e => {
 
-      if(dislike==props.dislike)
+      if(dislike===props.dislike)
       {
       const dislike1 = dislike +1; 
       setDislike(dislike1);
@@ -754,7 +754,7 @@ const  User=(props)=>{
 
         </div>
         <div>
-      <Avatar  className={classes.image} alt="GHI" src="WP_Ironman-2560x1440_00000.jpg" align="left"  />
+      <Avatar  className={classes.image} alt="GHI" align="left"  />
       <Typography className={classes.username}>GHI</Typography><br /><br />
       </div>
 
@@ -793,7 +793,7 @@ const  User=(props)=>{
 
         </div>
         <div>
-      <Avatar  className={classes.image} alt="ghi" src="WP_Ironman-2560x1440_00000.jpg" align="left"  />
+      <Avatar  className={classes.image} alt="ghi" align="left"  />
       <Typography className={classes.username}>ghi</Typography><br /><br />
       </div>
 
@@ -836,7 +836,7 @@ const  University=(props)=>{
       const[bg,setBg]=useState("disabled");
     const handleLike = e => {
 
-      if(like==props.like)
+      if(like===props.like)
       {
       const like1 = like +1; 
       setLike(like1);
@@ -864,7 +864,7 @@ const  University=(props)=>{
       const[bg1,setBg1]=useState("disabled");
     const handleDislike = e => {
 
-      if(dislike==props.dislike)
+      if(dislike===props.dislike)
       {
       const dislike1 = dislike +1; 
       setDislike(dislike1);
@@ -903,7 +903,7 @@ const  University=(props)=>{
 
         </div>
         <div >
-      <Avatar  className={classes.image}  alt="JKL" src="WP_Ironman-2560x1440_00000.jpg" align="left" />
+      <Avatar  className={classes.image}  alt="JKL" align="left" />
       <Typography className={classes.username}>JKL</Typography><br /><br />
       </div>
 
@@ -936,12 +936,12 @@ const  University=(props)=>{
 
   );
 };
-function a11yProps(index) {
-  return {
-    id: `full-width-tab-${index}`,
-    'aria-controls': `full-width-tabpanel-${index}`,
-  };
-}
+// function a11yProps(index) {
+//   return {
+//     id: `full-width-tab-${index}`,
+//     'aria-controls': `full-width-tabpanel-${index}`,
+//   };
+// }
 
 const AntTabs = withStyles({
   root: {
