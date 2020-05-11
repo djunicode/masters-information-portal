@@ -3,7 +3,7 @@ const notifications=require('../models/notification');
 // GET / -Returns all notifications from the db
 exports.returnNotifications=async(req,res)=>{
     const userId = res.locals.user._id;
-    const notifications=await notifications.find({toUser:userId});
+    const notifications=await notifications.find({toUser:userId}).populate('eventId');
     res.status(200).send({
         success:true,
         notifications:notifications}); 

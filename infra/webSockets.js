@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken');
 const logger = require('../config/logger');
 const Chat = require('../models/chat');
 const { verifyJwt } = require('./jwt');
+const { createChatNotification}=require('./notifications');
 
 function createServer(app) {
   const server = http.Server(app);
@@ -121,6 +122,10 @@ function createServer(app) {
         },
       });
 
+      const chat=await Chat.findById(socketChatMap[socket]);
+
+      const notification=createChatNotification(socketUserMap[socket],chat.receiver,socketChatMap[socket])
+      console.log(notification)
       // Send to connected user(s)
       io.to(socketChatMap[socket]).send('message', message);
     });
