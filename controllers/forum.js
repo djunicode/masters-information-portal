@@ -34,11 +34,11 @@ exports.create = async (req, res) => {
       `Created answer ${doc._id} to question ${forum._id} posted by user ${req.body.author}`
     );
     const notification= createForumNotification(req.body.author,forum.parentId,forum._id);
-    console.log(notification)
+    logger.created('notification',notification)
   }
 
   logger.created('Forum', doc);
-  return res.status(201).json({doc});
+  return res.status(201).json(doc);
 };
 
 /**
