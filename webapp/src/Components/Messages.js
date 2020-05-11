@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -104,10 +104,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Messages(props) {
-  useEffect(() => {
-    console.log(props.loggedIn);
-  });
-
   const classes = useStyles();
   const [text, setText] = useState('');
   const [open, setOpen] = React.useState(false);
