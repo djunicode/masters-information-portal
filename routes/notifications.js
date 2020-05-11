@@ -6,7 +6,7 @@ const { authRequired } = require('../middleware/auth');
 
 const router = Router();
 
-router.get('/',authRequired, asyncHandler(controller.returnNotifications));
+router.get('/',authRequired, asyncHandler(controller.getNotifications));
 router.post('/read',authRequired, asyncHandler(controller.readAll));
 router.post('/:id/read',authRequired, asyncHandler(controller.readOne));
 router.delete('/',authRequired, asyncHandler(controller.deleteAll));

@@ -20,7 +20,7 @@ const notifications=require('../models/notification');
  * @apiSuccess (200) {String} the two types of notifications eg. 'Forum' or 'chat'
  *  
  */
-exports.returnNotifications=async(req,res)=>{
+exports.getNotifications=async(req,res)=>{
     const userId = res.locals.user._id;
     const docList=await notifications.find({toUser:userId}).populate('eventId');
     res.status(200).send(docList); 
