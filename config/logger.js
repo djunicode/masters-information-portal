@@ -9,7 +9,7 @@ const filename = path.join('logDir', 'loggers.log');
  * Function to set color settings of a strin
  */
 function formatMessage(info) {
-  let level = info.level;
+  let { level } = info;
   if (level) {
     level = level.toUpperCase();
   }
@@ -40,16 +40,16 @@ const LOGGER_OPTIONS = {
   format: format.combine(
     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     format.label({ label: path.basename(process.mainModule.filename) }),
-    format.printf(info => formatMessage(info))
+    format.printf((info) => formatMessage(info))
   ),
   transports: [
     new transports.Console({
       format: format.combine(
         format.json(),
-        format.printf(info => formatMessage(info))
-      )
-    })
-  ]
+        format.printf((info) => formatMessage(info))
+      ),
+    }),
+  ],
 };
 
 /**
@@ -108,15 +108,15 @@ function deleted(model, doc) {
 
 module.exports = {
   baseLogger: logger,
-  info: s => logger.info(s),
-  error: s => logger.error(s),
-  debug: s => logger.debug(s),
+  info: (s) => logger.info(s),
+  error: (s) => logger.error(s),
+  debug: (s) => logger.debug(s),
   log: (level, s) => logger.log(level, s),
-  warn: s => logger.warn(s),
+  warn: (s) => logger.warn(s),
 
   created,
   readOne,
   readMany,
   updated,
-  deleted
+  deleted,
 };
