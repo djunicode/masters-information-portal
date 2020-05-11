@@ -9,16 +9,15 @@ let Should = chai.should();
 const expect = chai.use(chaiHttp).expect;
 
 describe(config.GROUP_USER_TESTS, () => {
-  beforeEach(async () => {
+  before(async () => {
     await dbConnection();
+  });
+  beforeEach(async () => {
     await User.deleteMany({});
   });
 
   it(config.TEST_INCOMPLETE_DETAILS, async () => {
-    const user1 = await chai
-      .request(server)
-      .post('/api/users/register')
-      .send({});
+    const user1 = await chai.request(server).post('/api/users/register').send({});
     expect(user1).to.have.status(400);
     expect(user1.body).to.be.a('object');
     expect(user1.body).to.have.property('password');
@@ -48,10 +47,7 @@ describe(config.GROUP_USER_TESTS, () => {
     expect(user3.body).to.be.a('object');
     expect(user3.body).to.not.have.property('password');
     expect(user3.body).to.have.property('email');
-    expect(user3.body.email)
-      .to.have.property('message')
-      .to.be.a('string')
-      .eql('Email is Invalid');
+    expect(user3.body.email).to.have.property('message').to.be.a('string').eql('Email is Invalid');
     expect(user2.body).to.not.have.property('name');
   });
 
@@ -65,12 +61,8 @@ describe(config.GROUP_USER_TESTS, () => {
     expect(res.body).to.have.property('userObject');
     expect(res.body).to.have.property('token');
     expect(res.body).to.have.property('refreshToken');
-    expect(res.body.userObject.name)
-      .to.be.a('string')
-      .eql('Test');
-    expect(res.body.userObject.email)
-      .to.be.a('string')
-      .eql('test@test.com');
+    expect(res.body.userObject.name).to.be.a('string').eql('Test');
+    expect(res.body.userObject.email).to.be.a('string').eql('test@test.com');
   });
   it(config.TEST_DUPLICATE_USER, async () => {
     const res1 = await chai
@@ -86,9 +78,7 @@ describe(config.GROUP_USER_TESTS, () => {
     expect(res2.body).to.have.property('msg');
     expect(res2.body).to.not.have.property('user');
     expect(res2.body).to.not.have.property('token');
-    expect(res2.body.msg)
-      .to.be.a('string')
-      .eql('User already exists, try logging in!');
+    expect(res2.body.msg).to.be.a('string').eql('User already exists, try logging in!');
   });
 
   it(config.TEST_INVALID_LOGIN, async () => {
@@ -100,9 +90,7 @@ describe(config.GROUP_USER_TESTS, () => {
     expect(res1).to.have.status(401);
     expect(res1.body).to.be.a('object');
     expect(res1.body).to.have.property('msg');
-    expect(res1.body.msg)
-      .to.be.a('string')
-      .eql('User email not found.');
+    expect(res1.body.msg).to.be.a('string').eql('User email not found.');
     expect(res1.body).to.not.have.property('user');
     expect(res1.body).to.not.have.property('token');
 
@@ -121,9 +109,7 @@ describe(config.GROUP_USER_TESTS, () => {
     expect(res2.body).to.have.property('msg');
     expect(res2.body).to.not.have.property('user');
     expect(res2.body).to.not.have.property('token');
-    expect(res2.body.msg)
-      .to.be.a('string')
-      .eql("User password didn't match.");
+    expect(res2.body.msg).to.be.a('string').eql("User password didn't match.");
   });
 
   it(config.TEST_VALID_LOGIN, async () => {
@@ -143,5 +129,8 @@ describe(config.GROUP_USER_TESTS, () => {
     expect(res2.body).to.have.property('userObject');
     expect(res2.body).to.have.property('token');
     expect(res2.body).to.have.property('refreshToken');
+  });
+  after(async () => {
+    await User.deleteMany({});
   });
 });

@@ -8,17 +8,22 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import ProfImage from './profilephoto.jpg';
+
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Avatar from '@material-ui/core/Avatar';
-import MailOutlineRoundedIcon from '@material-ui/icons/MailOutlineRounded';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
+import Cookies from 'js-cookie';
+
+import GitHubIcon from '@material-ui/icons/GitHub';
+const axios = require('axios');
+const token = Cookies.get('jwt');
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -42,26 +47,65 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-function Sid() {
+function Ques() {
+  const questions = [
+      {
+          author: "Leonardo DiCaprio",
+          date: "7th August",
+          like2: 8,
+          dislike2:10,
 
-    const [like, setLike] = useState(15);
+          
+      },
+      {
+          author: "Richard Rogers",
+          date: "10th November",
+          like2: 7,
+          dislike2:12,
+          
+      },
+      {
+          author: "Steve Rogers",
+          date: "7th March",
+          like2: 6,
+          dislike2:15,
+          
+      },
+      {
+          author: "Natasha Romanoff",
+          date: "5th January",
+          like2: 5,
+          dislike2:12,
+          
+      }
+  ]
+
   
-    const [dislike,setDislike] = useState(5);
-    const handleLike = e => {
-      const like1 = like +1;  
-      setLike(like1);
-    };
-    const handleDislike = e => {
-        const dislike1 = dislike +1;  
-        setDislike(dislike1);
-      };
+  function CustomLike(props) {  
+    const [like2, setLike2] = useState(props.like2);  
+    const incrementCount = (e) => setLike2(like2 + 1); 
+  return( <Grid item xs = {3}>
+             
+    <p className="likesv">{like2}</p><ThumbUpAltIcon onClick={incrementCount} className="icon1"/> </Grid>) 
+  }
+  function CustomDislike(props) {  
+    const [dislike2, setDislike2] = useState(props.dislike2);  
+    const incrementCount = (e) => setDislike2(dislike2 + 1); 
+  return(<Grid item xs = {3}>
+     
+    <p className="likesv" > {dislike2}</p><ThumbDownAltIcon onClick={incrementCount} className="icon1"/></Grid>) 
+  }
+  
+  
+  const displayQuestions = questions.map((ques, index) =>{
+
     
-    return (
-      <Grid container spacing = {2}>
+      return(
+        
+          <Grid container spacing = {2}>
           <Grid item xs = {1}></Grid>
           <Grid item xs = {10}>
-        <h3 className="headers"> Questions </h3>
-        <br />
+  
         <Paper elevation = {3}>
         <Grid container spacing = {1}>
         <Grid item xs = {1}></Grid>
@@ -70,19 +114,15 @@ function Sid() {
         <div>
         <Avatar className="avatar" src="/broken-image.jpg" />      
         <div>
-        <p className = "quesauthor">    Richard Rogers</p>
-        <p className = "date">   7 August </p></div>
+      <p className = "quesauthor">    {ques.author}</p>
+        <p className = "date">   {ques.date} </p></div>
         </div>
         
         <p className="coursedesc">This is the answer to the question. This is the answer to the question. This is the answer to the question</p>    
                     
         <Grid container spacing={3}>
-            <Grid item xs = {3}>
-             
-    <p className="likesv">{like}</p><ThumbUpAltIcon onClick={handleLike} className="icon1"/> </Grid>
-    <Grid item xs = {3}>
-     
-    <p className="likesv" > {dislike}</p><ThumbDownAltIcon onClick={handleDislike} className="icon1"/></Grid>
+            <CustomLike like2={ques.like2} />
+    <CustomDislike dislike2 = {ques.dislike2}/>
     <Grid item xs = {3}>
      
     <p className="likesv">Share</p><ScreenShareTwoToneIcon  className="icon1"/></Grid>
@@ -104,54 +144,31 @@ function Sid() {
     <br />
     </Paper>
     <br />
-    <Paper elevation = {3}>
-        <Grid container spacing = {1}>
-        <Grid item xs = {1}></Grid>
-        <Grid item xs = {7}>
-        <p className = "ques">Some Question Here ?</p>
-        <div>
-        <Avatar className="avatar" src="/broken-image.jpg" />      
-        <div>
-        <p className = "quesauthor">    Richard Rogers</p>
-        <p className = "date">   7 August </p></div>
-        </div>
-        
-        <p className="coursedesc">This is the answer to the question. This is the answer to the question. This is the answer to the question</p>    
-                    
-        <Grid container spacing={3}>
-            <Grid item xs = {3}>
-             
-    <p className="likesv">{like}</p><ThumbUpAltIcon onClick={handleLike} className="icon1"/> </Grid>
-    <Grid item xs = {3}>
-     
-    <p className="likesv" >{dislike}</p><ThumbDownAltIcon onClick={handleDislike} className="icon1"/></Grid>
-    <Grid item xs = {3}>
-     
-    <p className="likesv">Share</p><ScreenShareTwoToneIcon  className="icon1"/></Grid>
-    <Grid item xs = {3}></Grid>
-    </Grid>
-    </Grid>
-    <Grid item xs = {4}>
-    <Button variant="outlined" style={{
-        
-        color: "2CE89A",borderColor:"#2CE89A"
-            }} className="buttonuniv">Javascript</Button>
-<Button variant="outlined" style={{
-        
-        color: "#2CE89A",borderColor:"#2CE89A"
-            }} className="buttonuniv">React</Button>
-
-    </Grid>
-    </Grid>
-    <br />
-    </Paper>
+    
     </Grid>
     <Grid item xs = {2}></Grid>
       </Grid>
-    );
-  };
+    
+      )
+  })
+return(
+  <div>
+  <Grid container spacing = {2}>
+          <Grid item xs = {1}></Grid>
+          <Grid item xs = {10}>
+        <h3 className="headers"> Questions </h3>
+        
+            </Grid>
+    <Grid item xs = {2}></Grid>
+      </Grid>
+      {displayQuestions}
+      </div>
+)
+  
+}
 
 const CurrentDate = (props) => {
+
 
   return (
     <div className='basic'>
@@ -161,7 +178,7 @@ const CurrentDate = (props) => {
     alignItems="center">
         
             <Grid item xs = {1}></Grid>
-            <Grid item xs={2}><img  className='imagenew' src={ProfImage} alt='Profile Photo'/></Grid>
+            <Grid item xs={2}><img  className='imagenew'  src={props.image} alt='Profile Photo'/></Grid>
             <Grid  item xs={6}>
         <p className="personname2">{props.personname}</p>
         <p className="persontitle2">{props.persontitle}</p>
@@ -172,7 +189,7 @@ const CurrentDate = (props) => {
         
         color: "#2CE89A",borderColor:"#2CE89A"
             }} className="buttonuniv">Follow</Button>
-                <TwitterIcon /><FacebookIcon /><MailOutlineRoundedIcon /></Grid>
+                <a href = {props.twitterLink}><TwitterIcon /></a><a href = {props.facebookLink}><FacebookIcon  /></a><a href = {props.githubLink}><GitHubIcon /></a></Grid>
         </Grid>
 
         <br /><br />
@@ -183,6 +200,23 @@ const CurrentDate = (props) => {
 };
 
 const Profile = (props) => {
+  var a = [];
+  a = props.tests;
+   const Display = a.map((item,index) =>{
+
+    
+      return(
+        
+    
+        <Grid item xs = {4}>       
+    <h4 className="persontitle3">{item.score}</h4>
+        <p className="persondesc3">{item.name}</p>
+        </Grid>
+       
+    
+    
+      )
+  })
 
     return (
         <Grid container spacing = {2}>
@@ -196,19 +230,13 @@ const Profile = (props) => {
         
         <h3 className="headers">Other Details</h3>
         
-        <Grid container spacing = {1}>
-          
-    <Grid item xs = {4}><h4 className="persontitle3">{props.grescore}</h4>
-        <p className="persondesc3">GRE Score</p></Grid>
-    <Grid item xs = {4}><h4 className="persontitle3">{props.averagescore}</h4>
-        <p className="persondesc3">Average Score</p></Grid>
-    <Grid item xs = {4}><h4 className="persontitle3">{props.toeflscore}</h4>
-        <p className="persondesc3">TOEFL Score</p></Grid>
-        
-        </Grid>
+     <Grid container spacing = {1}>
+      <Grid item xs = {1}></Grid>
+      
+        {Display}
         
         
-
+</Grid>
     
     
                 <h3 className="headers">Timeline</h3>
@@ -238,55 +266,14 @@ const Profile = (props) => {
 
 const UniversityApplications = (props) => {
 
-    return (
-        
-        <Grid container spacing = {2}>
-        
-            <Grid item xs = {1}></Grid>
-            <Grid item xs = {10}>
-            <h3 className="headers">University Applications</h3>
-            <br ></br>
-            <br />
-            <Grid container spacing ={3} className="uni" style={{backgroundColor:"#FFFFFF"}}>
-            <Grid item xs = {8}> <h3 className="univtitle">University Name</h3>
+const a = props.acceptArray.map(item =>{
+
+return(
+  <div>
+<Grid container spacing ={3} className="unis" style={{backgroundColor:"#FFFFFF"}}>
+            <Grid item xs = {8}> <h3 className="univtitle">{item}</h3>
             <h5 className="coursename">Course Name</h5>
-            <p className="coursedesc" >This is my desciption.This is my description line 2. This is my description line 2.This is my description line 2.This is my description line 2.This is my description line 2.This is my description line 2.</p>
-            <br />
-            <p className="coursedesc">Date Applied</p>
-            </Grid>
-            <Grid item xs = {3}>
-                <br /><br /><br /><br />
-            <Button variant="outlined" style={{
-        
-        color: "#E8B32C",borderColor:"#E8B32C"
-            }} className="buttonuniv">Applied</Button>
-            </Grid>
-            <Grid item xs={1}></Grid>
-            </Grid>
-            <br />
-            <br />
-            <Grid container spacing ={3} className="uni" style={{backgroundColor:"#FFFFFF"}}>
-            <Grid item xs = {8}> <h3 className="univtitle">University Name</h3>
-            <h5 className="coursename">Course Name</h5>
-            <p className="coursedesc" >This is my desciption.This is my description line 2. This is my description line 2.This is my description line 2.This is my description line 2.This is my description line 2.This is my description line 2.</p>
-            <br />
-            <p className="coursedesc">Date Applied</p>
-            </Grid>
-            <Grid item xs = {3}>
-                <br /><br /><br /><br />
-            <Button variant="outlined" style={{
-        
-        color: "#E8B32C",borderColor:"#E8B32C"
-            }} className="buttonuniv">Applied</Button>
-            </Grid>
-            <Grid item xs={1}></Grid>
-            </Grid>
-            <br />
-            <br />
-            <Grid container spacing ={3} className="unis" style={{backgroundColor:"#FFFFFF"}}>
-            <Grid item xs = {8}> <h3 className="univtitle">University Name</h3>
-            <h5 className="coursename">Course Name</h5>
-            <p className="coursedesc" >This is my desciption.This is my description line 2. This is my description line 2.This is my description line 2.This is my description line 2.This is my description line 2.This is my description line 2.</p>
+            <p className="coursedesc" >This is the desciption.This is my description line 2.</p>
             <br />
             <p className="coursedesc">Date Applied</p>
             </Grid>
@@ -295,16 +282,25 @@ const UniversityApplications = (props) => {
             <Button variant="outlined" style={{
         
         color: "#2CE89A",borderColor:"#2CE89A"
-            }} className="buttonuniv">Selected</Button>
+            }} className="buttonuniv">Accepted</Button>
             </Grid>
             <Grid item xs={1}></Grid>
+            <br />
             </Grid>
             <br />
             <br />
-            <Grid container spacing ={3} className="unir" style={{backgroundColor:"#FFFFFF"}}>
-            <Grid item xs = {8}> <h3 className="univtitle">University Name</h3>
+            </div>
+)     
+
+});
+
+const b = props.rejectArray.map(item=>{
+return(
+  <div>
+<Grid container spacing ={3} className="unir" style={{backgroundColor:"#FFFFFF"}}>
+            <Grid item xs = {8}> <h3 className="univtitle">{item}</h3>
             <h5 className="coursename">Course Name</h5>
-            <p className="coursedesc" >This is my desciption.This is my description line 2. This is my description line 2.This is my description line 2.This is my description line 2.This is my description line 2.This is my description line 2.</p>
+            <p className="coursedesc" >This is the desciption.This is my description line 2.</p>
             <br />
             <p className="coursedesc">Date Applied</p>
             </Grid>
@@ -316,13 +312,36 @@ const UniversityApplications = (props) => {
             }} className="buttonuniv">Rejected</Button>
             </Grid>
             <Grid item xs={1}></Grid>
+            <br />
             </Grid>
+            <br />
+            <br />
+            </div>
+
+
+)
+
+})
+
+    return (
+        
+        <Grid container spacing = {2}>
+        
+            <Grid item xs = {1}></Grid>
+            <Grid item xs = {10}>
+            <h3 className="headers">University Applications</h3>
+            <br ></br>
+            <br />
+            {a}
+            {b}
+            
 
             </Grid>
             <Grid item xs = {1}></Grid>
             </Grid>
+          
     );
-    
+  
   };
 
 function a11yProps(index) {
@@ -406,9 +425,119 @@ export default function FullWidthTabs() {
     setValue(index);
   };
 
+const getTagById = (id,ObjectArr) => {
+	var name;
+	ObjectArr.forEach((obj)=>{
+		if(obj._id===id){
+			name=obj.name;
+		}
+	})
+	return name;
+}
+
+const [universityArr,setUniversityArr]=React.useState([]);
+
+    const [universityNames,setUniversityNames]=React.useState([]);
+    const [uniName,setUniName]=React.useState('');
+   
+    const[name,setName]=React.useState(null);
+  const[bio,setBio]=React.useState('');
+  const[dept,setDept]=React.useState('');
+  const[uni,setUni]=React.useState([]);
+  const[rejects,setRejects]=React.useState([]);
+  const[accName,setAccName]=React.useState([]);
+  const[rejName,setRejName]=React.useState([]);
+  const[accepts,setAccepts]=React.useState([]);
+  const[facebook,setFacebook] = React.useState('');
+   const[github,setGithub] = React.useState('');
+    const[twitter,setTwitter] = React.useState('');
+  const[univ,setUniv]=React.useState('');
+  const[url,setUrl]=React.useState(null);
+ const [test,setTest] = React.useState([]);
+  const response = axios.get('api/users/me/', {
+                headers: {
+                  Authorization: token
+                  
+                }
+
+              })
+              .then(function (response) {
+                
+              setName(response.data.name);
+              setBio(response.data.bio);
+              setDept(response.data.department);
+              setUniv(response.data.currentSchool);
+              setRejects(response.data.rejects);
+              setAccepts(response.data.accepts);
+              setFacebook(response.data.facebookUrl);
+              setGithub(response.data.githubUrl);
+              setTwitter(response.data.twitterUrl);
+              setTest(response.data.testTimeline);
+              setUrl(`/api/users/${response.data._id}/avatar`);
+              
+              
+      
+              })
+              .catch(function (error) {
+                console.log("Invalid User");
+              }); 
+
+const res = axios.get('/api/tags').then(function (res) {
+                var tags = {universityArr:[],universityNames:[],tagArr:[],tagNames:[]};
+                res.data.forEach((item)=>{
+	  		if(item.isSchool){
+	    		if(!tags.universityArr.includes(item)){
+			      tags.universityArr.push(item)
+	    		}
+	    		if(!tags.universityNames.includes(item.name)){
+			      tags.universityNames.push(item.name)
+	    		}
+	  		}
+	  		else{
+			    if(!tags.tagArr.includes(item)){
+			      tags.tagArr.push(item)
+			    }
+			    if(!tags.tagNames.includes(item.name)){
+			      tags.tagNames.push(item.name)
+			    }
+	  		}
+		});
+    console.log("working");
+    
+    var name1;
+    name1 = getTagById(univ,tags.universityArr);
+    setUniName(name1);
+    var rejectName = [];
+    var acceptName = [];
+    rejects.forEach((item)=>{
+		          var name = getTagById(item,tags.universityArr)
+              rejectName.push(name);
+	});
+  accepts.forEach((item)=>{
+		          var name2 = getTagById(item,tags.universityArr)
+              acceptName.push(name2);
+	});
+  setAccName(acceptName);
+  setRejName(rejectName)                          
+              })
+              .catch(function (error) {
+                console.log("Not working");
+              }); 
+
+
+
   return (
     <div className={classes.root}>
-     <CurrentDate style={{backgroundColor:'#E5E5E5'}} personname="Siddharth Salvi" persontitle="S.E Computer Engineering"  persondesc="This is my description. This is my description.This is my description.This is my description.This is my description."/>
+
+  
+     <CurrentDate style={{backgroundColor:'#E5E5E5'}} personname={name} 
+     persontitle={dept} 
+    persondesc={bio} 
+    facebookLink = {facebook}
+    githubLink = {github}
+    twitterLink = {twitter} 
+    
+    image = {url}/>
      <Divider  style={{color:'#2CE89A'}}/> 
       <div className={classes.demo1}>
           <Grid container spacing={2}>
@@ -428,17 +557,16 @@ export default function FullWidthTabs() {
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
         <Profile 
-        univname="D.J Sanghvi College of Engineering"
+        univname={uniName}
         univdesc="This is my description line 2.This is my description line 2.This is my description line 2.This is my description line 2."
-        grescore="3.7"
-        toeflscore="115"
-        averagescore="320" />
+        tests = {test} />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-        <UniversityApplications style={{backgroundColor:'#E5E5E5'}} />
+        <UniversityApplications style={{backgroundColor:'#E5E5E5'}} acceptArray = {accName} rejectArray = {rejName} />
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
-       <Sid />
+      
+       <Ques/>
         </TabPanel>
       </SwipeableViews>
     </div>
