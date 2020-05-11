@@ -13,6 +13,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import { Formik, Form, FieldArray } from 'formik';
 import CloseIcon from '@material-ui/icons/Close';
@@ -175,70 +176,76 @@ function EditProfile(props) {
 			            return errors;
 			          }}
 			          onSubmit={async (values, { setSubmitting }) => {
-			          	var domains = [];
-			          	user.pic=pic;
-			            user.email=values.email;
-			            user.university=values.university;
-			            user.department=values.department;
-			            user.gradDate=values.gradDate;
-			            user.bio=values.bio;
-			            user.tests=values.tests;
-			            user.facebook=values.facebook;
-			            user.twitter=values.twitter;
-			            user.linkedIn=values.linkedIn;
-			            user.github=values.github;
-			            user.uniApplied=values.uniApplied;
-			            user.accepts=[];
-			            user.rejects=[];
-			            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
-			            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
-			            user.university= await getObjectId(universityNames,universityArr,user.university,true);
-			            accepts.forEach(async (item,index)=>
-			              user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
-			            )
-			            rejects.forEach(async (item,index)=>
-			              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
-			            )
-			            values.domain.forEach(async (item,index)=>
-			              domains[index]=await getObjectId(tagNames,tagArr,item,false)
-			            )
-			            if(!!user.pic){
-			           	 	const formData = new FormData();
-			            	formData.append('avatar',user.pic[0]);
-				            axios.post('/api/users/upload',formData,{
-		        			headers: {
-		          			  	Authorization: token1,
-		          			  	'content-type': 'multipart/form-data'
-		          			}})
-		          			.then(function(response){
-		          				console.log("Picture Uploaded!")
-		          			})
-				        }
-            			axios.put('/api/users/me', {
-					      email: user.email,
-					      graduationDate: user.gradDate,
-					      currentSchool: user.university,
-					      department: user.department,
-					      bio: user.bio,
-					      domains: domains,
-					      testTimeline: user.tests,
-					      linkedinUrl: user.linkedIn,
-					      githubUrl: user.github,
-					      facebookUrl: user.facebook,
-					      twitterUrl: user.twitter,
-					      accepts: user.accepts,
-					      rejects: user.rejects
-					    },
-            			  {headers: {
-              			  	Authorization: token1
-              			  }})
-					    .then(function (response) {
-			           	  handleOpenMsg();
-					    })
-					    .catch(function (error) {
-					      console.log("Failed! An error occured. Please try again later");
-					    });
-			            //@Backend Submit Function for Sign-Up
+			          	if (values.addDomain===''){
+				          	var domains = [];
+				          	user.pic=pic;
+				            user.email=values.email;
+				            user.university=values.university;
+				            user.department=values.department;
+				            user.gradDate=values.gradDate;
+				            user.bio=values.bio;
+				            user.tests=values.tests;
+				            user.facebook=values.facebook;
+				            user.twitter=values.twitter;
+				            user.linkedIn=values.linkedIn;
+				            user.github=values.github;
+				            user.uniApplied=values.uniApplied;
+				            user.accepts=[];
+				            user.rejects=[];
+				            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
+				            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
+				            user.university= await getObjectId(universityNames,universityArr,user.university,true);
+				            accepts.forEach(async (item,index)=>
+				              user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
+				            )
+				            rejects.forEach(async (item,index)=>
+				              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
+				            )
+				            values.domain.forEach(async (item,index)=>
+				              domains[index]=await getObjectId(tagNames,tagArr,item,false)
+				            )
+				            if(!!user.pic){
+				           	 	const formData = new FormData();
+				            	formData.append('avatar',user.pic[0]);
+					            axios.post('/api/users/upload',formData,{
+			        			headers: {
+			          			  	Authorization: token1,
+			          			  	'content-type': 'multipart/form-data'
+			          			}})
+			          			.then(function(response){
+			          				console.log("Picture Uploaded!")
+			          				props.setImageUpdate(true)
+			          			})
+					        }
+	            			axios.put('/api/users/me', {
+						      email: user.email,
+						      graduationDate: user.gradDate,
+						      currentSchool: user.university,
+						      department: user.department,
+						      bio: user.bio,
+						      domains: domains,
+						      testTimeline: user.tests,
+						      linkedinUrl: user.linkedIn,
+						      githubUrl: user.github,
+						      facebookUrl: user.facebook,
+						      twitterUrl: user.twitter,
+						      accepts: user.accepts,
+						      rejects: user.rejects
+						    },
+	            			  {headers: {
+	              			  	Authorization: token1
+	              			  }})
+						    .then(function (response) {
+				           	  handleOpenMsg();
+						    })
+						    .catch(function (error) {
+						      console.log("Failed! An error occured. Please try again later");
+						    });
+						}
+						else{
+							alert("The Domain: '"+values.addDomain+"' entered by you isnt saved, Please click on the '+'' icon next to domain's input to save it.")
+						}
+			            //@Backend 4 Function for Sign-Up
 		        }}
         		>
         	{({ isSubmitting ,handleChange,handleBlur,values,errors,touched,setFieldValue}) => (
@@ -380,41 +387,57 @@ function EditProfile(props) {
               <Typography variant="h5" style={{paddingTop:10}}> Domains </Typography>
             </Grid>
             <Grid item md={6}>
-              <Autocomplete
-              options={tagNames}
-              disableClearable
-              inputValue={!!values.addDomain?values.addDomain:''}
-              autoHighlight
-              getOptionDisabled={option => values.domain.includes(option)}
-              name="addDomain"
-              onChange={(e, value) => {
-                setFieldValue("addDomain", value)
-              }}
-              onBlur={handleBlur}
-              className={classes.textf}
-              renderInput={params => (
-                <TextField 
-                  {...params} 
-                  name='addDomain'
-                  value={values.addDomain}
-                  label="Domains"
-                  placeholder="eg:Machine Learning, IOT"
-                  fullWidth
-                  variant="filled"
-                  helperText="Press enter after adding each domain" 
-                  onChange={handleChange}
-                  onKeyPress={(event) => {
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
-                        if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
-                          setFieldValue('domain',[...values.domain,values.addDomain]);
-                          setFieldValue('addDomain','');
-                        }
-                    }
-                  }}
-                />
-              )}
-            />
+            	<Grid container>
+            		<Grid item xs={10}>
+		              <Autocomplete
+		              options={tagNames}
+		              disableClearable
+		              inputValue={!!values.addDomain?values.addDomain:''}
+		              autoHighlight
+		              getOptionDisabled={option => values.domain.includes(option)}
+		              name="addDomain"
+		              onChange={(e, value) => {
+		                setFieldValue("addDomain", value)
+		              }}
+		              onBlur={handleBlur}
+		              renderInput={params => (
+		                <TextField 
+		                  {...params} 
+		                  name='addDomain'
+		                  value={values.addDomain}
+		                  label="Domains"
+		                  placeholder="eg:Machine Learning, IOT"
+		                  fullWidth
+		                  variant="filled"
+		                  helperText="Press Enter key or hit the '+' icon after adding each domain" 
+		                  onChange={handleChange}
+          				  onBlur={()=>{if(!tagNames.includes(values.addDomain)){setFieldValue("addDomain",'')}}}
+		                  onKeyPress={(event) => {
+		                    if (event.key === 'Enter') {
+		                        event.preventDefault();
+		                        if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
+		                          setFieldValue('domain',[...values.domain,values.addDomain]);
+		                          setFieldValue('addDomain','');
+		                        }
+		                    }
+		                  }}
+		                />
+		              )}
+		            />
+            	</Grid>
+	            <Grid item xs={2}>
+		            <IconButton
+		              onClick={()=>{
+		              	if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
+		                  	setFieldValue('domain',[...values.domain,values.addDomain]);
+		              		setFieldValue('addDomain','');
+		              	}
+		              }}
+		            >
+		          		<AddIcon/>
+		          	</IconButton>
+	          	</Grid>
+          	</Grid>
             <br/>
             <br/>
             {values.domain.map((item,index)=>(

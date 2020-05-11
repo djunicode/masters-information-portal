@@ -10,6 +10,7 @@ import Autocomplete,{createFilterOptions} from '@material-ui/lab/Autocomplete';
 import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
 import Alert from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -513,41 +514,57 @@ export default function Register() {
               <Typography variant="h5"> Domains </Typography>
             </Grid>
             <Grid item md={6}>
-             <Autocomplete
-              options={tagNames}
-              disableClearable
-              inputValue={!!values.addDomain?values.addDomain:''}
-              autoHighlight
-              getOptionDisabled={option => values.domain.includes(option)}
-              name="addDomain"
-              onChange={(e, value) => {
-                setFieldValue("addDomain", value)
-              }}
-              onBlur={handleBlur}
-              renderInput={params => (
-                <TextField 
-                  {...params} 
-                  name='addDomain'
-                  value={values.addDomain}
-                  label="Domains"
-                  placeholder="eg:Machine Learning, IOT"
-                  fullWidth
-                  variant="filled"
-                  helperText="Press enter after adding each domain" 
-                  onChange={handleChange}
+              <Grid container>
+                <Grid item xs={10}>
+                  <Autocomplete
+                  options={tagNames}
+                  disableClearable
+                  inputValue={!!values.addDomain?values.addDomain:''}
+                  autoHighlight
+                  getOptionDisabled={option => values.domain.includes(option)}
+                  name="addDomain"
+                  onChange={(e, value) => {
+                    setFieldValue("addDomain", value)
+                  }}
                   onBlur={handleBlur}
-                  onKeyPress={(event) => {
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
-                        if (values.addDomain.trim() && !values.domain.includes(values.addDomain)){
-                          setFieldValue('domain',[...values.domain,values.addDomain]);
-                          setFieldValue('addDomain','');
+                  renderInput={params => (
+                    <TextField 
+                      {...params} 
+                      name='addDomain'
+                      value={values.addDomain}
+                      label="Domains"
+                      placeholder="eg:Machine Learning, IOT"
+                      fullWidth
+                      variant="filled"
+                      helperText="Press Enter key or hit the '+' icon after adding each domain" 
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      onKeyPress={(event) => {
+                        if (event.key === 'Enter') {
+                            event.preventDefault();
+                            if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
+                              setFieldValue('domain',[...values.domain,values.addDomain]);
+                              setFieldValue('addDomain','');
+                            }
                         }
+                      }}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <IconButton
+                  onClick={()=>{
+                    if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
+                        setFieldValue('domain',[...values.domain,values.addDomain]);
+                      setFieldValue('addDomain','');
                     }
                   }}
-                />
-              )}
-            />
+                >
+                  <AddIcon/>
+                </IconButton>
+              </Grid>
+            </Grid>
             <br/>
             <br/>
             {values.domain.map((item,index)=>(

@@ -32,7 +32,7 @@ export default function Home(){
 		}
 	})
 	return(
-		<React.Fragment>
+		<div className="homepage-body">
 			<div className="home-header">
 				<Grid container>
 			      	<Grid item md={6}>
@@ -140,6 +140,6 @@ export default function Home(){
 			</Grid>
 			</div>
 			<br/><br/>
-		</React.Fragment>
+		</div>
 	)
 }

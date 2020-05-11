@@ -55,6 +55,10 @@ const useStyles = makeStyles({
     },
     paper: {
         background: '#ffffff'
+    },
+    homepage: {
+        marginLeft: -250,
+        width: '100vw'
     }
 });
 
@@ -74,10 +78,19 @@ function NavBar(props) {
 
         setState({ ...state, [side]: open });
     };
+    const[homepage,setHomepage]=React.useState(false)
     const[url,setUrl]=React.useState(null);
     const[name,setName]=React.useState(null);
+    const[mobile,setMobile]=React.useState(false)
     useEffect(()=>{
-        if(props.loggedIn){
+        if(window.location.pathname==='/'){
+            setHomepage(true)
+            console.log(1)
+        }
+        else{
+            setHomepage(false)
+        }
+        if(props.loggedIn&&(!url||props.imageUpdate)){
             axios.get('api/users/me/', {
                 headers: {
                   Authorization: token
@@ -86,13 +99,17 @@ function NavBar(props) {
               .then(function (response) {
                 setUrl(`/api/users/${response.data._id}/avatar`);
                 setName(response.data.name);
+                props.setImageUpdate(false)
               })
               .catch(function (error) {
                 console.log("Invalid User");
               }); 
+              if(window.innerWidth<475){
+                setMobile(true)
+              }
         } 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[props.loggedIn])
+    },[props.loggedIn,window.innerWidth,props.imageUpdate,window.location.pathname,homepage])
     const sideList = side => (
         <div
             className={classes.list}
@@ -115,11 +132,7 @@ function NavBar(props) {
             <List>
                 <Divider/>
                 <NavLink
-                    style={{
-                        textDecoration: 'none',
-                        color: 'black',
-                        fontFamily: 'Roboto'
-                    }}
+                    className={classes.link}
                     to='/'
                 >
                     <ListItem button>
@@ -224,17 +237,21 @@ function NavBar(props) {
                             <Typography>Add Resources</Typography>
                         </ListItem>
                     </NavLink>
-                    <ListItem button onClick={()=>{Cookies.remove('jwt');Cookies.remove('refreshToken');props.setLoggedIn(0)}}>
-                        <ListItemIcon>
-                            <AccountCircleIcon />
-                        </ListItemIcon>
-                        <Typography>Logout</Typography>
-                    </ListItem>
+                    <NavLink
+                        className={classes.link}
+                        to='/'
+                    >
+                        <ListItem button onClick={()=>{Cookies.remove('jwt');props.setLoggedIn(0);Cookies.remove('refreshToken')}}>
+                            <ListItemIcon>
+                                <AccountCircleIcon />
+                            </ListItemIcon>
+                            <Typography>Logout</Typography>
+                        </ListItem>
+                    </NavLink>
                     <Divider />
                 </React.Fragment>
                 :
-                <React.Fragment>
-                </React.Fragment>
+                null
             }
             </List>
         </div>
@@ -242,10 +259,10 @@ function NavBar(props) {
 
     return (
         <React.Fragment>
-            <div className={classes.root}>
+            <div className={classes.root} style={homepage&&!mobile?{marginLeft:'-250px'}:null}>
                 <AppBar position='static'>
                     <Toolbar>
-                        <Hidden smUp implementation="css">
+                        {homepage?
                             <IconButton
                                 onClick={toggleDrawer('left', true)}
                                 edge='start'
@@ -255,11 +272,24 @@ function NavBar(props) {
                             >
                                 <MenuIcon />
                             </IconButton>
-                        </Hidden>
+                        :
+                            <Hidden smUp implementation="css">
+                                <IconButton
+                                    onClick={toggleDrawer('left', true)}
+                                    edge='start'
+                                    color='inherit'
+                                    className={classes.menuButton}
+                                    aria-label="menu"
+                                >
+                                    <MenuIcon />
+                                </IconButton>
+                            </Hidden>
+                        }
                         <Typography variant='h4' className={classes.title}>
                             <NavLink
                                 className={classes.linkHeader}
                                 to='/'
+                                onClick={()=>setHomepage(true)}
                             ><Typography variant='h4'>Masters Information Portal</Typography>
                             </NavLink>
                         </Typography>
@@ -286,7 +316,7 @@ function NavBar(props) {
                     </Toolbar>
                 </AppBar>
             </div>
-            <Hidden smUp implementation="css">
+            {homepage?
                 <Drawer
                     open={state.left}
                     onClose={toggleDrawer('left', false)}
@@ -297,15 +327,30 @@ function NavBar(props) {
                 >
                     {sideList('left')}
                 </Drawer>
-            </Hidden>
-            <Hidden smDown implementation="css">
-                <Drawer
-                    classes={{ paper: classes.paper }}
-                    variant='permanent'
-                >
-                    {sideList('left')}
-                </Drawer>
-            </Hidden>
+            :
+                <React.Fragment>
+                    <Hidden smUp implementation="css">
+                        <Drawer
+                            open={state.left}
+                            onClose={toggleDrawer('left', false)}
+                            classes={{ paper: classes.paper }}
+                            ModalProps={{
+                              keepMounted: true, // Better open performance on mobile.
+                            }}
+                        >
+                            {sideList('left')}
+                        </Drawer>
+                    </Hidden>
+                    <Hidden smDown implementation="css">
+                        <Drawer
+                            classes={{ paper: classes.paper }}
+                            variant='permanent'
+                        >
+                            {sideList('left')}
+                        </Drawer>
+                    </Hidden>
+                </React.Fragment>
+            }
             <br/>
             <br/>
         </React.Fragment>

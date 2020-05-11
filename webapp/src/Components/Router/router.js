@@ -14,20 +14,24 @@ import SearchProfiles from '../profile3';
 import UniversityPage from '../universitypage'
 function RootRouter(props){
 
+	//homepage urls not affecting navbar
+
+	const [imageUpdate,setImageUpdate] = React.useState(false)
     const renderLogin = () => <Login loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn}/>;
 	const renderChat = () => <Messages loggedIn={props.loggedIn} />;
 	const renderAddResource = () => <AddResource loggedIn={props.loggedIn} />;
+	const renderEditProfile = () => <EditProfile setImageUpdate={setImageUpdate}/>
 	const invalidRoute = () => <Redirect to='/'/>;
 
     return (
         <Router>
-            <NavBar loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn}/>
+            <NavBar loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn} imageUpdate={imageUpdate} setImageUpdate={setImageUpdate}/>
             <Switch>
                 <Route exact path='/' component={Home}/>
                 <Route exact path='/register' component={Register}/>
                 <Route exact path='/login' component={renderLogin}/>
                 <Route exact path='/profile' component={FullWidthTabs}/>
-                <Route exact path='/edit' component={EditProfile}/>
+                <Route exact path='/edit' component={renderEditProfile}/>
                 <Route exact path='/resources' component={Resources} />
                 <Route exact path='/forum' component={Forum} />
 				<Route exact path="/chat" component={renderChat} />
