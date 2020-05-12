@@ -2,6 +2,7 @@ const Forum = require('../models/forum');
 const User = require('../models/user');
 const Tag = require('../models/tag');
 const logger = require('../config/logger');
+const {createForumNotification}=require('../infra/notifications');
 
 /**
  * @apiDefine Forum Forum
@@ -32,6 +33,8 @@ exports.create = async (req, res) => {
     logger.info(
       `Created answer ${doc._id} to question ${forum._id} posted by user ${req.body.author}`
     );
+    const notification= createForumNotification(req.body.author,forum.parentId,forum._id);
+    logger.created('notification',notification)
   }
 
   logger.created('Forum', doc);
