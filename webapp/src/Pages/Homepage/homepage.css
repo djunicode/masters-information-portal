@@ -15,12 +15,10 @@
 .description{
 	font-size: xx-large;
 	width: 475px;
-	margin-left: auto;
 }
 .description-img{
 	width: auto;
 	height: auto;
-	margin-left: auto;
 }
 @media screen and (max-width:475px){
 	.home-header{

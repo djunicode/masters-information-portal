@@ -4,12 +4,12 @@ const isOwner = async (req, res, next) => {
   const forum = await Forum.findById(req.params.id);
   if (!forum) {
     return res.status(400).json({
-      msg: 'Post not found'
+      msg: 'Post not found',
     });
   }
   if (req.user._id != forum.author.toString()) {
     return res.status(403).json({
-      msg: 'Unauthoried'
+      msg: 'Unauthoried',
     });
   }
   return next();

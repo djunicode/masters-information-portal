@@ -16,6 +16,7 @@
     "doc": "npm run apidoc && npm run jsdoc",
     "apidoc": "apidoc -i controllers/ -i infra/ -o docs/routes",
     "jsdoc": "jsdoc -c jsdoc.json",
+    "lint-fix": "eslint . && cd ./webapp && npm run lint-fix",
     "deploy": "sh build.sh"
   },
   "dependencies": {
@@ -46,9 +47,14 @@
     "chai-http": "^4.3.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-flowtype": "^4.7.0",
     "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.3",
     "mocha": "^7.1.0",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "prettier": "^2.0.5"
   },
   "keywords": []
 }

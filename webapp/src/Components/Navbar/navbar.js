@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import defaultProfileIcon from '../../assets/images/profile-icon.png';
 import Toolbar from '@material-ui/core/Toolbar';
 import { makeStyles } from '@material-ui/core/styles';
@@ -63,34 +63,28 @@ const useStyles = makeStyles({
 });
 
 function NavBar(props) {
-    const classes = useStyles();
-    const [state, setState] = React.useState({
-        left: false,
-    });
-    const token = Cookies.get('jwt');
-    const toggleDrawer = (side, open) => event => {
-        if (
-            event.type === 'keydown' &&
-            (event.key === 'Tab' || event.key === 'Shift')
-        ) {
-            return;
-        }
-
-        setState({ ...state, [side]: open });
+  const classes = useStyles();
+  const [state, setState] = React.useState({
+    left: false,
+  });
+  const token = Cookies.get('jwt');
+  const toggleDrawer = (side, open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setState({ ...state, [side]: open });
     };
-    const[homepage,setHomepage]=React.useState(false)
     const[url,setUrl]=React.useState(null);
     const[name,setName]=React.useState(null);
     const[mobile,setMobile]=React.useState(false)
     useEffect(()=>{
         if(window.location.pathname==='/'){
-            setHomepage(true)
-            console.log(1)
+            props.setHomepage(true)
         }
         else{
-            setHomepage(false)
+            props.setHomepage(false)
         }
-        if(props.loggedIn&&(!url||props.imageUpdate)){
+        if(props.loggedIn){
             axios.get('api/users/me/', {
                 headers: {
                   Authorization: token
@@ -99,7 +93,6 @@ function NavBar(props) {
               .then(function (response) {
                 setUrl(`/api/users/${response.data._id}/avatar`);
                 setName(response.data.name);
-                props.setImageUpdate(false)
               })
               .catch(function (error) {
                 console.log("Invalid User");
@@ -109,7 +102,7 @@ function NavBar(props) {
               }
         } 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[props.loggedIn,window.innerWidth,props.imageUpdate,window.location.pathname,homepage])
+    },[props.loggedIn,window.innerWidth,window.location.pathname,props.homepage])
     const sideList = side => (
         <div
             className={classes.list}
@@ -259,10 +252,10 @@ function NavBar(props) {
 
     return (
         <React.Fragment>
-            <div className={classes.root} style={homepage&&!mobile?{marginLeft:'-250px'}:null}>
+            <div className={classes.root} style={props.homepage&&!mobile?{marginLeft:'-250px'}:null}>
                 <AppBar position='static'>
                     <Toolbar>
-                        {homepage?
+                        {props.homepage?
                             <IconButton
                                 onClick={toggleDrawer('left', true)}
                                 edge='start'
@@ -289,7 +282,7 @@ function NavBar(props) {
                             <NavLink
                                 className={classes.linkHeader}
                                 to='/'
-                                onClick={()=>setHomepage(true)}
+                                onClick={()=>props.setHomepage(true)}
                             ><Typography variant='h4'>Masters Information Portal</Typography>
                             </NavLink>
                         </Typography>
@@ -298,6 +291,7 @@ function NavBar(props) {
                                 <NavLink
                                     className={classes.linkHeader}
                                     to='/login'
+                                    onClick={()=>props.setHomepage(false)}
                                 >
                                     <Button size='large' color='inherit'>
                                         Login
@@ -316,7 +310,7 @@ function NavBar(props) {
                     </Toolbar>
                 </AppBar>
             </div>
-            {homepage?
+            {props.homepage?
                 <Drawer
                     open={state.left}
                     onClose={toggleDrawer('left', false)}

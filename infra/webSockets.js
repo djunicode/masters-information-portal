@@ -21,7 +21,7 @@ function createServer(app) {
   // Socket-user mapper
   const socketUserMap = {};
 
-  //On intitialising a socket connection
+  // On intitialising a socket connection
   io.on('connection', (socket) => {
     logger.info(`Socket ${socket.id} connected`);
 
@@ -84,7 +84,7 @@ function createServer(app) {
       socket.join(chatId);
       socketChatMap[socket] = chatId;
       console.log('chat msgs', chat.messages);
-      socket.emit('msg hist', chat.messages); //Sending in the old messages saved using the chatId in the db
+      socket.emit('msg hist', chat.messages); // Sending in the old messages saved using the chatId in the db
     });
 
     /**

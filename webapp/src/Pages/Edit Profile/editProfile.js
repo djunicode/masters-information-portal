@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
 	},
 }));
 const filter = createFilterOptions();
-function EditProfile(props) {
+function EditProfile() {
 
 	const [user,setUser] = React.useState({
     	pic: '',
@@ -116,6 +116,10 @@ function EditProfile(props) {
     }
     const classes = useStyles();
     const [showSuccess, setShowSuccess] = React.useState(false);
+    const [showWarning, setShowWarning] = React.useState(false);
+    const handleCloseWarnMsg = () =>{
+    	setShowWarning(false)
+    }
     const handleOpenMsg = () => {
         setShowSuccess(true);
     };
@@ -214,7 +218,6 @@ function EditProfile(props) {
 			          			}})
 			          			.then(function(response){
 			          				console.log("Picture Uploaded!")
-			          				props.setImageUpdate(true)
 			          			})
 					        }
 	            			axios.put('/api/users/me', {
@@ -243,20 +246,29 @@ function EditProfile(props) {
 						    });
 						}
 						else{
-							alert("The Domain: '"+values.addDomain+"' entered by you isnt saved, Please click on the '+'' icon next to domain's input to save it.")
+							setShowWarning(true)
 						}
-			            //@Backend 4 Function for Sign-Up
+			            //@Backend Function for Sign-Up
 		        }}
         		>
         	{({ isSubmitting ,handleChange,handleBlur,values,errors,touched,setFieldValue}) => (
 	          <Form autoComplete="off">
 	            <Snackbar 
 	              open={showSuccess} 
-	              autoHideDuration={750} 
+	              autoHideDuration={1500} 
 	              onClose={handleCloseMsg}
 	            >
 	              <Alert variant="filled" severity="success">
-	                Changes Saved!
+	                Changes Saved! Refresh Page to see updated info.
+	              </Alert>
+	            </Snackbar>
+	            <Snackbar 
+	              open={showWarning} 
+	              autoHideDuration={1500} 
+	              onClose={handleCloseWarnMsg}
+	            >
+	              <Alert variant="filled" severity="warning">
+	                The Domain: '{values.addDomain}' entered by you isnt saved, Please click on the '+' icon next to domain's input to save it or clear the input.
 	              </Alert>
 	            </Snackbar>
 	            <Grid container className={classes.container}>

@@ -15,26 +15,26 @@ const TagSchema = new mongoose.Schema({
   name: {
     type: String,
     unique: true,
-    required: [true, 'Please provide a display name for tag']
+    required: [true, 'Please provide a display name for tag'],
   },
   isSchool: {
     type: Boolean,
-    default: false
+    default: false,
   },
   slug: {
     //* Alternate Versions for the Tag
     type: String,
-    unique: true
+    unique: true,
   },
   followers: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    }
-  ]
+      ref: 'User',
+    },
+  ],
 });
 
-const generateSlug = name => name.replace(/\s+/g, '-').toLowerCase();
+const generateSlug = (name) => name.replace(/\s+/g, '-').toLowerCase();
 
 /**
  * @memberof TagSchema

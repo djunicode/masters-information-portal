@@ -11,37 +11,43 @@ import AddResource from '../AddResources';
 import FullWidthTabs from '../profpage3';
 import Home from '../../Pages/Homepage/home.js';
 import SearchProfiles from '../profile3';
-import UniversityPage from '../universitypage'
-function RootRouter(props){
+import UniversityPage from '../universitypage';
+import QuestionReply from '../QuestionReply';
 
-	//homepage urls not affecting navbar
+function RootRouter(props) {
+	const [homepage,setHomepage] = React.useState(false)
+  	const renderLogin = () => <Login loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn} />;
+  	const renderChat = () => <Messages loggedIn={props.loggedIn} />;
+  	const renderAddResource = () => <AddResource loggedIn={props.loggedIn} />;
+  	const renderQuestionReply = () => <QuestionReply loggedIn={props.loggedIn} />;
+	const renderHome = () => <Home setHomepage={setHomepage}/>;
+  	const invalidRoute = () => <Redirect to="/" />;
 
-	const [imageUpdate,setImageUpdate] = React.useState(false)
-    const renderLogin = () => <Login loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn}/>;
-	const renderChat = () => <Messages loggedIn={props.loggedIn} />;
-	const renderAddResource = () => <AddResource loggedIn={props.loggedIn} />;
-	const renderEditProfile = () => <EditProfile setImageUpdate={setImageUpdate}/>
-	const invalidRoute = () => <Redirect to='/'/>;
-
-    return (
-        <Router>
-            <NavBar loggedIn={props.loggedIn} setLoggedIn={props.setLoggedIn} imageUpdate={imageUpdate} setImageUpdate={setImageUpdate}/>
-            <Switch>
-                <Route exact path='/' component={Home}/>
-                <Route exact path='/register' component={Register}/>
-                <Route exact path='/login' component={renderLogin}/>
-                <Route exact path='/profile' component={FullWidthTabs}/>
-                <Route exact path='/edit' component={renderEditProfile}/>
-                <Route exact path='/resources' component={Resources} />
-                <Route exact path='/forum' component={Forum} />
-				<Route exact path="/chat" component={renderChat} />
-				<Route exact path="/add-resource" component={renderAddResource} />
-	    <Route exact path='/search' component={SearchProfiles}/>
-	    <Route exact path="/university" component={UniversityPage} />
-				<Route component = {invalidRoute} />
-            </Switch>
-        </Router>
-    );
+  return (
+    <Router>
+      	<NavBar 
+      		loggedIn={props.loggedIn} 
+      		setLoggedIn={props.setLoggedIn} 
+      		homepage={homepage}
+      		setHomepage={setHomepage}
+      	/>
+      	<Switch>
+        	<Route exact path="/" component={renderHome} />
+        	<Route exact path="/register" component={Register} />
+	        <Route exact path="/login" component={renderLogin} />
+	        <Route exact path="/profile" component={FullWidthTabs} />
+	        <Route exact path="/edit" component={EditProfile} />
+	        <Route exact path="/resources" component={Resources} />
+	        <Route exact path="/forum" component={Forum} />
+	        <Route exact path="/chat" component={renderChat} />
+	        <Route exact path="/add-resource" component={renderAddResource} />
+	        <Route exact path="/search" component={SearchProfiles} />
+	        <Route exact path="/university" component={UniversityPage} />
+	        <Route exact path="/question-reply" component={renderQuestionReply} />
+	        <Route component={invalidRoute} />
+      	</Switch>
+    </Router>
+  );
 }
 
 export default RootRouter;

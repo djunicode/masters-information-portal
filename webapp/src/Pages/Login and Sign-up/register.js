@@ -147,6 +147,10 @@ export default function Register() {
     };
     const [registered,setRegistered]=React.useState(false);
     const [showSuccess, setShowSuccess] = React.useState(false);
+    const [showWarning, setShowWarning] = React.useState(false);
+    const handleCloseWarnMsg = () =>{
+      setShowWarning(false)
+    }
     const handleOpenMsg = () => {
         setShowSuccess(true);
     };
@@ -456,39 +460,53 @@ export default function Register() {
             addDomain: '',
           }}
           onSubmit={async (values, { setSubmitting }) => {
-            user.bio=values.bio;
-            user.tests=values.tests;
-            user.facebook=values.facebook;
-            user.twitter=values.twitter;
-            user.linkedIn=values.linkedIn;
-            user.github=values.github;
-            user.uniApplied=values.uniApplied;
-            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
-            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
-            user.university= await getObjectId(universityNames,universityArr,user.university,true);
-            accepts.forEach(async (item,index)=>
-              user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
-            )
-            rejects.forEach(async (item,index)=>
-              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
-            )
-            values.domain.forEach(async (item,index)=>
-              user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
-            )
-            submitAxios();  //Submit function for signup
-        }}
+            if(values.addDomain===''){
+              user.bio=values.bio;
+              user.tests=values.tests;
+              user.facebook=values.facebook;
+              user.twitter=values.twitter;
+              user.linkedIn=values.linkedIn;
+              user.github=values.github;
+              user.uniApplied=values.uniApplied;
+              const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
+              const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
+              user.university= await getObjectId(universityNames,universityArr,user.university,true);
+              accepts.forEach(async (item,index)=>
+                user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
+              )
+              rejects.forEach(async (item,index)=>
+                user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
+              )
+              values.domain.forEach(async (item,index)=>
+                user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
+              )
+              submitAxios();  //Submit function for signup
+            }
+            else{
+              setShowWarning(true)
+            }
+          }}
         >
         {({ isSubmitting ,handleChange,handleBlur,values,setFieldValue}) => (
       <Form> 
         <Snackbar 
-              open={showSuccess} 
-              autoHideDuration={750} 
-              onClose={handleCloseMsg}
-            >
-              <Alert variant="filled" severity="success">
-                Changes Saved!
-              </Alert>
-            </Snackbar>
+          open={showSuccess} 
+          autoHideDuration={750} 
+          onClose={handleCloseMsg}
+        >
+          <Alert variant="filled" severity="success">
+            Changes Saved!
+          </Alert>
+        </Snackbar>
+         <Snackbar 
+          open={showWarning} 
+          autoHideDuration={1500} 
+          onClose={handleCloseWarnMsg}
+        >
+          <Alert variant="filled" severity="warning">
+            The Domain: '{values.addDomain}' entered by you isnt saved, Please click on the '+' icon next to Domains input to save it or clear the input.
+          </Alert>
+        </Snackbar>
         <Grid container className={classes.container}>
             <Grid item md={6}>
               <Typography variant="h5"> Biography </Typography>
@@ -538,7 +556,7 @@ export default function Register() {
                       variant="filled"
                       helperText="Press Enter key or hit the '+' icon after adding each domain" 
                       onChange={handleChange}
-                      onBlur={handleBlur}
+                      onBlur={()=>{if(!tagNames.includes(values.addDomain)){setFieldValue("addDomain",'')}}}
                       onKeyPress={(event) => {
                         if (event.key === 'Enter') {
                             event.preventDefault();
