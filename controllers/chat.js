@@ -33,3 +33,35 @@ exports.create = async (req, res) => {
   logger.created('Chat', doc);
   return res.status(201).json(doc);
 };
+
+
+/**
+ * @apiGroup Chat
+ * @api {GET} /api/chats/ Gets all the chats of the user from the db
+ * @apiDescription Gets all the chats of the user from the database
+ * @apiPermission All logged in users with jwt token
+ * @apiSuccess (200) {Array} Array of all the chat objects of the user from the db
+ */
+exports.getChats=async(req,res)=>{
+  let data=[];
+  const userId=res.locals.user._id;
+  const doc=await Chat.find({sender:userId}).populate('receiver');
+  doc.forEach(element => {
+    data.append(element);
+  });
+
+  const docList=await Chat.find({receiver:userId}).populate('sender');
+  docList.forEach(element => {
+    data.append(element);
+  });
+
+  if(data==null){
+    return res.status(400).send({
+      success:false,
+      msg:'No chats found in the db'
+    })
+  }
+
+  return res.status(200).send(data);
+
+}

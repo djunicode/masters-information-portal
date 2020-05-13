@@ -5,5 +5,6 @@ const { authRequired } = require('../middleware/auth');
 
 const router = Router();
 router.post('/', authRequired, asyncHandler(controller.create));
+router.get('/',authRequired,asyncHandler(controller.getChats));
 
 module.exports = router;
