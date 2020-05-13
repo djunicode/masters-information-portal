@@ -43,17 +43,22 @@ exports.create = async (req, res) => {
  * @apiSuccess (200) {Array} Array of all the chat objects of the user from the db
  */
 exports.getChats=async(req,res)=>{
-  let profile=[];
+
   const userId=res.locals.user._id;
-  const doc=await Chat.find({sender:userId}).populate('receiver');
-  doc.forEach(element => {
-    profile.append(element);
+
+  const sentChats=await Chat.find({sender:userId})
+  sentChats.forEach(element => {
+    const profile=await element.receiver.getPublicProfile();
+    element.otherUserProfile=profile;
   });
 
-  const docList=await Chat.find({receiver:userId}).populate('sender');
-  docList.forEach(element => {
-    profile.append(element);
+  const receivedChats=await Chat.find({receiver:userId})
+  receivedChats.forEach(element => {
+    const profile=await element.sender.getPublicProfile();
+    element.otherUserProfile=profile;
   });
+
+  const profile={sentChats,receivedChats}
 
   if(profile==null){
     return res.status(400).send({
