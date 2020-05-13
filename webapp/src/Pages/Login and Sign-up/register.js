@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React,{useEffect,useRef} from 'react';
 import {getObjectId,getTag} from '../../Helpers/fetchRequests.js';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -61,6 +61,7 @@ function getSteps() {
 
 export default function Register() {
 
+  const domainInput = useRef(null)
   const [componentDidMount]=React.useState(0);
   const [redirect,setRedirect]=React.useState(false);
   const [universityArr,setUniversityArr]=React.useState([]);
@@ -484,6 +485,7 @@ export default function Register() {
             }
             else{
               setShowWarning(true)
+              window.scrollTo(0,domainInput.current.offsetTop-50)
             }
           }}
         >
@@ -500,7 +502,7 @@ export default function Register() {
         </Snackbar>
          <Snackbar 
           open={showWarning} 
-          autoHideDuration={1500} 
+          autoHideDuration={3500} 
           onClose={handleCloseWarnMsg}
         >
           <Alert variant="filled" severity="warning">
@@ -549,6 +551,7 @@ export default function Register() {
                     <TextField 
                       {...params} 
                       name='addDomain'
+                      ref={domainInput}
                       value={values.addDomain}
                       label="Domains"
                       placeholder="eg:Machine Learning, IOT"

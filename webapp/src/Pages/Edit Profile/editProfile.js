@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React,{useEffect,useRef} from 'react';
 import {getTagById,getObjectId,getTag,getUserInfo} from '../../Helpers/fetchRequests.js';
 import CheckLogin from '../../Helpers/checkLogin.js'
 import Button from '@material-ui/core/Button';
@@ -79,6 +79,7 @@ function EditProfile() {
         uniApplied: []
     });
 
+	const domainInput = useRef(null);
 	const [mounted,setMounted] = React.useState(false);
 	const [universityArr,setUniversityArr]=React.useState([]);
     const [universityNames,setUniversityNames]=React.useState([]);
@@ -247,6 +248,8 @@ function EditProfile() {
 						}
 						else{
 							setShowWarning(true)
+							console.log(domainInput)
+							window.scrollTo(0,domainInput.current.offsetTop-50)
 						}
 			            //@Backend Function for Sign-Up
 		        }}
@@ -255,7 +258,7 @@ function EditProfile() {
 	          <Form autoComplete="off">
 	            <Snackbar 
 	              open={showSuccess} 
-	              autoHideDuration={1500} 
+	              autoHideDuration={2000} 
 	              onClose={handleCloseMsg}
 	            >
 	              <Alert variant="filled" severity="success">
@@ -264,7 +267,7 @@ function EditProfile() {
 	            </Snackbar>
 	            <Snackbar 
 	              open={showWarning} 
-	              autoHideDuration={1500} 
+	              autoHideDuration={3500} 
 	              onClose={handleCloseWarnMsg}
 	            >
 	              <Alert variant="filled" severity="warning">
@@ -416,6 +419,7 @@ function EditProfile() {
 		                <TextField 
 		                  {...params} 
 		                  name='addDomain'
+		             	  ref={domainInput}
 		                  value={values.addDomain}
 		                  label="Domains"
 		                  placeholder="eg:Machine Learning, IOT"
