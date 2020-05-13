@@ -12,7 +12,6 @@ const logger = require('../config/logger');
 const Chat = require('../models/chat');
 const { verifyJwt } = require('./jwt');
 const { createChatNotification}=require('./notifications');
-const logger = require('../config/logger');
 
 function createServer(app) {
   const server = http.Server(app);
