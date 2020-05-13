@@ -123,10 +123,10 @@ function createServer(app) {
         },
       });
 
-      const chat=await Chat.findById(socketChatMap[socket]);
+      const chat = await Chat.findById(socketChatMap[socket]);
 
-      const notification=createChatNotification(socketUserMap[socket],chat.receiver,socketChatMap[socket])
-      logger.created('notification',notification)
+      const notification=createChatNotification(socketUserMap[socket],chat.receiver,socketChatMap[socket]);
+      logger.created('Notification', notification);
       // Send to connected user(s)
       io.to(socketChatMap[socket]).send('message', message);
     });
