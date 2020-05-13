@@ -1,3 +1,6 @@
+.homepage-body{
+	margin-left: -250px;
+}
 .home-header{
 	background :url(../../assets/svg/Homepage_header.svg);
 	background-size: 100% 100%;
@@ -5,14 +8,13 @@
 	color:white;
 	font-size: 3.5em;
 	padding-top: 110px;
-	min-height: 110vh;
+	height: 868px;
 	margin-top: -68px;
 	overflow-x: hidden;
 }
 .description{
 	font-size: xx-large;
 	width: 475px;
-	margin-left: auto;
 }
 .description-img{
 	width: auto;
@@ -33,5 +35,8 @@
 	.description{
 		font-size: x-large;
 		width:100vw;
+	}
+	.homepage-body{
+		margin-left: 0px;
 	}
 }
