@@ -43,25 +43,25 @@ exports.create = async (req, res) => {
  * @apiSuccess (200) {Array} Array of all the chat objects of the user from the db
  */
 exports.getChats=async(req,res)=>{
-  let data=[];
+  let profile=[];
   const userId=res.locals.user._id;
   const doc=await Chat.find({sender:userId}).populate('receiver');
   doc.forEach(element => {
-    data.append(element);
+    profile.append(element);
   });
 
   const docList=await Chat.find({receiver:userId}).populate('sender');
   docList.forEach(element => {
-    data.append(element);
+    profile.append(element);
   });
 
-  if(data==null){
+  if(profile==null){
     return res.status(400).send({
       success:false,
       msg:'No chats found in the db'
     })
   }
 
-  return res.status(200).send(data);
+  return res.status(200).send(profile);
 
 }
