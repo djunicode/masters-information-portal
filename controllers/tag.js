@@ -151,7 +151,7 @@ exports.follow = async (req, res) => {
   }
   doc.followers.push(req.user._id);
   await doc.save();
-  req.user.tagFollows.push(doc._id);
+  req.user.tagFollows.push(doc.id);
   await req.user.save();
   return res.json(doc);
 };

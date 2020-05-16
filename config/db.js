@@ -10,7 +10,6 @@ module.exports = {
   dbConnection: async () => {
     try {
       const dbConnUrl = process.env.NODE_ENV === 'test' ? dbTestConnectionUrl : dbConnectionUrl;
-
       await mongoose.connect(dbConnUrl, {
         useNewUrlParser: true,
         useUnifiedTopology: true,

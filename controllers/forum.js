@@ -3,6 +3,8 @@ const User = require('../models/user');
 const Tag = require('../models/tag');
 const logger = require('../config/logger');
 const {createForumNotification}=require('../infra/notifications');
+const mongoose = require('mongoose');
+const _ = require('lodash');
 
 /**
  * @apiDefine Forum Forum
@@ -127,6 +129,7 @@ exports.upvoteById = async (req, res) => {
   const { id } = req.params;
   const userId = req.user._id;
   const doc = await Forum.findById(id);
+  //console.log(doc)
   if (!doc) {
     return res.status(404).json({
       msg: 'Not found',
@@ -147,6 +150,17 @@ exports.upvoteById = async (req, res) => {
 
   //* User has not reacted at all
   await Forum.findByIdAndUpdate(id, { $push: { upvoters: userId } });
+  //Adding the tags on the post to the users liked tags
+  doc.tags.forEach(tag => {
+    tag = String(tag) 
+    const curr =  req.user.tagLikes.get(tag)
+    if(!curr){
+      req.user.tagLikes.set(tag,1)
+    }else{
+      req.user.tagLikes.set(tag,curr+1)
+    }
+  });
+  req.user.save()
   logger.info(`Forum Question ${id} upvoted by ${userId}`);
   return res.status(201).send({});
 };
@@ -264,4 +278,47 @@ exports.deleteById = async (req, res) => {
   return res.json({
     msg: 'ok',
   });
+};
+
+/**
+ * @apiGroup Forum
+ * @api {GET} /api/forum/recommended
+ * @apiDescription Get 
+ * @apiPermission isLoggedIn
+ * @apiSuccess (200) {ObjectID} parentId -Id of the corresponding Forum (if the current document is an answer)
+ * @apiSuccess (200) {Boolean} isAnswer -Whether it is an answer or a question
+ * @apiSuccess (200) {String} title -Title of the forum (if the current document is a question)
+ * @apiSuccess (200) {String} text -Textbody of the forum/Answers (depending on isAnswer)
+ * @apiSuccess (200) {Date} createdAt -Time at which the forum was created
+ * @apiSuccess (200) {Date} updatedAt -Time at which the forum was updated
+ * @apiSuccess (200) {ObjectID} author -The author of the forum
+ * @apiSuccess (200) {ObjectID[]} upvoters -Array of objectIds of upvoters
+ * @apiSuccess (200) {ObjectID[]} downvoters -Array of objectIds of downvoters
+ * @apiSuccess (200) {ObjectID[]} tags - Array of objectIds of Tags
+ * @apiSuccess (200) {ObjectID[]} answers - Array of objectIds of Answers
+ */
+exports.getRecommended = async (req, res) => {
+  //For recommending based on the tags followed by the user
+  const query = req.user.tagFollows
+  //Checking if a tag has been liked by the user more than k times 
+  req.user.tagLikes.forEach((value,key)=>{
+    if(value>=3){
+      query.push( mongoose.Types.ObjectId(key))
+    }
+  })
+  const posts = await Forum.find({ 
+      tags: { "$in" : query }  ,
+      "createdAt":{$gt:new Date(Date.now() - 48*60*60 * 1000)} 
+  }).limit(25)
+
+  //Posts posted in the past 48 hours
+  var recentPosts=[]
+  if(posts.length<25){
+    recentPosts = await Forum.find({ 
+        "createdAt":{$gt:new Date(Date.now() - 48*60*60 * 1000)} 
+     }).limit(25-posts.length)
+  }
+  //To remove the duplicate posts if any
+  const toSend = _.unionWith(posts,recentPosts,_.isEqual)
+  return res.json(toSend);
 };

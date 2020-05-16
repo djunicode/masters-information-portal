@@ -48,6 +48,7 @@ exports.register = async (req, res) => {
   }
 
   const user = await new User(req.body);
+  user.tagLikes = {}
   const token = await user.newAuthToken();
   const refreshToken = await createRefreshToken({ _id: user.id });
   tokenList[refreshToken] = { id: user.id, refreshToken };
@@ -205,3 +206,5 @@ exports.getProfilePhoto = async (req, res) => {
   res.set('Content-Type', 'image/jpg');
   res.send(user.avatar);
 };
+
+
