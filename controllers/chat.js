@@ -46,13 +46,13 @@ exports.getChats=async(req, res) => {
   const userId = res.locals.user._id;
 
   const sentChats = await Chat.find({sender:userId});
-  sentChats.forEach(c => {
+  sentChats.forEach(async c => {
     const profile = await c.receiver.getPublicProfile();
     c.profile = profile;
   });
 
   const receivedChats = await Chat.find({receiver:userId});
-  receivedChats.forEach(c => {
+  receivedChats.forEach(async c => {
     const profile = await c.sender.getPublicProfile();
     c.profile = profile;
   });
