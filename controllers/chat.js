@@ -42,31 +42,27 @@ exports.create = async (req, res) => {
  * @apiPermission All logged in users with jwt token
  * @apiSuccess (200) {Array} Array of all the chat objects of the user from the db
  */
-exports.getChats=async(req,res)=>{
+exports.getChats=async(req, res) => {
+  const userId = res.locals.user._id;
 
-  const userId=res.locals.user._id;
-
-  const sentChats=await Chat.find({sender:userId})
-  sentChats.forEach(element => {
-    const profile=await element.receiver.getPublicProfile();
-    element.otherUserProfile=profile;
+  const sentChats=await Chat.find({sender:userId});
+  sentChats.forEach(c => {
+    const profile = await c.receiver.getPublicProfile();
+    c.profile = profile;
   });
 
-  const receivedChats=await Chat.find({receiver:userId})
-  receivedChats.forEach(element => {
-    const profile=await element.sender.getPublicProfile();
-    element.otherUserProfile=profile;
+  const receivedChats=await Chat.find({receiver:userId});
+  receivedChats.forEach(c => {
+    const profile = await c.sender.getPublicProfile();
+    c.profile = profile;
   });
 
-  const profile={sentChats,receivedChats}
-
-  if(profile==null){
-    return res.status(400).send({
-      success:false,
-      msg:'No chats found in the db'
-    })
+  const chats = [...sentChats, ...receivedChats];
+  
+  if (chats.length == 0) {
+    // Send 404 but empty chats
+    return res.stats(404).send([]);
   }
 
-  return res.status(200).send(profile);
-
+  return res.status(200).send(chats);
 }
