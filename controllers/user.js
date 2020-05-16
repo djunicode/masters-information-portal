@@ -48,6 +48,7 @@ exports.register = async (req, res) => {
   }
 
   const user = await new User(req.body);
+  user.tagLikes = {}
   const token = await user.newAuthToken();
   const refreshToken = await createRefreshToken({ _id: user.id });
   tokenList[refreshToken] = { id: user.id, refreshToken };
@@ -124,6 +125,22 @@ exports.getProfile = async (req, res) => {
 
 /**
  * @apiGroup User
+ * @api {GET} /api/users Get all users
+ * @apiDescription Gets profiles of all existing users
+ * @apiPermission LoggedIn
+ * @apiParam None
+ * @apiSuccess (200) Profile details of all users in the db
+ * */
+exports.getUsers = async (req, res) => {
+  const users = await User.find();
+  const toSend = users.map(user => {
+    return user.getPublicProfile()
+  });
+  res.json(toSend);
+};
+
+/**
+ * @apiGroup User
  * @api {PUT} /api/users/me Update profile
  * @apiDescription Update the user's profile
  * @apiPermission LoggedIn
@@ -189,3 +206,5 @@ exports.getProfilePhoto = async (req, res) => {
   res.set('Content-Type', 'image/jpg');
   res.send(user.avatar);
 };
+
+
