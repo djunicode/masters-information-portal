@@ -45,13 +45,13 @@ exports.create = async (req, res) => {
 exports.getChats=async(req, res) => {
   const userId = res.locals.user._id;
 
-  const sentChats=await Chat.find({sender:userId});
+  const sentChats = await Chat.find({sender:userId});
   sentChats.forEach(c => {
     const profile = await c.receiver.getPublicProfile();
     c.profile = profile;
   });
 
-  const receivedChats=await Chat.find({receiver:userId});
+  const receivedChats = await Chat.find({receiver:userId});
   receivedChats.forEach(c => {
     const profile = await c.sender.getPublicProfile();
     c.profile = profile;
@@ -61,7 +61,7 @@ exports.getChats=async(req, res) => {
   
   if (chats.length == 0) {
     // Send 404 but empty chats
-    return res.stats(404).send([]);
+    return res.status(404).send([]);
   }
 
   return res.status(200).send(chats);
