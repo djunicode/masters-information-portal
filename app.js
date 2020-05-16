@@ -9,7 +9,7 @@ const logger = require('./config/logger');
 const { devProfile } = require('./config/morganConfig');
 const { directives, limiter, options } = require('./config/middlewares');
 
-const { userRouter, forumRouter, tagRouter, chatRouter } = require('./routes');
+const { userRouter, forumRouter, tagRouter, chatRouter,notificationsRouter } = require('./routes');
 
 // --- App config
 
@@ -43,6 +43,7 @@ app.use('/api/users', userRouter);
 app.use('/api/tags', tagRouter);
 app.use('/api/chats', chatRouter);
 app.use('/api/forum', forumRouter);
+app.use('/api/notifications',notificationsRouter)
 
 // --- Documentation
 app.use('/docs/models', express.static(path.join(__dirname, '/docs/models')));

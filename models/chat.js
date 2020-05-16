@@ -24,4 +24,4 @@ const ChatSchema = new Schema({
   messages: [MessageSchema],
 });
 
-module.exports = model('chat', ChatSchema);
+module.exports = model('Chat', ChatSchema);

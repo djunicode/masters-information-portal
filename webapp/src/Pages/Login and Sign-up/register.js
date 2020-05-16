@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React,{useEffect,useRef} from 'react';
 import {getObjectId,getTag} from '../../Helpers/fetchRequests.js';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -10,6 +10,7 @@ import Autocomplete,{createFilterOptions} from '@material-ui/lab/Autocomplete';
 import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
 import Alert from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -24,7 +25,21 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import AddIcon from '@material-ui/icons/Add';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
+import {Redirect,Link} from 'react-router-dom';
+import Cookies from 'js-cookie';
 const useStyles = makeStyles(theme => ({
+    root: {
+      backgroundColor: theme.palette.background.paper,
+      textAlign: 'center',
+      maxWidth: 1111,
+      minHeight: 440,
+      margin: 'auto',
+      marginTop: 20,
+      paddingTop: 10,
+      marginBottom: 20,
+      paddingBottom: 20,
+      flexGrow: 1
+    },
     textf: {
         marginTop: 20
     },
@@ -44,10 +59,11 @@ function getSteps() {
     return ['Core Details', 'Other Details'];
 }
 
-export default function Register(props) {
+export default function Register() {
 
-  const[componentDidMount]=React.useState(0);
-
+  const domainInput = useRef(null)
+  const [componentDidMount]=React.useState(0);
+  const [redirect,setRedirect]=React.useState(false);
   const [universityArr,setUniversityArr]=React.useState([]);
   const [universityNames,setUniversityNames]=React.useState([]);
   const [tagArr,setTagArr]=React.useState([]);
@@ -66,6 +82,12 @@ export default function Register(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[componentDidMount])
+ // eslint-disable-next-line
+  React.useEffect(()=>{
+    if(!!Cookies.get('jwt')){
+      setRedirect(true);
+    }
+  })
 
   const submitAxios = () => {
     axios.post('/api/users/register', {
@@ -89,7 +111,7 @@ export default function Register(props) {
     })
     .then(function (response) {
       console.log("Registration Successful");
-      props.setRegister(0);
+      setRegistered(true)
     })
     .catch(function (error) {
       console.log("Registration Failed");
@@ -124,7 +146,12 @@ export default function Register(props) {
     const isStepSkipped = step => {
         return skipped.has(step);
     };
+    const [registered,setRegistered]=React.useState(false);
     const [showSuccess, setShowSuccess] = React.useState(false);
+    const [showWarning, setShowWarning] = React.useState(false);
+    const handleCloseWarnMsg = () =>{
+      setShowWarning(false)
+    }
     const handleOpenMsg = () => {
         setShowSuccess(true);
     };
@@ -148,7 +175,9 @@ export default function Register(props) {
     };
 
     return (
-      <div className="App" style={{paddingTop:'45px'}}>
+      <div className={classes.root} style={{paddingTop:'45px'}}>
+      {registered?<Redirect to='/login'/>:null}
+      {redirect?<Redirect to='/'/>:null}
       <Typography variant="h4" className={classes.header}><b>Register</b></Typography>
       <Grid container>
         <Grid item md={3}/>
@@ -432,39 +461,54 @@ export default function Register(props) {
             addDomain: '',
           }}
           onSubmit={async (values, { setSubmitting }) => {
-            user.bio=values.bio;
-            user.tests=values.tests;
-            user.facebook=values.facebook;
-            user.twitter=values.twitter;
-            user.linkedIn=values.linkedIn;
-            user.github=values.github;
-            user.uniApplied=values.uniApplied;
-            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
-            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
-            user.university= await getObjectId(universityNames,universityArr,user.university,true);
-            accepts.forEach(async (item,index)=>
-              user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
-            )
-            rejects.forEach(async (item,index)=>
-              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
-            )
-            values.domain.forEach(async (item,index)=>
-              user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
-            )
-            submitAxios();  //Submit function for signup
-        }}
+            if(values.addDomain===''){
+              user.bio=values.bio;
+              user.tests=values.tests;
+              user.facebook=values.facebook;
+              user.twitter=values.twitter;
+              user.linkedIn=values.linkedIn;
+              user.github=values.github;
+              user.uniApplied=values.uniApplied;
+              const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
+              const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
+              user.university= await getObjectId(universityNames,universityArr,user.university,true);
+              accepts.forEach(async (item,index)=>
+                user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
+              )
+              rejects.forEach(async (item,index)=>
+                user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
+              )
+              values.domain.forEach(async (item,index)=>
+                user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
+              )
+              submitAxios();  //Submit function for signup
+            }
+            else{
+              setShowWarning(true)
+              window.scrollTo(0,domainInput.current.offsetTop-50)
+            }
+          }}
         >
         {({ isSubmitting ,handleChange,handleBlur,values,setFieldValue}) => (
       <Form> 
         <Snackbar 
-              open={showSuccess} 
-              autoHideDuration={750} 
-              onClose={handleCloseMsg}
-            >
-              <Alert variant="filled" severity="success">
-                Changes Saved!
-              </Alert>
-            </Snackbar>
+          open={showSuccess} 
+          autoHideDuration={750} 
+          onClose={handleCloseMsg}
+        >
+          <Alert variant="filled" severity="success">
+            Changes Saved!
+          </Alert>
+        </Snackbar>
+         <Snackbar 
+          open={showWarning} 
+          autoHideDuration={3500} 
+          onClose={handleCloseWarnMsg}
+        >
+          <Alert variant="filled" severity="warning">
+            The Domain: '{values.addDomain}' entered by you isnt saved, Please click on the '+' icon next to Domains input to save it or clear the input.
+          </Alert>
+        </Snackbar>
         <Grid container className={classes.container}>
             <Grid item md={6}>
               <Typography variant="h5"> Biography </Typography>
@@ -490,41 +534,58 @@ export default function Register(props) {
               <Typography variant="h5"> Domains </Typography>
             </Grid>
             <Grid item md={6}>
-             <Autocomplete
-              options={tagNames}
-              disableClearable
-              inputValue={!!values.addDomain?values.addDomain:''}
-              autoHighlight
-              getOptionDisabled={option => values.domain.includes(option)}
-              name="addDomain"
-              onChange={(e, value) => {
-                setFieldValue("addDomain", value)
-              }}
-              onBlur={handleBlur}
-              renderInput={params => (
-                <TextField 
-                  {...params} 
-                  name='addDomain'
-                  value={values.addDomain}
-                  label="Domains"
-                  placeholder="eg:Machine Learning, IOT"
-                  fullWidth
-                  variant="filled"
-                  helperText="Press enter after adding each domain" 
-                  onChange={handleChange}
+              <Grid container>
+                <Grid item xs={10}>
+                  <Autocomplete
+                  options={tagNames}
+                  disableClearable
+                  inputValue={!!values.addDomain?values.addDomain:''}
+                  autoHighlight
+                  getOptionDisabled={option => values.domain.includes(option)}
+                  name="addDomain"
+                  onChange={(e, value) => {
+                    setFieldValue("addDomain", value)
+                  }}
                   onBlur={handleBlur}
-                  onKeyPress={(event) => {
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
-                        if (values.addDomain.trim() && !values.domain.includes(values.addDomain)){
-                          setFieldValue('domain',[...values.domain,values.addDomain]);
-                          setFieldValue('addDomain','');
+                  renderInput={params => (
+                    <TextField 
+                      {...params} 
+                      name='addDomain'
+                      ref={domainInput}
+                      value={values.addDomain}
+                      label="Domains"
+                      placeholder="eg:Machine Learning, IOT"
+                      fullWidth
+                      variant="filled"
+                      helperText="Press Enter key or hit the '+' icon after adding each domain" 
+                      onChange={handleChange}
+                      onBlur={()=>{if(!tagNames.includes(values.addDomain)){setFieldValue("addDomain",'')}}}
+                      onKeyPress={(event) => {
+                        if (event.key === 'Enter') {
+                            event.preventDefault();
+                            if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
+                              setFieldValue('domain',[...values.domain,values.addDomain]);
+                              setFieldValue('addDomain','');
+                            }
                         }
+                      }}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <IconButton
+                  onClick={()=>{
+                    if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
+                        setFieldValue('domain',[...values.domain,values.addDomain]);
+                      setFieldValue('addDomain','');
                     }
                   }}
-                />
-              )}
-            />
+                >
+                  <AddIcon/>
+                </IconButton>
+              </Grid>
+            </Grid>
             <br/>
             <br/>
             {values.domain.map((item,index)=>(
@@ -847,7 +908,8 @@ export default function Register(props) {
     </Formik>
   </div>
   }
+  <br/><Typography>Already have an account? <Link to='/login' style={{color:'#496961'}}> <b>Sign In</b></Link></Typography>
   </Box> 
   </div>
-    );
+  );
 }

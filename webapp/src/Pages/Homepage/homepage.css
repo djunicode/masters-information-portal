@@ -1,0 +1,42 @@
+.homepage-body{
+	margin-left: -250px;
+}
+.home-header{
+	background :url(../../assets/svg/Homepage_header.svg);
+	background-size: 100% 100%;
+	background-size: cover;
+	color:white;
+	font-size: 3.5em;
+	padding-top: 110px;
+	height: 868px;
+	margin-top: -68px;
+	overflow-x: hidden;
+}
+.description{
+	font-size: xx-large;
+	width: 475px;
+}
+.description-img{
+	width: auto;
+	height: auto;
+}
+@media screen and (max-width:475px){
+	.home-header{
+		margin-top: -40px;
+		padding-top: 0px;
+		font-size: 2em;
+		background-color: #46BC99;
+	}
+	.description-img{
+		width: 90vw;
+		height: auto;
+		margin-left:5vw;
+	}
+	.description{
+		font-size: x-large;
+		width:100vw;
+	}
+	.homepage-body{
+		margin-left: 0px;
+	}
+}

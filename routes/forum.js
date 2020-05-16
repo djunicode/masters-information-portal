@@ -7,6 +7,7 @@ const controller = require('../controllers/forum');
 const router = Router();
 router.post('/', authRequired, asyncHandler(controller.create));
 router.get('/', asyncHandler(controller.getAll));
+router.get('/recommended',authRequired,asyncHandler(controller.getRecommended));
 router.get('/:id', asyncHandler(controller.getById));
 router.post('/:id/upvote', authRequired, asyncHandler(controller.upvoteById));
 router.post('/:id/downvote', authRequired, asyncHandler(controller.downvoteById));

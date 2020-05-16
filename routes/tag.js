@@ -6,12 +6,17 @@ const roles = require('../constants/roles');
 
 const router = Router();
 
-router.post('/', authRequired, hasRoles([roles.ADMIN]), asyncHandler(controller.create));
+router.post('/', authRequired, asyncHandler(controller.create));
 router.post('/:slug/follow', authRequired, asyncHandler(controller.follow));
 router.post('/:slug/unfollow', authRequired, asyncHandler(controller.unfollow));
 router.get('/', asyncHandler(controller.getAll));
 router.get('/:slug', asyncHandler(controller.getBySlug));
 router.put('/:slug', authRequired, hasRoles([roles.ADMIN]), asyncHandler(controller.updateBySlug));
-router.delete('/:slug', authRequired, hasRoles([roles.ADMIN]), asyncHandler(controller.deleteBySlug));
+router.delete(
+  '/:slug',
+  authRequired,
+  hasRoles([roles.ADMIN]),
+  asyncHandler(controller.deleteBySlug)
+);
 
 module.exports = router;
