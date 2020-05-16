@@ -33,3 +33,36 @@ exports.create = async (req, res) => {
   logger.created('Chat', doc);
   return res.status(201).json(doc);
 };
+
+
+/**
+ * @apiGroup Chat
+ * @api {GET} /api/chats/ Gets all the chats of the user from the db
+ * @apiDescription Gets all the chats of the user from the database
+ * @apiPermission All logged in users with jwt token
+ * @apiSuccess (200) {Array} Array of all the chat objects of the user from the db
+ */
+exports.getChats=async(req, res) => {
+  const userId = res.locals.user._id;
+
+  const sentChats = await Chat.find({sender:userId});
+  sentChats.forEach(c => {
+    const profile = await c.receiver.getPublicProfile();
+    c.profile = profile;
+  });
+
+  const receivedChats = await Chat.find({receiver:userId});
+  receivedChats.forEach(c => {
+    const profile = await c.sender.getPublicProfile();
+    c.profile = profile;
+  });
+
+  const chats = [...sentChats, ...receivedChats];
+  
+  if (chats.length == 0) {
+    // Send 404 but empty chats
+    return res.status(404).send([]);
+  }
+
+  return res.status(200).send(chats);
+}
