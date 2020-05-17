@@ -1,5 +1,6 @@
 const Chat = require('../models/chat');
 const logger = require('../config/logger');
+const User=require('../models/user');
 
 /**
  * @apiDefine Chat Chat
@@ -42,22 +43,30 @@ exports.create = async (req, res) => {
  * @apiPermission All logged in users with jwt token
  * @apiSuccess (200) {Array} Array of all the chat objects of the user from the db
  */
+
 exports.getChats=async(req, res) => {
-  const userId = res.locals.user._id;
+  let userId = res.locals.user._id;
+  let chatsSent=[];
+  let chatsReceived=[];
 
-  const sentChats = await Chat.find({sender:userId});
-  sentChats.forEach(async c => {
-    const profile = await c.receiver.getPublicProfile();
-    c.profile = profile;
-  });
+  let sentChats = await Chat.find({sender:userId});
 
-  const receivedChats = await Chat.find({receiver:userId});
-  receivedChats.forEach(async c => {
-    const profile = await c.sender.getPublicProfile();
-    c.profile = profile;
-  });
+  for(let i=0;i<sentChats.length;i++){
+     const receiverProfile=await User.findById(sentChats[i].receiver);
+    const profile = await receiverProfile.getPublicProfile();
+    chatsSent.push({ chatModel:sentChats[i],profile })
+  }
 
-  const chats = [...sentChats, ...receivedChats];
+
+  let receivedChats = await Chat.find({receiver:userId});
+
+  for(let i=0;i<receivedChats.length;i++){
+     const senderProfile=await User.findById(receivedChats[i].sender);
+    const profile = await senderProfile.getPublicProfile();
+    chatsReceived.push({ chatModel:receivedChats[i],profile })
+  }
+  
+  let chats = [...chatsSent, ...chatsReceived];
   
   if (chats.length == 0) {
     // Send 404 but empty chats
@@ -65,4 +74,5 @@ exports.getChats=async(req, res) => {
   }
 
   return res.status(200).send(chats);
+  
 }
