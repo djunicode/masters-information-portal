@@ -64,7 +64,7 @@ app.get('/*', (req, res) => {
  */
 app.use((err, req, res, next) => {
   logger.error(err);
-console.log(err)
+
   if (err.name === 'ValidationError') {
     return res.status(400).json(err.errors);
   }
