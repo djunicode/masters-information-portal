@@ -138,7 +138,7 @@ export default function Register() {
       rejects: []
     });
     const classes = useStyles();
-    const [activeStep, setActiveStep] = React.useState(1);
+    const [activeStep, setActiveStep] = React.useState(0);
     const steps = getSteps();
     const [skipped, setSkipped] = React.useState(new Set());
     const isStepOptional = step => {
@@ -471,13 +471,13 @@ export default function Register() {
               var testVal = checkTestValidation(values);
               if(!testVal){
                 setShowWarning2(true);
-                window.scrollTo(0,testInput.current.offsetTop-50)
+                window.scrollTo({top:testInput.current.offsetTop-50, behavior: 'smooth'})
               }
               else{
                 var universityVal = checkUniversityValidation(values);
                 if(!universityVal){
                   setShowWarning3(true);
-                  window.scrollTo(0,universityInput.current.offsetTop-50)
+                  window.scrollTo({top:universityInput.current.offsetTop-50, behavior: 'smooth'})
                 }
                 else{
                   user.bio=values.bio;
@@ -505,7 +505,7 @@ export default function Register() {
             }
             else{
               setShowWarning(true)
-              window.scrollTo(0,domainInput.current.offsetTop-50)
+              window.scrollTo({top:domainInput.current.offsetTop-50, behavior: 'smooth'})
             }
           }}
         >

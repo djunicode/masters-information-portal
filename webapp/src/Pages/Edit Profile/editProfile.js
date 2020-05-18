@@ -187,13 +187,13 @@ function EditProfile() {
 			          		var testVal = checkTestValidation(values);
 				              if(!testVal){
 				                setShowWarning2(true);
-				                window.scrollTo(0,testInput.current.offsetTop-50)
+				                window.scrollTo({top:testInput.current.offsetTop-50, behavior: 'smooth'})
 				              }
 				              else{
 				                var universityVal = checkUniversityValidation(values);
 				                if(!universityVal){
 				                  setShowWarning3(true);
-				                  window.scrollTo(0,universityInput.current.offsetTop-50)
+				                  window.scrollTo({top:universityInput.current.offsetTop-50, behavior: 'smooth'})
 				                }
 				                else{
 				          			var domains = [];
@@ -265,7 +265,7 @@ function EditProfile() {
 						else{
 							setShowWarning(true)
 							console.log(domainInput)
-							window.scrollTo(0,domainInput.current.offsetTop-50)
+							window.scrollTo({top:domainInput.current.offsetTop-50, behavior: 'smooth'})
 						}
 			            //@Backend Function for Sign-Up
 		        }}
