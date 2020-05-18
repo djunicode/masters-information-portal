@@ -1,5 +1,6 @@
 import React,{useEffect,useRef} from 'react';
 import {getObjectId,getTag} from '../../Helpers/fetchRequests.js';
+import {checkUniversityValidation,checkTestValidation} from '../../Helpers/validateForm.js'
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -52,7 +53,6 @@ const useStyles = makeStyles(theme => ({
         paddingBottom: 20,
     }
 }));
-
 const axios = require('axios');
 const filter = createFilterOptions();
 function getSteps() {
@@ -62,13 +62,14 @@ function getSteps() {
 export default function Register() {
 
   const domainInput = useRef(null)
+  const testInput = useRef(null)
+  const universityInput = useRef(null)
   const [componentDidMount]=React.useState(0);
   const [redirect,setRedirect]=React.useState(false);
   const [universityArr,setUniversityArr]=React.useState([]);
   const [universityNames,setUniversityNames]=React.useState([]);
   const [tagArr,setTagArr]=React.useState([]);
   const [tagNames,setTagNames]=React.useState([]);  
-
   useEffect(()=>{
     if(!componentDidMount){
       async function fetchData(){
@@ -127,17 +128,17 @@ export default function Register() {
       gradDate: '2020-01-01',
       bio: '',
       domain: [],
-      tests: [{ name: '', date: '2020-01-01', score: '' }],
+      tests: [],
       facebook: '',
       twitter: '',
       linkedIn: '',
       github: '',
-      uniApplied: [{ name: '', status: '' }],
+      uniApplied: [],
       accepts: [],
       rejects: []
     });
     const classes = useStyles();
-    const [activeStep, setActiveStep] = React.useState(0);
+    const [activeStep, setActiveStep] = React.useState(1);
     const steps = getSteps();
     const [skipped, setSkipped] = React.useState(new Set());
     const isStepOptional = step => {
@@ -149,8 +150,13 @@ export default function Register() {
     const [registered,setRegistered]=React.useState(false);
     const [showSuccess, setShowSuccess] = React.useState(false);
     const [showWarning, setShowWarning] = React.useState(false);
+    const [showWarning2, setShowWarning2] = React.useState(false);
+    const [showWarning3, setShowWarning3] = React.useState(false);
     const handleCloseWarnMsg = () =>{
       setShowWarning(false)
+    }
+    const handleCloseWarnMsg2 = () =>{
+      setShowWarning2(false)
     }
     const handleOpenMsg = () => {
         setShowSuccess(true);
@@ -462,26 +468,40 @@ export default function Register() {
           }}
           onSubmit={async (values, { setSubmitting }) => {
             if(values.addDomain===''){
-              user.bio=values.bio;
-              user.tests=values.tests;
-              user.facebook=values.facebook;
-              user.twitter=values.twitter;
-              user.linkedIn=values.linkedIn;
-              user.github=values.github;
-              user.uniApplied=values.uniApplied;
-              const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
-              const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
-              user.university= await getObjectId(universityNames,universityArr,user.university,true);
-              accepts.forEach(async (item,index)=>
-                user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
-              )
-              rejects.forEach(async (item,index)=>
-                user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
-              )
-              values.domain.forEach(async (item,index)=>
-                user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
-              )
-              submitAxios();  //Submit function for signup
+              var testVal = checkTestValidation(values);
+              if(!testVal){
+                setShowWarning2(true);
+                window.scrollTo(0,testInput.current.offsetTop-50)
+              }
+              else{
+                var universityVal = checkUniversityValidation(values);
+                if(!universityVal){
+                  setShowWarning3(true);
+                  window.scrollTo(0,universityInput.current.offsetTop-50)
+                }
+                else{
+                  user.bio=values.bio;
+                  user.tests=values.tests;
+                  user.facebook=values.facebook;
+                  user.twitter=values.twitter;
+                  user.linkedIn=values.linkedIn;
+                  user.github=values.github;
+                  user.uniApplied=values.uniApplied;
+                  const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
+                  const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
+                  user.university= await getObjectId(universityNames,universityArr,user.university,true);
+                  accepts.forEach(async (item,index)=>
+                    user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
+                  )
+                  rejects.forEach(async (item,index)=>
+                    user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
+                  )
+                  values.domain.forEach(async (item,index)=>
+                    user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
+                  )
+                  submitAxios();  //Submit function for signup
+                }
+              }
             }
             else{
               setShowWarning(true)
@@ -489,7 +509,7 @@ export default function Register() {
             }
           }}
         >
-        {({ isSubmitting ,handleChange,handleBlur,values,setFieldValue}) => (
+        {({ isSubmitting ,handleChange,handleBlur,values,setFieldValue,touched}) => (
       <Form> 
         <Snackbar 
           open={showSuccess} 
@@ -500,13 +520,31 @@ export default function Register() {
             Changes Saved!
           </Alert>
         </Snackbar>
-         <Snackbar 
+        <Snackbar 
           open={showWarning} 
           autoHideDuration={3500} 
           onClose={handleCloseWarnMsg}
         >
           <Alert variant="filled" severity="warning">
             The Domain: '{values.addDomain}' entered by you isnt saved, Please click on the '+' icon next to Domains input to save it or clear the input.
+          </Alert>
+        </Snackbar>
+        <Snackbar 
+          open={showWarning2} 
+          autoHideDuration={3500} 
+          onClose={handleCloseWarnMsg2}
+        >
+          <Alert variant="filled" severity="warning">
+            Fill all test timeline fields completely or remove unfilled ones.
+          </Alert>
+        </Snackbar>
+        <Snackbar 
+          open={showWarning3} 
+          autoHideDuration={3500} 
+          onClose={()=>{setShowWarning3(false)}}
+        >
+          <Alert variant="filled" severity="warning">
+            Fill all University Names or remove unfilled ones.
           </Alert>
         </Snackbar>
         <Grid container className={classes.container}>
@@ -604,7 +642,7 @@ export default function Register() {
         <Divider/>
         <Grid container className={classes.container}>
             <Grid item md={6}>
-              <Typography variant="h5" style={{marginTop: 20}}> Timeline of Tests </Typography>
+              <Typography ref={testInput} variant="h5" style={{marginTop: 20}}> Timeline of Tests </Typography>
             </Grid>
             <Grid item md={6}>
           <FieldArray
@@ -685,7 +723,7 @@ export default function Register() {
                   
                 :
                   <div>
-                    <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',date:'2020-01-01',score:null})}>
+                    <Button aria-label="add" style={{color:'green',marginTop:'15px',marginBottom:'30px'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',date:'2020-01-01',score:''})}>
                           <AddIcon /> Add Test
                     </Button><br/>
                   </div>
@@ -782,7 +820,7 @@ export default function Register() {
       <Divider/>
        <Grid container className={classes.container}>
             <Grid item md={6}>
-              <Typography variant="h5" style={{marginTop: 20}}> University Applications </Typography>
+              <Typography ref={universityInput} variant="h5" style={{marginTop: 20}}> University Applications </Typography>
             </Grid>
             <Grid item md={6}>
           <FieldArray
@@ -844,7 +882,7 @@ export default function Register() {
                       <Grid container spacing={2}>
                   {index===values.uniApplied.length-1?
                   <Grid item md={6} style={{alignItems:'right'}}>
-                    <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:''})}>
+                    <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:'Accepted'})}>
                           <AddIcon /> Add Application
                     </Button>
                   </Grid>
@@ -869,7 +907,7 @@ export default function Register() {
                   
                 :
                   <div>
-                    <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:''})}>
+                    <Button aria-label="add" style={{color:'green',marginTop:'15px',marginBottom:'30px'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:'Accepted'})}>
                           <AddIcon /> Add University
                     </Button><br/>
                   </div>
