@@ -883,7 +883,7 @@ export default function Register() {
                   {index===values.uniApplied.length-1?
                   <Grid item md={6} style={{alignItems:'right'}}>
                     <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:'Accepted'})}>
-                          <AddIcon /> Add Application
+                          <AddIcon /> Add University
                     </Button>
                   </Grid>
                   :

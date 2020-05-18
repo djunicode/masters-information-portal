@@ -584,7 +584,7 @@ function EditProfile() {
 			)
 			:
 			<div>
-            	<Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',date:'2020-01-01',score:''})}>
+            	<Button aria-label="add" style={{color:'green',marginTop:'15px',marginBottom:'30px'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',date:'2020-01-01',score:''})}>
                   <AddIcon /> Add Test
             	</Button><br/>
         	</div>
@@ -745,7 +745,7 @@ function EditProfile() {
               {index===values.uniApplied.length-1?
               <Grid item md={8} style={{alignItems:'right'}}>
                 <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:'Accepted'})}>
-                      <AddIcon /> Add Applicaiton
+                      <AddIcon /> Add University
                 </Button>
               </Grid>
               :
@@ -769,7 +769,7 @@ function EditProfile() {
               
             :
               <div>
-                <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:'Accepted'})}>
+                <Button aria-label="add" style={{color:'green',marginTop:'15px',marginBottom:'30px'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:'Accepted'})}>
                       <AddIcon /> Add University
                 </Button><br/>
               </div>
