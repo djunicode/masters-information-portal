@@ -78,7 +78,7 @@ function NavBar(props) {
     const[name,setName]=React.useState(null);
     const[mobile,setMobile]=React.useState(false)
     const handleResize = () =>{
-        if(window.innerWidth<=475){
+        if(window.innerWidth<=575){
             setMobile(true)
         }
         else{
