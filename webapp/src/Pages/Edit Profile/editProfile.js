@@ -1,6 +1,7 @@
 import React,{useEffect,useRef} from 'react';
 import {getTagById,getObjectId,getTag,getUserInfo} from '../../Helpers/fetchRequests.js';
 import CheckLogin from '../../Helpers/checkLogin.js'
+import {checkUniversityValidation,checkTestValidation} from '../../Helpers/validateForm.js'
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -80,9 +81,13 @@ function EditProfile() {
     });
 
 	const domainInput = useRef(null);
+	const universityInput = useRef(null);
+	const testInput = useRef(null);
 	const [mounted,setMounted] = React.useState(false);
 	const [universityArr,setUniversityArr]=React.useState([]);
     const [universityNames,setUniversityNames]=React.useState([]);
+    const [showWarning2, setShowWarning2] = React.useState(false);
+    const [showWarning3, setShowWarning3] = React.useState(false);
     const [tagArr,setTagArr]=React.useState([]);
     const [tagNames,setTagNames]=React.useState([]);  
 	const[token1,setToken1]=React.useState(null);
@@ -118,9 +123,6 @@ function EditProfile() {
     const classes = useStyles();
     const [showSuccess, setShowSuccess] = React.useState(false);
     const [showWarning, setShowWarning] = React.useState(false);
-    const handleCloseWarnMsg = () =>{
-    	setShowWarning(false)
-    }
     const handleOpenMsg = () => {
         setShowSuccess(true);
     };
@@ -182,74 +184,88 @@ function EditProfile() {
 			          }}
 			          onSubmit={async (values, { setSubmitting }) => {
 			          	if (values.addDomain===''){
-				          	var domains = [];
-				          	user.pic=pic;
-				            user.email=values.email;
-				            user.university=values.university;
-				            user.department=values.department;
-				            user.gradDate=values.gradDate;
-				            user.bio=values.bio;
-				            user.tests=values.tests;
-				            user.facebook=values.facebook;
-				            user.twitter=values.twitter;
-				            user.linkedIn=values.linkedIn;
-				            user.github=values.github;
-				            user.uniApplied=values.uniApplied;
-				            user.accepts=[];
-				            user.rejects=[];
-				            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
-				            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
-				            user.university= await getObjectId(universityNames,universityArr,user.university,true);
-				            accepts.forEach(async (item,index)=>
-				              user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
-				            )
-				            rejects.forEach(async (item,index)=>
-				              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
-				            )
-				            values.domain.forEach(async (item,index)=>
-				              domains[index]=await getObjectId(tagNames,tagArr,item,false)
-				            )
-				            if(!!user.pic){
-				           	 	const formData = new FormData();
-				            	formData.append('avatar',user.pic[0]);
-					            axios.post('/api/users/upload',formData,{
-			        			headers: {
-			          			  	Authorization: token1,
-			          			  	'content-type': 'multipart/form-data'
-			          			}})
-			          			.then(function(response){
-			          				console.log("Picture Uploaded!")
-			          			})
-					        }
-	            			axios.put('/api/users/me', {
-						      email: user.email,
-						      graduationDate: user.gradDate,
-						      currentSchool: user.university,
-						      department: user.department,
-						      bio: user.bio,
-						      domains: domains,
-						      testTimeline: user.tests,
-						      linkedinUrl: user.linkedIn,
-						      githubUrl: user.github,
-						      facebookUrl: user.facebook,
-						      twitterUrl: user.twitter,
-						      accepts: user.accepts,
-						      rejects: user.rejects
-						    },
-	            			  {headers: {
-	              			  	Authorization: token1
-	              			  }})
-						    .then(function (response) {
-				           	  handleOpenMsg();
-						    })
-						    .catch(function (error) {
-						      console.log("Failed! An error occured. Please try again later");
-						    });
+			          		var testVal = checkTestValidation(values);
+				              if(!testVal){
+				                setShowWarning2(true);
+				                window.scrollTo({top:testInput.current.offsetTop-50, behavior: 'smooth'})
+				              }
+				              else{
+				                var universityVal = checkUniversityValidation(values);
+				                if(!universityVal){
+				                  setShowWarning3(true);
+				                  window.scrollTo({top:universityInput.current.offsetTop-50, behavior: 'smooth'})
+				                }
+				                else{
+				          			var domains = [];
+						          	user.pic=pic;
+						            user.email=values.email;
+						            user.university=values.university;
+						            user.department=values.department;
+						            user.gradDate=values.gradDate;
+						            user.bio=values.bio;
+						            user.tests=values.tests;
+						            user.facebook=values.facebook;
+						            user.twitter=values.twitter;
+						            user.linkedIn=values.linkedIn;
+						            user.github=values.github;
+						            user.uniApplied=values.uniApplied;
+						            user.accepts=[];
+						            user.rejects=[];
+						            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
+						            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
+						            user.university= await getObjectId(universityNames,universityArr,user.university,true);
+						            accepts.forEach(async (item,index)=>
+						              user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
+						            )
+						            rejects.forEach(async (item,index)=>
+						              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
+						            )
+						            values.domain.forEach(async (item,index)=>
+						              domains[index]=await getObjectId(tagNames,tagArr,item,false)
+						            )
+						            if(!!user.pic){
+						           	 	const formData = new FormData();
+						            	formData.append('avatar',user.pic[0]);
+							            axios.post('/api/users/upload',formData,{
+					        			headers: {
+					          			  	Authorization: token1,
+					          			  	'content-type': 'multipart/form-data'
+					          			}})
+					          			.then(function(response){
+					          				console.log("Picture Uploaded!")
+					          			})
+							        }
+			            			axios.put('/api/users/me', {
+								      email: user.email,
+								      graduationDate: user.gradDate,
+								      currentSchool: user.university,
+								      department: user.department,
+								      bio: user.bio,
+								      domains: domains,
+								      testTimeline: user.tests,
+								      linkedinUrl: user.linkedIn,
+								      githubUrl: user.github,
+								      facebookUrl: user.facebook,
+								      twitterUrl: user.twitter,
+								      accepts: user.accepts,
+								      rejects: user.rejects
+								    },
+			            			  {headers: {
+			              			  	Authorization: token1
+			              			  }})
+								    .then(function (response) {
+						           	  handleOpenMsg();
+								    })
+								    .catch(function (error) {
+								      console.log("Failed! An error occured. Please try again later");
+								    });
+								}
+							}
 						}
 						else{
 							setShowWarning(true)
 							console.log(domainInput)
-							window.scrollTo(0,domainInput.current.offsetTop-50)
+							window.scrollTo({top:domainInput.current.offsetTop-50, behavior: 'smooth'})
 						}
 			            //@Backend Function for Sign-Up
 		        }}
@@ -268,12 +284,30 @@ function EditProfile() {
 	            <Snackbar 
 	              open={showWarning} 
 	              autoHideDuration={3500} 
-	              onClose={handleCloseWarnMsg}
+	              onClose={()=>setShowWarning(false)}
 	            >
 	              <Alert variant="filled" severity="warning">
 	                The Domain: '{values.addDomain}' entered by you isnt saved, Please click on the '+' icon next to domain's input to save it or clear the input.
 	              </Alert>
 	            </Snackbar>
+	            <Snackbar 
+		          open={showWarning2} 
+		          autoHideDuration={3500} 
+		          onClose={()=>setShowWarning2(false)}
+		        >
+		          <Alert variant="filled" severity="warning">
+		            Fill all test timeline fields completely or remove unfilled ones.
+		          </Alert>
+		        </Snackbar>
+		        <Snackbar 
+		          open={showWarning3} 
+		          autoHideDuration={3500} 
+		          onClose={()=>{setShowWarning3(false)}}
+		        >
+		          <Alert variant="filled" severity="warning">
+		            Fill all University Names or remove unfilled ones.
+		          </Alert>
+		        </Snackbar>
 	            <Grid container className={classes.container}>
 	              <Grid item md={6}>
 	                <Typography variant="h5" style={{paddingTop:30}}> Account </Typography>
@@ -472,60 +506,58 @@ function EditProfile() {
         <Divider/>
         <Grid container className={classes.container}>
             <Grid item md={6}>
-              <Typography variant="h5" style={{marginTop: 15}}>Timeline of Tests </Typography>
+              <Typography ref={testInput} variant="h5" style={{marginTop: 15}}>Timeline of Tests </Typography>
             </Grid>
             <Grid item md={6}>
           <FieldArray
-                  name="tests"
-                  render={arrayHelpers => (
-                    <React.Fragment>
-                    {values.tests && values.tests.length>0?(
-                      values.tests.map((value,index) => (
-                        <React.Fragment key={index}>
-                          <div>
-                          <TextField 
-                            name={`tests.${index}.name`}
-                            value={!!value.name?value.name:''}
-                            key={index}
-                            fullWidth
-                            type="text" 
-                            variant="filled"
-                            label="Test Name" 
-                            placeholder="Enter the name" 
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                        </div><br/>
-                        <Grid container spacing={2}>
-                          <Grid item md={6}>
-                            <TextField
-                              type="date" 
-                              label="Date"
-                              name={`tests.${index}.date`} 
-                              key={index}
-                              value={!!value.date?value.date:''}
-                              fullWidth
-                              variant="filled" 
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                            />
-                          </Grid>
-                          <Grid item md={6}>
-                            <TextField
-                              type="number" 
-                              label="Score"
-                              value={!!value.score?value.score:''}
-                              name={`tests.${index}.score`} 
-                              key={index}
-                              fullWidth
-                              variant="filled"  
-                              placeholder="Score" 
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                            />
-                          </Grid> 
-                       
-                      
+            name="tests"
+            render={arrayHelpers => (
+            <React.Fragment>
+            {values.tests && values.tests.length>0?(
+              values.tests.map((value,index) => (
+                <React.Fragment key={index}>
+                  <div>
+                  <TextField 
+                    name={`tests.${index}.name`}
+                    value={!!value.name?value.name:''}
+                    key={index}
+                    fullWidth
+                    type="text" 
+                    variant="filled"
+                    label="Test Name" 
+                    placeholder="Enter the name" 
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                </div><br/>
+                <Grid container spacing={2}>
+                  <Grid item md={6}>
+                    <TextField
+                      type="date" 
+                      label="Date"
+                      name={`tests.${index}.date`} 
+                      key={index}
+                      value={!!value.date?value.date:''}
+                      fullWidth
+                      variant="filled" 
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextField
+                      type="number" 
+                      label="Score"
+                      value={!!value.score?value.score:''}
+                      name={`tests.${index}.score`} 
+                      key={index}
+                      fullWidth
+                      variant="filled"  
+                      placeholder="Score" 
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  </Grid> 
                   {index===values.tests.length-1?
                   <Grid item md={6} style={{alignItems:'right'}}>
                     <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',date:'2020-01-01',score:''})}>
@@ -552,7 +584,7 @@ function EditProfile() {
 			)
 			:
 			<div>
-            	<Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',date:'2020-01-01',score:null})}>
+            	<Button aria-label="add" style={{color:'green',marginTop:'15px',marginBottom:'30px'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',date:'2020-01-01',score:''})}>
                   <AddIcon /> Add Test
             	</Button><br/>
         	</div>
@@ -650,7 +682,7 @@ function EditProfile() {
 		<Divider/>
 	 	<Grid container className={classes.container}>
             <Grid item md={6}>
-              <Typography variant="h5" style={{marginTop: 15}}> University Applications </Typography>
+              <Typography ref={universityInput} variant="h5" style={{marginTop: 15}}> University Applications </Typography>
             </Grid>
             <Grid item md={6}>
           	<FieldArray
@@ -712,8 +744,8 @@ function EditProfile() {
                   <Grid container spacing={2}>
               {index===values.uniApplied.length-1?
               <Grid item md={8} style={{alignItems:'right'}}>
-                <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:''})}>
-                      <AddIcon /> Add Applicaiton
+                <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:'Accepted'})}>
+                      <AddIcon /> Add University
                 </Button>
               </Grid>
               :
@@ -737,7 +769,7 @@ function EditProfile() {
               
             :
               <div>
-                <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:''})}>
+                <Button aria-label="add" style={{color:'green',marginTop:'15px',marginBottom:'30px'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:'Accepted'})}>
                       <AddIcon /> Add University
                 </Button><br/>
               </div>

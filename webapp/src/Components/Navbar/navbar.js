@@ -77,32 +77,45 @@ function NavBar(props) {
     const[url,setUrl]=React.useState(null);
     const[name,setName]=React.useState(null);
     const[mobile,setMobile]=React.useState(false)
-    useEffect(()=>{
+    const handleResize = () =>{
+        if(window.innerWidth<=575){
+            setMobile(true)
+        }
+        else{
+            setMobile(false)
+        }
+    }
+    const checkHomepage = () =>{
         if(window.location.pathname==='/'){
             props.setHomepage(true)
         }
         else{
             props.setHomepage(false)
         }
+    }
+    useEffect(()=>{
+        checkHomepage();
+        window.addEventListener('popstate', (event) => {        //This will ensure that the navbar checks whether current page is homepage or not if user navigates via browser's back button
+            checkHomepage();
+        });
+        handleResize();
+        window.addEventListener('resize', handleResize);
         if(props.loggedIn){
             axios.get('api/users/me/', {
                 headers: {
                   Authorization: token
                 }
-              })
-              .then(function (response) {
+            })
+            .then(function (response) {
                 setUrl(`/api/users/${response.data._id}/avatar`);
                 setName(response.data.name);
-              })
-              .catch(function (error) {
+            })
+            .catch(function (error) {
                 console.log("Invalid User");
-              }); 
-              if(window.innerWidth<475){
-                setMobile(true)
-              }
+            }); 
         } 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[props.loggedIn,window.innerWidth,window.location.pathname,props.homepage])
+    },[props.loggedIn,window.location.pathname,props.homepage])
     const sideList = side => (
         <div
             className={classes.list}
