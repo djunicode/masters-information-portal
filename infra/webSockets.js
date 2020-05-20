@@ -112,7 +112,6 @@ function createServer(app) {
         });
       }
 
-      const data=[]
       // Save message first
       await Chat.findByIdAndUpdate(socketChatMap[socket], {
         $push: {
