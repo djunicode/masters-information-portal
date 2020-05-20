@@ -1,4 +1,4 @@
-/**
+  /**
  * SocketIO events
  * authenticate ~ To join open user's chats
  * open chat ~ To send messages and get previous messages of the chat
@@ -120,14 +120,15 @@ function createServer(app) {
             message,
           },
         },
-      });
-
+      }
+      );
       const chat = await Chat.findById(socketChatMap[socket]);
+      let latestMessage=chat.messages.slice(-1).pop()
 
       const notification=createChatNotification(socketUserMap[socket],chat.receiver,socketChatMap[socket]);
       logger.created('Notification', notification);
       // Send to connected user(s)
-      io.to(socketChatMap[socket]).send('message', message);
+      io.to(socketChatMap[socket]).emit('message', latestMessage);
     });
     /**
      * @apiGroup WebSockets
