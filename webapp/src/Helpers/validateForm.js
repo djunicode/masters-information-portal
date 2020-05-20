@@ -5,6 +5,10 @@ export const checkTestValidation=(values)=>{      //Check Validation for Test Ti
   values.tests.forEach((item,index)=>{
     if(item.name.trim()===''||item.score===''||item.date.trim()==='')
       fail++
+    else
+      for(var i=index+1;i<values.tests.length;i++)
+        if(values.tests[i].name===item.name)  //Tests with same name cannot be repeated
+          fail++
   })
   if(fail>0)
     return false;//Validation Failed
@@ -17,6 +21,11 @@ export const checkUniversityValidation=(values)=>{    //Check Validation for Uni
   values.uniApplied.forEach((item,index)=>{
     if(item.name.trim()==='')
       fail++
+    else{
+      for(var i=index+1;i<values.uniApplied.length;i++)
+        if(values.uniApplied[i].name===item.name&&item.name!=="Other")  //Universities with name except "Other" cannot be repeated
+          fail++
+    }
   })
   if(fail>0)
     return false;//Validation Failed
