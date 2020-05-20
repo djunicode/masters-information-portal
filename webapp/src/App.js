@@ -34,6 +34,7 @@ function App() {
       })
       .then(function(response){
         Cookies.set('jwt',response.data.token,{expires: 1});
+        axios.defaults.headers.common['Authorization'] = response.data.token;
         setLoggedIn(1);
       })
       .catch(function(error){
@@ -46,6 +47,7 @@ function App() {
         const token = Cookies.get('jwt')
         if(!!token){
           setLoggedIn(1);
+          axios.defaults.headers.common['Authorization'] = token;
         }
         else if(!!Cookies.get('refreshToken')){
           setLoggedIn(0);

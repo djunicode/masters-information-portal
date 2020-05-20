@@ -72,6 +72,8 @@ export default function LoginPage(props){
 				  .then(function (response) {
 				    Cookies.set('jwt',response.data.token,{expires: 1});
 				    Cookies.set('refreshToken',response.data.refreshToken,{expires: 7})
+				    localStorage.setItem('userDetails',JSON.stringify(response.data.userObject))
+				    console.log(JSON.parse(localStorage.getItem('userDetails')))
 				    props.setLoggedIn(1);
 				  })
 				  .catch(function (error) {
@@ -79,7 +81,6 @@ export default function LoginPage(props){
 			          setSubmitting(false);
 			        }, 1000);
 				    setShowWarning(true);
-
 				  });  
 		    }}>
 		    {({ isSubmitting ,handleChange,handleBlur,touched,errors}) => (
