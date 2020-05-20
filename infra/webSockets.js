@@ -123,12 +123,12 @@ function createServer(app) {
       }
       );
       const chat = await Chat.findById(socketChatMap[socket]);
-      const data=chat.messages.slice(-1).pop()
+      let latestMessage=chat.messages.slice(-1).pop()
 
       const notification=createChatNotification(socketUserMap[socket],chat.receiver,socketChatMap[socket]);
       logger.created('Notification', notification);
       // Send to connected user(s)
-      io.to(socketChatMap[socket]).emit('message', data);
+      io.to(socketChatMap[socket]).emit('message', latestMessage);
     });
     /**
      * @apiGroup WebSockets
