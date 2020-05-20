@@ -69,6 +69,9 @@ export default function Register() {
   const [universityNames,setUniversityNames]=React.useState([]);
   const [tagNames,setTagNames]=React.useState([]);  
   useEffect(()=>{
+    if(!!Cookies.get('jwt')){
+      setRedirect(true);
+    }
     if(!componentDidMount){
       async function fetchData(){
         var tags = await getTags()
@@ -79,12 +82,6 @@ export default function Register() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[componentDidMount])
- // eslint-disable-next-line
-  React.useEffect(()=>{
-    if(!!Cookies.get('jwt')){
-      setRedirect(true);
-    }
-  })
 
   const submitAxios = () => {
     axios.post('/api/users/register', {
