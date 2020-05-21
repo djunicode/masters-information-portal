@@ -73,6 +73,10 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: Buffer,
   },
+  avatarUrl : {
+    type: String,
+    default : ""
+  },
   role: [String],
   department: {
     type: String,
