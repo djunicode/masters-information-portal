@@ -184,7 +184,6 @@ exports.getById = async (req, res) => {
  * */
 exports.uploadProfilePhoto = async (req, res) => {
   req.user.avatar = req.file.buffer;
-  req.user.avatarUrl = "http://localhost:8000/api/users/" + req.user.id + "/avatar"
   await req.user.save();
   res.status(200).send({
     msg: 'Profile photo uploaded successfully',
