@@ -1,4 +1,4 @@
-/**
+  /**
  * SocketIO events
  * authenticate ~ To join open user's chats
  * open chat ~ To send messages and get previous messages of the chat
@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken');
 const logger = require('../config/logger');
 const Chat = require('../models/chat');
 const { verifyJwt } = require('./jwt');
+const { createChatNotification}=require('./notifications');
 
 function createServer(app) {
   const server = http.Server(app);
@@ -21,7 +22,7 @@ function createServer(app) {
   // Socket-user mapper
   const socketUserMap = {};
 
-  //On intitialising a socket connection
+  // On intitialising a socket connection
   io.on('connection', (socket) => {
     logger.info(`Socket ${socket.id} connected`);
 
@@ -84,7 +85,7 @@ function createServer(app) {
       socket.join(chatId);
       socketChatMap[socket] = chatId;
       console.log('chat msgs', chat.messages);
-      socket.emit('msg hist', chat.messages); //Sending in the old messages saved using the chatId in the db
+      socket.emit('msg hist', chat.messages); // Sending in the old messages saved using the chatId in the db
     });
 
     /**
@@ -119,10 +120,15 @@ function createServer(app) {
             message,
           },
         },
-      });
+      }
+      );
+      const chat = await Chat.findById(socketChatMap[socket]);
+      let latestMessage=chat.messages.slice(-1).pop()
 
+      const notification=createChatNotification(socketUserMap[socket],chat.receiver,socketChatMap[socket]);
+      logger.created('Notification', notification);
       // Send to connected user(s)
-      io.to(socketChatMap[socket]).send('message', message);
+      io.to(socketChatMap[socket]).emit('message', latestMessage);
     });
     /**
      * @apiGroup WebSockets

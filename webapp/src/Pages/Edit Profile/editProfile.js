@@ -1,6 +1,7 @@
-import React,{useEffect} from 'react';
-import {getTagById,getObjectId,getTag,getUserInfo} from '../../Helpers/fetchRequests.js';
+import React,{useEffect,useRef} from 'react';
+import {getTagIdByName,getTags,getUserInfo} from '../../Helpers/fetchRequests.js';
 import CheckLogin from '../../Helpers/checkLogin.js'
+import {checkUniversityValidation,checkTestValidation} from '../../Helpers/validateForm.js'
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,6 +14,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
 import { Formik, Form, FieldArray } from 'formik';
 import CloseIcon from '@material-ui/icons/Close';
@@ -57,8 +59,9 @@ const useStyles = makeStyles(theme => ({
 	},
 }));
 const filter = createFilterOptions();
-function EditProfile(props) {
+function EditProfile() {
 
+    const classes = useStyles();
 	const [user,setUser] = React.useState({
     	pic: '',
         name: '',
@@ -78,25 +81,40 @@ function EditProfile(props) {
         uniApplied: []
     });
 
+	const domainInput = useRef(null);
+	const universityInput = useRef(null);
+	const testInput = useRef(null);
 	const [mounted,setMounted] = React.useState(false);
-	const [universityArr,setUniversityArr]=React.useState([]);
     const [universityNames,setUniversityNames]=React.useState([]);
-    const [tagArr,setTagArr]=React.useState([]);
+    const [showWarning2, setShowWarning2] = React.useState(false);
+    const [showWarning3, setShowWarning3] = React.useState(false);
     const [tagNames,setTagNames]=React.useState([]);  
-	const[token1,setToken1]=React.useState(null);
+	const [token1,setToken1]=React.useState(null);
+	const[pic,setPic]=React.useState(null)
+    const handleImage = (picture) => {
+    	setPic(picture)
+    }
+    const [showSuccess, setShowSuccess] = React.useState(false);
+    const [showWarning, setShowWarning] = React.useState(false);
+    const handleOpenMsg = () => {
+        setShowSuccess(true);
+    };
+    const handleCloseMsg = () => {
+        setShowSuccess(false);
+    };
+    const departments = ["Computers", "IT", "Mechanical", "Bio-Med", "Production", "Electronics", "EXTC", "Chemical", "Civil", "Aeronautical", "Mining", "Agricultural", "Metallurgical"];
+
 	useEffect(()=>{
 		//Fetch data function definition
 		async function fetchData(){
 			const token = Cookies.get('jwt');
 			setToken1(token)
 			if(!mounted){
-				var tags = await getTag()
-				setUniversityArr(tags.universityArr)
+				var tags = await getTags()
 			   	setUniversityNames(tags.universityNames)
-			   	setTagArr(tags.tagArr)
 			   	setTagNames(tags.tagNames)
 				if(!!token){
-			 		var userInfo = await getUserInfo(token,tags.tagArr,tags.universityArr)
+			 		var userInfo = await getUserInfo(tags.tagArr,tags.universityArr)
 			 		setUser(userInfo)
 					setMounted(true);
 			  	} 
@@ -109,19 +127,6 @@ function EditProfile(props) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[])
 
-    const[pic,setPic]=React.useState(null)
-    const handleImage = (picture) => {
-    	setPic(picture)
-    }
-    const classes = useStyles();
-    const [showSuccess, setShowSuccess] = React.useState(false);
-    const handleOpenMsg = () => {
-        setShowSuccess(true);
-    };
-    const handleCloseMsg = () => {
-        setShowSuccess(false);
-    };
-    const departments = ["Computers", "IT", "Mechanical", "Bio-Med", "Production", "Electronics", "EXTC", "Chemical", "Civil", "Aeronautical", "Mining", "Agricultural", "Metallurgical"];
     return (
 		<React.Fragment>
 		  <CheckLogin/>
@@ -143,7 +148,7 @@ function EditProfile(props) {
 			            email:user.email,
 			            password:'',
 			            password_confirm:'',
-			            university: getTagById(user.university,universityArr),
+			            university: user.university,
 			            department: user.department,
 			            gradDate: user.gradDate,
 			            bio:user.bio,
@@ -175,83 +180,128 @@ function EditProfile(props) {
 			            return errors;
 			          }}
 			          onSubmit={async (values, { setSubmitting }) => {
-			          	var domains = [];
-			          	user.pic=pic;
-			            user.email=values.email;
-			            user.university=values.university;
-			            user.department=values.department;
-			            user.gradDate=values.gradDate;
-			            user.bio=values.bio;
-			            user.tests=values.tests;
-			            user.facebook=values.facebook;
-			            user.twitter=values.twitter;
-			            user.linkedIn=values.linkedIn;
-			            user.github=values.github;
-			            user.uniApplied=values.uniApplied;
-			            user.accepts=[];
-			            user.rejects=[];
-			            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
-			            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
-			            user.university= await getObjectId(universityNames,universityArr,user.university,true);
-			            accepts.forEach(async (item,index)=>
-			              user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
-			            )
-			            rejects.forEach(async (item,index)=>
-			              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
-			            )
-			            values.domain.forEach(async (item,index)=>
-			              domains[index]=await getObjectId(tagNames,tagArr,item,false)
-			            )
-			            if(!!user.pic){
-			           	 	const formData = new FormData();
-			            	formData.append('avatar',user.pic[0]);
-				            axios.post('/api/users/upload',formData,{
-		        			headers: {
-		          			  	Authorization: token1,
-		          			  	'content-type': 'multipart/form-data'
-		          			}})
-		          			.then(function(response){
-		          				console.log("Picture Uploaded!")
-		          			})
-				        }
-            			axios.put('/api/users/me', {
-					      email: user.email,
-					      graduationDate: user.gradDate,
-					      currentSchool: user.university,
-					      department: user.department,
-					      bio: user.bio,
-					      domains: domains,
-					      testTimeline: user.tests,
-					      linkedinUrl: user.linkedIn,
-					      githubUrl: user.github,
-					      facebookUrl: user.facebook,
-					      twitterUrl: user.twitter,
-					      accepts: user.accepts,
-					      rejects: user.rejects
-					    },
-            			  {headers: {
-              			  	Authorization: token1
-              			  }})
-					    .then(function (response) {
-			           	  handleOpenMsg();
-					    })
-					    .catch(function (error) {
-					      console.log("Failed! An error occured. Please try again later");
-					    });
-			            //@Backend Submit Function for Sign-Up
+			          	setTimeout(() => {			//Doesnt work without setTimeout
+			          		setSubmitting(true)			//Disables the submit button
+				        }, 1);
+				        setTimeout(() => {
+			          		setSubmitting(false)		//After 3 seconds, the submit button will no longer be disabled.
+				        }, 3000);
+			          	if (values.addDomain===''){		//Add Domain value pushed
+			          		var testVal = checkTestValidation(values);
+				              if(!testVal){			//Test Timeline Validation Failed
+				                setShowWarning2(true);
+				                window.scrollTo({top:testInput.current.offsetTop-50, behavior: 'smooth'})
+				              }
+				              else{		//Test Timeline Validated
+				                var universityVal = checkUniversityValidation(values);
+				                if(!universityVal){		//University Applications Validated
+				                  setShowWarning3(true);
+				                  window.scrollTo({top:universityInput.current.offsetTop-50, behavior: 'smooth'})
+				                }
+				                else{
+				          			var domains = [];
+						          	user.pic=pic;
+						            user.accepts=[];
+						            user.rejects=[];
+						            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
+						            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
+						            const university =await getTagIdByName(values.university,true);
+						            accepts.forEach(async (item,index)=>
+						              user.accepts.push( getTagIdByName(item.name,true))
+						            )
+						            rejects.forEach(async (item,index)=>
+						              user.rejects[index]= getTagIdByName(item.name,true)
+						            )
+						            values.domain.forEach(async (item,index)=>
+						              domains[index]= getTagIdByName(item,false)
+						            )
+						            if(!!user.pic){
+						           	 	const formData = new FormData();
+						            	formData.append('avatar',user.pic[0]);
+							            axios.post('/api/users/upload',formData,{
+					        			headers: {
+					          			  	Authorization: token1,
+					          			  	'content-type': 'multipart/form-data'
+					          			}})
+					          			.then(function(response){
+					          				console.log("Picture Uploaded!")
+					          			})
+							        }
+			            			axios.put('/api/users/me', {
+								      email: values.email,
+								      graduationDate: values.gradDate,
+								      currentSchool: university,
+								      department: values.department,
+								      bio: values.bio,
+								      domains: domains,
+								      testTimeline: values.tests,
+								      linkedinUrl: values.linkedIn,
+								      githubUrl: values.github,
+								      facebookUrl: values.facebook,
+								      twitterUrl: values.twitter,
+								      accepts: user.accepts,
+								      rejects: user.rejects
+								    },
+			            			  {headers: {
+			              			  	Authorization: token1
+			              			  }})
+								    .then(function (response) {
+						           	  handleOpenMsg();
+						           	  console.log(response)
+						           	  localStorage.setItem('userDetails',JSON.stringify(response.data))
+								    })
+								    .catch(function (error) {
+								      console.log("Failed! An error occured. Please try again later");
+								    });
+								}
+							}
+						}
+						else{		//Domain Name not pushed
+							setShowWarning(true)
+							console.log(domainInput)
+							window.scrollTo({top:domainInput.current.offsetTop-50, behavior: 'smooth'})
+						}
+			            //@Backend Function for Sign-Up
 		        }}
         		>
         	{({ isSubmitting ,handleChange,handleBlur,values,errors,touched,setFieldValue}) => (
 	          <Form autoComplete="off">
 	            <Snackbar 
 	              open={showSuccess} 
-	              autoHideDuration={750} 
+	              autoHideDuration={2000} 
 	              onClose={handleCloseMsg}
 	            >
 	              <Alert variant="filled" severity="success">
-	                Changes Saved!
+	                Changes Saved! Refresh Page to see updated info.
 	              </Alert>
 	            </Snackbar>
+	            <Snackbar 
+	              open={showWarning} 
+	              autoHideDuration={3500} 
+	              onClose={()=>setShowWarning(false)}
+	            >
+	              <Alert variant="filled" severity="warning">
+	                The Domain: '{values.addDomain}' entered by you isnt saved, Please click on the '+' icon next to domain's input to save it or clear the input.
+	              </Alert>
+	            </Snackbar>
+	            <Snackbar 
+		          open={showWarning2} 
+		          autoHideDuration={3500} 
+		          onClose={()=>setShowWarning2(false)}
+		        >
+		          <Alert variant="filled" severity="warning">
+		            Fill all test timeline fields completely or remove unfilled and duplicate entries.
+		          </Alert>
+		        </Snackbar>
+		        <Snackbar 
+		          open={showWarning3} 
+		          autoHideDuration={3500} 
+		          onClose={()=>{setShowWarning3(false)}}
+		        >
+		          <Alert variant="filled" severity="warning">
+		            Fill all University Names or remove unfilled and duplicate entries.
+		          </Alert>
+		        </Snackbar>
 	            <Grid container className={classes.container}>
 	              <Grid item md={6}>
 	                <Typography variant="h5" style={{paddingTop:30}}> Account </Typography>
@@ -307,6 +357,7 @@ function EditProfile(props) {
               disableClearable
               inputValue={!!values.university?values.university:''}
               name="university"
+              style={{marginTop:'-5px'}}
               onChange={(e, value) => {
                 setFieldValue("university", value)
               }}
@@ -380,41 +431,58 @@ function EditProfile(props) {
               <Typography variant="h5" style={{paddingTop:10}}> Domains </Typography>
             </Grid>
             <Grid item md={6}>
-              <Autocomplete
-              options={tagNames}
-              disableClearable
-              inputValue={!!values.addDomain?values.addDomain:''}
-              autoHighlight
-              getOptionDisabled={option => values.domain.includes(option)}
-              name="addDomain"
-              onChange={(e, value) => {
-                setFieldValue("addDomain", value)
-              }}
-              onBlur={handleBlur}
-              className={classes.textf}
-              renderInput={params => (
-                <TextField 
-                  {...params} 
-                  name='addDomain'
-                  value={values.addDomain}
-                  label="Domains"
-                  placeholder="eg:Machine Learning, IOT"
-                  fullWidth
-                  variant="filled"
-                  helperText="Press enter after adding each domain" 
-                  onChange={handleChange}
-                  onKeyPress={(event) => {
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
-                        if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
-                          setFieldValue('domain',[...values.domain,values.addDomain]);
-                          setFieldValue('addDomain','');
-                        }
-                    }
-                  }}
-                />
-              )}
-            />
+            	<Grid container>
+            		<Grid item xs={10}>
+		              <Autocomplete
+		              options={tagNames}
+		              disableClearable
+		              inputValue={!!values.addDomain?values.addDomain:''}
+		              autoHighlight
+		              getOptionDisabled={option => values.domain.includes(option)}
+		              name="addDomain"
+		              onChange={(e, value) => {
+		                setFieldValue("addDomain", value)
+		              }}
+		              onBlur={handleBlur}
+		              renderInput={params => (
+		                <TextField 
+		                  {...params} 
+		                  name='addDomain'
+		             	  ref={domainInput}
+		                  value={values.addDomain}
+		                  label="Domains"
+		                  placeholder="eg:Machine Learning, IOT"
+		                  fullWidth
+		                  variant="filled"
+		                  helperText="Press Enter key or hit the '+' icon after adding each domain" 
+		                  onChange={handleChange}
+          				  onBlur={()=>{if(!tagNames.includes(values.addDomain)){setFieldValue("addDomain",'')}}}
+		                  onKeyPress={(event) => {
+		                    if (event.key === 'Enter') {
+		                        event.preventDefault();
+		                        if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
+		                          setFieldValue('domain',[...values.domain,values.addDomain]);
+		                          setFieldValue('addDomain','');
+		                        }
+		                    }
+		                  }}
+		                />
+		              )}
+		            />
+            	</Grid>
+	            <Grid item xs={2}>
+		            <IconButton
+		              onClick={()=>{
+		              	if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
+		                  	setFieldValue('domain',[...values.domain,values.addDomain]);
+		              		setFieldValue('addDomain','');
+		              	}
+		              }}
+		            >
+		          		<AddIcon/>
+		          	</IconButton>
+	          	</Grid>
+          	</Grid>
             <br/>
             <br/>
             {values.domain.map((item,index)=>(
@@ -433,60 +501,58 @@ function EditProfile(props) {
         <Divider/>
         <Grid container className={classes.container}>
             <Grid item md={6}>
-              <Typography variant="h5" style={{marginTop: 15}}>Timeline of Tests </Typography>
+              <Typography ref={testInput} variant="h5" style={{marginTop: 15}}>Timeline of Tests </Typography>
             </Grid>
             <Grid item md={6}>
           <FieldArray
-                  name="tests"
-                  render={arrayHelpers => (
-                    <React.Fragment>
-                    {values.tests && values.tests.length>0?(
-                      values.tests.map((value,index) => (
-                        <React.Fragment key={index}>
-                          <div>
-                          <TextField 
-                            name={`tests.${index}.name`}
-                            value={!!value.name?value.name:''}
-                            key={index}
-                            fullWidth
-                            type="text" 
-                            variant="filled"
-                            label="Test Name" 
-                            placeholder="Enter the name" 
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                        </div><br/>
-                        <Grid container spacing={2}>
-                          <Grid item md={6}>
-                            <TextField
-                              type="date" 
-                              label="Date"
-                              name={`tests.${index}.date`} 
-                              key={index}
-                              value={!!value.date?value.date:''}
-                              fullWidth
-                              variant="filled" 
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                            />
-                          </Grid>
-                          <Grid item md={6}>
-                            <TextField
-                              type="number" 
-                              label="Score"
-                              value={!!value.score?value.score:''}
-                              name={`tests.${index}.score`} 
-                              key={index}
-                              fullWidth
-                              variant="filled"  
-                              placeholder="Score" 
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                            />
-                          </Grid> 
-                       
-                      
+            name="tests"
+            render={arrayHelpers => (
+            <React.Fragment>
+            {values.tests && values.tests.length>0?(
+              values.tests.map((value,index) => (
+                <React.Fragment key={index}>
+                  <div>
+                  <TextField 
+                    name={`tests.${index}.name`}
+                    value={!!value.name?value.name:''}
+                    key={index}
+                    fullWidth
+                    type="text" 
+                    variant="filled"
+                    label="Test Name" 
+                    placeholder="Enter the name" 
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  />
+                </div><br/>
+                <Grid container spacing={2}>
+                  <Grid item md={6}>
+                    <TextField
+                      type="date" 
+                      label="Date"
+                      name={`tests.${index}.date`} 
+                      key={index}
+                      value={!!value.date?value.date:''}
+                      fullWidth
+                      variant="filled" 
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  </Grid>
+                  <Grid item md={6}>
+                    <TextField
+                      type="number" 
+                      label="Score"
+                      value={!!value.score?value.score:''}
+                      name={`tests.${index}.score`} 
+                      key={index}
+                      fullWidth
+                      variant="filled"  
+                      placeholder="Score" 
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  </Grid> 
                   {index===values.tests.length-1?
                   <Grid item md={6} style={{alignItems:'right'}}>
                     <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',date:'2020-01-01',score:''})}>
@@ -513,7 +579,7 @@ function EditProfile(props) {
 			)
 			:
 			<div>
-            	<Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',date:'2020-01-01',score:null})}>
+            	<Button aria-label="add" style={{color:'green',marginTop:'15px',marginBottom:'30px'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',date:'2020-01-01',score:''})}>
                   <AddIcon /> Add Test
             	</Button><br/>
         	</div>
@@ -611,7 +677,7 @@ function EditProfile(props) {
 		<Divider/>
 	 	<Grid container className={classes.container}>
             <Grid item md={6}>
-              <Typography variant="h5" style={{marginTop: 15}}> University Applications </Typography>
+              <Typography ref={universityInput} variant="h5" style={{marginTop: 15}}> University Applications </Typography>
             </Grid>
             <Grid item md={6}>
           	<FieldArray
@@ -628,6 +694,7 @@ function EditProfile(props) {
                         disableClearable
                         inputValue={!!value.name?value.name:''}
                         name={`uniApplied.${index}.name`}
+              			style={{marginTop:'-8px'}}
                         onChange={(e, value) => {
                           setFieldValue(`uniApplied.${index}.name`, value)
                         }}
@@ -673,8 +740,8 @@ function EditProfile(props) {
                   <Grid container spacing={2}>
               {index===values.uniApplied.length-1?
               <Grid item md={8} style={{alignItems:'right'}}>
-                <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:''})}>
-                      <AddIcon /> Add Applicaiton
+                <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:'Accepted'})}>
+                      <AddIcon /> Add University
                 </Button>
               </Grid>
               :
@@ -698,7 +765,7 @@ function EditProfile(props) {
               
             :
               <div>
-                <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:''})}>
+                <Button aria-label="add" style={{color:'green',marginTop:'15px',marginBottom:'30px'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:'Accepted'})}>
                       <AddIcon /> Add University
                 </Button><br/>
               </div>

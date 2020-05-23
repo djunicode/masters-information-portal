@@ -96,6 +96,10 @@ const userSchema = new mongoose.Schema({
       ref: 'Tag',
     },
   ],
+  tagLikes: {
+    type: Map,
+    of: Number
+  }
 });
 
 userSchema.methods.newAuthToken = async function () {

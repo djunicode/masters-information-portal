@@ -16,6 +16,7 @@ router.post(
   upload.single('avatar'),
   asyncHandler(controller.uploadProfilePhoto)
 );
+router.get('/', authRequired, asyncHandler(controller.getUsers));
 router.get('/me', authRequired, asyncHandler(controller.getProfile));
 router.get('/:id', asyncHandler(controller.getById));
 router.get('/:id/avatar', asyncHandler(controller.getProfilePhoto));

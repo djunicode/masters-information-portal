@@ -1,5 +1,6 @@
-import React,{useEffect} from 'react';
-import {getObjectId,getTag} from '../../Helpers/fetchRequests.js';
+import React,{useEffect,useRef} from 'react';
+import {getTagIdByName,getTags} from '../../Helpers/fetchRequests.js';
+import {checkUniversityValidation,checkTestValidation} from '../../Helpers/validateForm.js'
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,6 +11,7 @@ import Autocomplete,{createFilterOptions} from '@material-ui/lab/Autocomplete';
 import MenuItem from '@material-ui/core/MenuItem';
 import Chip from '@material-ui/core/Chip';
 import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
 import Alert from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -51,7 +53,6 @@ const useStyles = makeStyles(theme => ({
         paddingBottom: 20,
     }
 }));
-
 const axios = require('axios');
 const filter = createFilterOptions();
 function getSteps() {
@@ -60,32 +61,27 @@ function getSteps() {
 
 export default function Register() {
 
+  const domainInput = useRef(null)
+  const testInput = useRef(null)
+  const universityInput = useRef(null)
   const [componentDidMount]=React.useState(0);
   const [redirect,setRedirect]=React.useState(false);
-  const [universityArr,setUniversityArr]=React.useState([]);
   const [universityNames,setUniversityNames]=React.useState([]);
-  const [tagArr,setTagArr]=React.useState([]);
   const [tagNames,setTagNames]=React.useState([]);  
-
   useEffect(()=>{
+    if(!!Cookies.get('jwt')){
+      setRedirect(true);
+    }
     if(!componentDidMount){
       async function fetchData(){
-        var tags = await getTag()
-        setUniversityArr(tags.universityArr)
+        var tags = await getTags()
         setUniversityNames(tags.universityNames)
-        setTagArr(tags.tagArr)
         setTagNames(tags.tagNames)
       }
       fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[componentDidMount])
- // eslint-disable-next-line
-  React.useEffect(()=>{
-    if(!!Cookies.get('jwt')){
-      setRedirect(true);
-    }
-  })
 
   const submitAxios = () => {
     axios.post('/api/users/register', {
@@ -125,12 +121,12 @@ export default function Register() {
       gradDate: '2020-01-01',
       bio: '',
       domain: [],
-      tests: [{ name: '', date: '2020-01-01', score: '' }],
+      tests: [],
       facebook: '',
       twitter: '',
       linkedIn: '',
       github: '',
-      uniApplied: [{ name: '', status: '' }],
+      uniApplied: [],
       accepts: [],
       rejects: []
     });
@@ -146,6 +142,15 @@ export default function Register() {
     };
     const [registered,setRegistered]=React.useState(false);
     const [showSuccess, setShowSuccess] = React.useState(false);
+    const [showWarning, setShowWarning] = React.useState(false);
+    const [showWarning2, setShowWarning2] = React.useState(false);
+    const [showWarning3, setShowWarning3] = React.useState(false);
+    const handleCloseWarnMsg = () =>{
+      setShowWarning(false)
+    }
+    const handleCloseWarnMsg2 = () =>{
+      setShowWarning2(false)
+    }
     const handleOpenMsg = () => {
         setShowSuccess(true);
     };
@@ -455,39 +460,86 @@ export default function Register() {
             addDomain: '',
           }}
           onSubmit={async (values, { setSubmitting }) => {
-            user.bio=values.bio;
-            user.tests=values.tests;
-            user.facebook=values.facebook;
-            user.twitter=values.twitter;
-            user.linkedIn=values.linkedIn;
-            user.github=values.github;
-            user.uniApplied=values.uniApplied;
-            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
-            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
-            user.university= await getObjectId(universityNames,universityArr,user.university,true);
-            accepts.forEach(async (item,index)=>
-              user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
-            )
-            rejects.forEach(async (item,index)=>
-              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
-            )
-            values.domain.forEach(async (item,index)=>
-              user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
-            )
-            submitAxios();  //Submit function for signup
-        }}
+            if(values.addDomain===''){
+              var testVal = checkTestValidation(values);
+              if(!testVal){
+                setShowWarning2(true);
+                window.scrollTo({top:testInput.current.offsetTop-50, behavior: 'smooth'})
+              }
+              else{
+                var universityVal = checkUniversityValidation(values);
+                if(!universityVal){
+                  setShowWarning3(true);
+                  window.scrollTo({top:universityInput.current.offsetTop-50, behavior: 'smooth'})
+                }
+                else{
+                  user.bio=values.bio;
+                  user.tests=values.tests;
+                  user.facebook=values.facebook;
+                  user.twitter=values.twitter;
+                  user.linkedIn=values.linkedIn;
+                  user.github=values.github;
+                  user.uniApplied=values.uniApplied;
+                  const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
+                  const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
+                  user.university=await getTagIdByName(user.university,true);
+                  accepts.forEach(async (item,index)=>
+                    user.accepts[index]=await getTagIdByName(item.name,true)
+                  )
+                  rejects.forEach(async (item,index)=>
+                    user.rejects[index]=await getTagIdByName(item.name,true)
+                  )
+                  values.domain.forEach(async (item,index)=>
+                    user.domain[index]=await getTagIdByName(item,false)
+                  )
+                  submitAxios();  //Submit function for signup
+                }
+              }
+            }
+            else{
+              setShowWarning(true)
+              window.scrollTo({top:domainInput.current.offsetTop-50, behavior: 'smooth'})
+            }
+          }}
         >
-        {({ isSubmitting ,handleChange,handleBlur,values,setFieldValue}) => (
+        {({ isSubmitting ,handleChange,handleBlur,values,setFieldValue,touched}) => (
       <Form> 
         <Snackbar 
-              open={showSuccess} 
-              autoHideDuration={750} 
-              onClose={handleCloseMsg}
-            >
-              <Alert variant="filled" severity="success">
-                Changes Saved!
-              </Alert>
-            </Snackbar>
+          open={showSuccess} 
+          autoHideDuration={750} 
+          onClose={handleCloseMsg}
+        >
+          <Alert variant="filled" severity="success">
+            Changes Saved!
+          </Alert>
+        </Snackbar>
+        <Snackbar 
+          open={showWarning} 
+          autoHideDuration={3500} 
+          onClose={handleCloseWarnMsg}
+        >
+          <Alert variant="filled" severity="warning">
+            The Domain: '{values.addDomain}' entered by you isnt saved, Please click on the '+' icon next to Domains input to save it or clear the input.
+          </Alert>
+        </Snackbar>
+        <Snackbar 
+          open={showWarning2} 
+          autoHideDuration={3500} 
+          onClose={handleCloseWarnMsg2}
+        >
+          <Alert variant="filled" severity="warning">
+            Fill all test timeline fields completely or remove unfilled and duplicate entries.
+          </Alert>
+        </Snackbar>
+        <Snackbar 
+          open={showWarning3} 
+          autoHideDuration={3500} 
+          onClose={()=>{setShowWarning3(false)}}
+        >
+          <Alert variant="filled" severity="warning">
+            Fill all University Names or remove unfilled and duplicate entries.
+          </Alert>
+        </Snackbar>
         <Grid container className={classes.container}>
             <Grid item md={6}>
               <Typography variant="h5"> Biography </Typography>
@@ -513,41 +565,58 @@ export default function Register() {
               <Typography variant="h5"> Domains </Typography>
             </Grid>
             <Grid item md={6}>
-             <Autocomplete
-              options={tagNames}
-              disableClearable
-              inputValue={!!values.addDomain?values.addDomain:''}
-              autoHighlight
-              getOptionDisabled={option => values.domain.includes(option)}
-              name="addDomain"
-              onChange={(e, value) => {
-                setFieldValue("addDomain", value)
-              }}
-              onBlur={handleBlur}
-              renderInput={params => (
-                <TextField 
-                  {...params} 
-                  name='addDomain'
-                  value={values.addDomain}
-                  label="Domains"
-                  placeholder="eg:Machine Learning, IOT"
-                  fullWidth
-                  variant="filled"
-                  helperText="Press enter after adding each domain" 
-                  onChange={handleChange}
+              <Grid container>
+                <Grid item xs={10}>
+                  <Autocomplete
+                  options={tagNames}
+                  disableClearable
+                  inputValue={!!values.addDomain?values.addDomain:''}
+                  autoHighlight
+                  getOptionDisabled={option => values.domain.includes(option)}
+                  name="addDomain"
+                  onChange={(e, value) => {
+                    setFieldValue("addDomain", value)
+                  }}
                   onBlur={handleBlur}
-                  onKeyPress={(event) => {
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
-                        if (values.addDomain.trim() && !values.domain.includes(values.addDomain)){
-                          setFieldValue('domain',[...values.domain,values.addDomain]);
-                          setFieldValue('addDomain','');
+                  renderInput={params => (
+                    <TextField 
+                      {...params} 
+                      name='addDomain'
+                      ref={domainInput}
+                      value={values.addDomain}
+                      label="Domains"
+                      placeholder="eg:Machine Learning, IOT"
+                      fullWidth
+                      variant="filled"
+                      helperText="Press Enter key or hit the '+' icon after adding each domain" 
+                      onChange={handleChange}
+                      onBlur={()=>{if(!tagNames.includes(values.addDomain)){setFieldValue("addDomain",'')}}}
+                      onKeyPress={(event) => {
+                        if (event.key === 'Enter') {
+                            event.preventDefault();
+                            if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
+                              setFieldValue('domain',[...values.domain,values.addDomain]);
+                              setFieldValue('addDomain','');
+                            }
                         }
+                      }}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <IconButton
+                  onClick={()=>{
+                    if (values.addDomain.trim()&&tagNames.includes(values.addDomain)&&!values.domain.includes(values.addDomain)){
+                        setFieldValue('domain',[...values.domain,values.addDomain]);
+                      setFieldValue('addDomain','');
                     }
                   }}
-                />
-              )}
-            />
+                >
+                  <AddIcon/>
+                </IconButton>
+              </Grid>
+            </Grid>
             <br/>
             <br/>
             {values.domain.map((item,index)=>(
@@ -566,7 +635,7 @@ export default function Register() {
         <Divider/>
         <Grid container className={classes.container}>
             <Grid item md={6}>
-              <Typography variant="h5" style={{marginTop: 20}}> Timeline of Tests </Typography>
+              <Typography ref={testInput} variant="h5" style={{marginTop: 20}}> Timeline of Tests </Typography>
             </Grid>
             <Grid item md={6}>
           <FieldArray
@@ -647,7 +716,7 @@ export default function Register() {
                   
                 :
                   <div>
-                    <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',date:'2020-01-01',score:null})}>
+                    <Button aria-label="add" style={{color:'green',marginTop:'15px',marginBottom:'30px'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',date:'2020-01-01',score:''})}>
                           <AddIcon /> Add Test
                     </Button><br/>
                   </div>
@@ -744,7 +813,7 @@ export default function Register() {
       <Divider/>
        <Grid container className={classes.container}>
             <Grid item md={6}>
-              <Typography variant="h5" style={{marginTop: 20}}> University Applications </Typography>
+              <Typography ref={universityInput} variant="h5" style={{marginTop: 20}}> University Applications </Typography>
             </Grid>
             <Grid item md={6}>
           <FieldArray
@@ -806,8 +875,8 @@ export default function Register() {
                       <Grid container spacing={2}>
                   {index===values.uniApplied.length-1?
                   <Grid item md={6} style={{alignItems:'right'}}>
-                    <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:''})}>
-                          <AddIcon /> Add Application
+                    <Button aria-label="add" variant="outlined" style={{color:'green'}} onClick={() => arrayHelpers.insert(index+1, {name:'',status:'Accepted'})}>
+                          <AddIcon /> Add University
                     </Button>
                   </Grid>
                   :
@@ -831,7 +900,7 @@ export default function Register() {
                   
                 :
                   <div>
-                    <Button aria-label="add" style={{color:'green'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:''})}>
+                    <Button aria-label="add" style={{color:'green',marginTop:'15px',marginBottom:'30px'}}  variant="outlined" onClick={() => arrayHelpers.insert(0, {name:'',status:'Accepted'})}>
                           <AddIcon /> Add University
                     </Button><br/>
                   </div>

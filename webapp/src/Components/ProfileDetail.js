@@ -19,7 +19,7 @@ import TwitterIcon from '@material-ui/icons/Twitter';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import Cookies from 'js-cookie';
-
+import {useParams} from 'react-router-dom';
 import GitHubIcon from '@material-ui/icons/GitHub';
 const axios = require('axios');
 const token = Cookies.get('jwt');
@@ -199,6 +199,7 @@ const CurrentDate = (props) => {
   
 };
 
+  
 
 const Profile1 = (props) => {
     return (
@@ -341,7 +342,6 @@ return(
   };
 
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor:'#E5E5E5',
@@ -403,7 +403,7 @@ const AntTab = withStyles(theme => ({
 }))(props => <Tab disableRipple {...props} />);
 
 
-export default function FullWidthTabs() {
+export default function UserProfile() {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -426,14 +426,13 @@ const getTagById = (id,ObjectArr) => {
 	return name;
 }
 
-
     const [uniName,setUniName]=React.useState('');
    
     const[name,setName]=React.useState(null);
   const[bio,setBio]=React.useState('');
   const[dept,setDept]=React.useState('');
- 
- const[rejects,setRejects]=React.useState([]);
+
+  const[rejects,setRejects]=React.useState([]);
   const[accName,setAccName]=React.useState([]);
   const[rejName,setRejName]=React.useState([]);
   const[accepts,setAccepts]=React.useState([]);
@@ -445,9 +444,11 @@ const getTagById = (id,ObjectArr) => {
   const[univ,setUniv]=React.useState('');
   const[url,setUrl]=React.useState(null);
  const [test,setTest] = React.useState([]);
+  const params = useParams();
+  console.log(params);
   useEffect(() => {
     if(!loaded){
-    axios.get('api/users/me/', {
+    axios.get(`api/users/${params.profileID}`, {
                 headers: {
                   Authorization: token
                   
@@ -526,8 +527,9 @@ const getTagById = (id,ObjectArr) => {
               
   
   }
+  
     }
-},[loaded1,loaded,accepts,rejects,univ]); 
+},[params.profileID,loaded1,loaded,accepts,rejects,univ]); 
 
 
 

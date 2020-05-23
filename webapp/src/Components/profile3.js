@@ -8,7 +8,6 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import ProfImage from './profilephoto.jpg';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -17,6 +16,11 @@ import Avatar from '@material-ui/core/Avatar';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import TextField from '@material-ui/core/TextField';
+import Cookies from 'js-cookie';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+const axios = require('axios');
+const token = Cookies.get('jwt');
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -222,37 +226,10 @@ const AntTab = withStyles(theme => ({
 }))(props => <Tab disableRipple {...props} />);
 
 
-
-
-const people = [
-    {
-              id:1,  
-              name:"Siddharth Salvi",
-              CurrentStatus:"Masters Computers",
-              University:"California University",
-              Country:"United States",
-              Company:""
-              },
-              {
-              id:2,  
-              name:"Sam Stevens",
-              CurrentStatus:"Masters Computers",
-              University:"MIT",
-              Country:"Canada",
-              Company:"Morgan Stanley"
-              },
-              {
-                id:2,  
-                name:"Clay Jensen",
-                CurrentStatus:"Masters Computers",
-                University:"Ohio University",
-                Country:"Canada",
-                Company:"Morgan Stanley"
-                }
-              
-];
-
 function SearchProfiles() {
+
+
+ 
 
  const classes = useStyles();
   const theme = useTheme();
@@ -267,16 +244,78 @@ function SearchProfiles() {
   };
    
  const [searchTerm, setSearchTerm] = React.useState("");
+ const [searchTerm1, setSearchTerm1] = React.useState("");
+const [searchResults1, setSearchResults1] = React.useState([]);
  const [searchResults, setSearchResults] = React.useState([]);
+ const [people, setPeople] = React.useState([]);
+const [loaded, setLoaded] = React.useState(false);
+    const [universityNames,setUniversityNames]=React.useState([]);
+
  const handleChange1 = event => {
     setSearchTerm(event.target.value);
   };
+  const handleChange2 = event => {
+    setSearchTerm1(event.target.value);
+  };
  React.useEffect(() => {
-    const results = people.filter(person =>
-      person.name.toLowerCase().includes(searchTerm)|| person.University.toLowerCase().includes(searchTerm) 
+
+if(!loaded){
+ axios.get('api/users/', {
+                headers: {
+                  Authorization: token
+                  
+                }
+
+              })
+              .then(function (response) {
+                
+              
+              setPeople(response.data);
+              
+              
+      
+              })
+              .catch(function (error) {
+                console.log("Invalid Bro Sid");
+              });
+
+                var tags = {universityArr:[],universityNames:[],tagArr:[],tagNames:[]};
+  if(!tags.universityArr.length && !tags.tagArr.length){
+  axios.get('/api/tags').then(function (res) {
+                
+                res.data.forEach((item)=>{
+	  		if(item.isSchool){
+	    		
+	    		if(!tags.universityNames.includes(item.name)){
+			      tags.universityNames.push(item.name)
+	    		}
+	  		}
+	  		
+		});
+  setUniversityNames(tags.universityNames);
+  setLoaded(true);  
+              })
+              .catch(function (error) {
+                console.log("Not working");
+              });
+              
+  
+  }
+
+}
+    const results = people.filter((person) =>
+      person.name.toLowerCase().includes(searchTerm) 
     );
     setSearchResults(results);
-  }, [searchTerm]);
+  const results1 = universityNames.filter((univ) =>
+      univ.toLowerCase().includes(searchTerm1) 
+    );
+    setSearchResults1(results1);
+  
+
+  }, [loaded,searchTerm,people,universityNames,searchTerm1]);
+
+
 
 
   return (
@@ -295,7 +334,8 @@ function SearchProfiles() {
             
             <Grid item xs={4}></Grid>
             <Grid  item xs={5}>
-            <TextField value={searchTerm} onChange={handleChange1} id="outlined-basic" label="Search" variant="outlined" />
+            <TextField value={searchTerm} onChange={handleChange1} id="outlined-basic" label="Search Name" variant="outlined" />
+            <TextField value={searchTerm1} onChange={handleChange2} id="outlined-basic" label="Search Univ" variant="outlined" />
         
             </Grid>
             <Grid className='icons' item xs={3}>
@@ -337,7 +377,7 @@ function SearchProfiles() {
         
         
         
-         {searchResults.map(item => (
+         {loaded?searchResults.map(item => (
           <Grid container spacing = {1}>
           <Grid item xs = {1}></Grid>
           <Grid item xs = {10}>
@@ -349,21 +389,23 @@ function SearchProfiles() {
     alignItems="center">
         
             
-            <Grid item xs={2}><img  className='imagenew1' src={ProfImage} alt='Profile'/></Grid>
+            <Grid item xs={2}> <Avatar className="imagenew1" /> </Grid>
             <Grid  item xs={8}>
         <p className="personname3">{item.name}</p>
-        <p className="persontitle4">{item.CurrentStatus}</p>
-        <p className="persondesc4">This is my desciption. This is my desciption. This is my desciption.</p>
+        <p className="persontitle4">{item.department}</p>
+        <p className="persondesc4">{item.bio}</p>
             <br/>
+            <br />
             </Grid>
             <Grid className='icons' item xs={2}>
-            <Button variant="outlined" style={{
+            <a href = {`/${item._id}`} target="_blank"><Button variant="outlined" style={{
         
         color: "#2CE89A",borderColor:"#2CE89A"
-            }} className="buttonprof">View Profile</Button>
+            }} className="buttonprof">View Profile</Button></a>
                 </Grid>
         </Grid>
 
+    <br />
     <br />
     </Paper>
     <br />
@@ -371,11 +413,11 @@ function SearchProfiles() {
     </Grid>
     <Grid item xs = {2}></Grid>
       </Grid>
-        ))}
+        )):<div><Grid container spacing = {3}><Grid item xs = {5}></Grid><Grid item xs = {3}><CircularProgress /></Grid><Grid item xs = {4}></Grid></Grid></div>}
               
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-        {searchResults.map(item => (
+        {loaded?searchResults1.map(item => (
           <Grid container spacing = {2}>
           <Grid item xs = {1}></Grid>
           <Grid item xs = {10}>
@@ -389,13 +431,13 @@ function SearchProfiles() {
             <Grid item xs = {1}></Grid>
             <Grid item xs={1}></Grid>
             <Grid  item xs={7}>
-        <p className="personname4">{item.University}</p>
+        <p className="personname4">{item}</p>
            </Grid>
             <Grid className='icons' item xs={2}>
-            <Button variant="outlined" style={{
+            <a href="/university" target="_blank"><Button variant="outlined" style={{
         
         color: "#2CE89A",borderColor:"#2CE89A"
-            }} className="buttonprof1">View Profile</Button>
+            }} className="buttonprof1">View Profile</Button></a>
                 </Grid>
         </Grid>
 
@@ -406,7 +448,7 @@ function SearchProfiles() {
     </Grid>
     <Grid item xs = {2}></Grid>
       </Grid>
-     ))}
+     )):<div><Grid container spacing = {3}><Grid item xs = {5}></Grid><Grid item xs = {3}><CircularProgress /></Grid><Grid item xs = {4}></Grid></Grid></div>}
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
       
@@ -421,3 +463,7 @@ function SearchProfiles() {
   );
 }
 export default SearchProfiles;
+
+
+
+

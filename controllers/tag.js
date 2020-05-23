@@ -41,7 +41,7 @@ exports.getAll = async (req, res) => {
   const docs = await Tag.find(searchQuery);
   if (!docs) {
     return res.status(404).json({
-      msg: 'No documents found'
+      msg: 'No documents found',
     });
   }
 
@@ -66,7 +66,7 @@ exports.getBySlug = async (req, res) => {
   const doc = await Tag.findOne({ slug });
   if (!doc) {
     return res.status(404).json({
-      msg: 'Not found'
+      msg: 'Not found',
     });
   }
 
@@ -93,7 +93,7 @@ exports.updateBySlug = async (req, res) => {
   const doc = await Tag.findOneAndUpdate({ slug }, req.body, { new: true });
   if (!doc) {
     return res.status(404).json({
-      msg: 'Not found'
+      msg: 'Not found',
     });
   }
   logger.updated('Tag', doc);
@@ -112,13 +112,13 @@ exports.deleteBySlug = async (req, res) => {
   const doc = await Tag.findOneAndDelete({ slug });
   if (!doc) {
     return res.status(404).json({
-      msg: 'Not found'
+      msg: 'Not found',
     });
   }
 
   logger.deleted('Tag', doc);
   return res.json({
-    msg: 'ok'
+    msg: 'ok',
   });
 };
 
@@ -136,22 +136,22 @@ exports.deleteBySlug = async (req, res) => {
  */
 exports.follow = async (req, res) => {
   const { slug } = req.params;
-  const doc = await Tag.findOne({ slug: slug });
-  //Checking if tag exists
+  const doc = await Tag.findOne({ slug });
+  // Checking if tag exists
   if (doc === null) {
     return res.status(404).json({
-      msg: 'Tag Not found'
+      msg: 'Tag Not found',
     });
   }
-  //Checking if user aldready follows the tag
+  // Checking if user aldready follows the tag
   if (doc.followers.includes(req.user.id)) {
     return res.status(403).json({
-      msg: 'You aldready follow this tag'
+      msg: 'You aldready follow this tag',
     });
   }
   doc.followers.push(req.user._id);
   await doc.save();
-  req.user.tagFollows.push(doc._id);
+  req.user.tagFollows.push(doc.id);
   await req.user.save();
   return res.json(doc);
 };
@@ -169,22 +169,22 @@ exports.follow = async (req, res) => {
  */
 exports.unfollow = async (req, res) => {
   const { slug } = req.params;
-  //Checking if tag exists
-  const doc = await Tag.findOne({ slug: slug });
+  // Checking if tag exists
+  const doc = await Tag.findOne({ slug });
   if (doc === null) {
     return res.status(404).json({
-      msg: 'Tag Not found'
+      msg: 'Tag Not found',
     });
   }
-  //Checking if user does not follow the tag
+  // Checking if user does not follow the tag
   if (!doc.followers.includes(req.user.id)) {
     return res.status(403).json({
-      msg: "You don't follow this tag"
+      msg: "You don't follow this tag",
     });
   }
-  //Removing user from followers array of the tag
+  // Removing user from followers array of the tag
   doc.followers.splice(doc.followers.indexOf(req.user.id), 1);
-  //Removing the tag from the tagFollows array of the user
+  // Removing the tag from the tagFollows array of the user
   req.user.tagFollows.splice(req.user.tagFollows.indexOf(doc.id, 1));
 
   await doc.save();

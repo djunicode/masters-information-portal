@@ -5,13 +5,13 @@ module.exports = {
   limiter: rateLimit({
     windowMs: rateLimitWindowInterval,
     max: rateLimitAttempts,
-    message: JSON.stringify('Rate limit exceeded', null, 4)
+    message: JSON.stringify('Rate limit exceeded', null, 4),
   }),
 
   directives: {
     defaultSrc: ["'self'"],
     styleSrc: ["'self'", "'unsafe-inline'"],
-    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"]
+    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
   },
 
   options: {
@@ -19,6 +19,6 @@ module.exports = {
     methods: ['GET', 'POST', 'HEAD', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     preflightContinue: false,
-    optionsSuccessStatus: 204 || 200
-  }
+    optionsSuccessStatus: 204 || 200,
+  },
 };

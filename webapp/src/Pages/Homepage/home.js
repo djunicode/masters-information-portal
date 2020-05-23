@@ -13,7 +13,7 @@ import Img3 from '../../assets/images/image3.png';
 import Img4 from '../../assets/images/image4.png';
 import Img5 from '../../assets/images/image5.png';
 
-export default function Home(){
+export default function Home(props){
 	const[loggedIn,setLoggedIn]=React.useState(false);
 	const[greetText,setText] = React.useState("Join");
 	// eslint-disable-next-line
@@ -32,7 +32,7 @@ export default function Home(){
 		}
 	})
 	return(
-		<React.Fragment>
+		<div className="homepage-body">
 			<div className="home-header">
 				<Grid container>
 			      	<Grid item md={6}>
@@ -45,12 +45,12 @@ export default function Home(){
 		      			<div style={{marginLeft:'7vw'}}>
 		      				{loggedIn?
 		      					<React.Fragment>
-				      				<Link to='/chat' style={{textDecoration:'none'}}>
+				      				<Link to='/chat' style={{textDecoration:'none'}} onClick={()=>props.setHomepage(false)}>
 										<Button style={{backgroundColor:'#F4FAF8',borderRadius:25,width:150,color:'#46BC99'}}>
 					      					<Typography><b>Chat</b></Typography>
 					      				</Button>
 				      				</Link>
-				      				<Link to='/forum' style={{textDecoration:'none'}}>
+				      				<Link to='/forum' style={{textDecoration:'none'}} onClick={()=>props.setHomepage(false)}>
 					      				<Button style={{border:'2px solid #FAFAF8',borderRadius:25,width:150,marginLeft:30,color:'#F4FAF8'}}>
 					      					<Typography><b>Forum</b></Typography>
 					      				</Button>
@@ -58,12 +58,12 @@ export default function Home(){
 					      		</React.Fragment>
 			      			:
 		      					<React.Fragment>
-				      				<Link to='/login' style={{textDecoration:'none'}}>
+				      				<Link to='/login' style={{textDecoration:'none'}} onClick={()=>props.setHomepage(false)}>
 					      				<Button style={{backgroundColor:'#F4FAF8',borderRadius:25,width:150,color:'#46BC99'}}>
 					      					<Typography><b>Login</b></Typography>
 					      				</Button>
 				      				</Link>
-				      				<Link to='/register' style={{textDecoration:'none'}}>
+				      				<Link to='/register' style={{textDecoration:'none'}} onClick={()=>props.setHomepage(false)}>
 				      					<Button style={{border:'2px solid #FAFAF8',borderRadius:25,width:150,marginLeft:30,color:'#F4FAF8'}}>
 					      					<Typography><b>Register</b></Typography>
 					      				</Button>
@@ -80,7 +80,7 @@ export default function Home(){
 		      	</Grid>
 			</div>
 			<div align="center">
-			<Grid container alignItems='center'>
+			<Grid container alignItems='center' justify="space-evenly">
 				<Grid item md={6}>
 					<p className="description">
 						Find information about any university. Know what scores you need to get into the university, their average fees and many other details!
@@ -89,23 +89,26 @@ export default function Home(){
 				<Grid item md={6}>
 					<img src={Img1} className="description-img" alt="University Preview"/>
 				</Grid>
-				<Hidden smDown implementation="css">
-					<Grid item md={6}>
-						<div align="center">
-							<img src={Img2} className="description-img" alt="Forums Preview"/>
-						</div>
-					</Grid>
-				</Hidden>
 				<Grid item md={6}>
-					<p className="description">
-						Ask questions in the forums browsed by various alumnis, and help your friends by answering their questions
-					</p>
-				</Grid>
-				<Hidden smUp implementation="css">
-					<Grid item md={6}>
+					<Hidden smDown implementation="css">
 						<img src={Img2} className="description-img" alt="Forums Preview"/>
-					</Grid>
-				</Hidden>
+					</Hidden>
+					<Hidden smUp implementation="css">
+						<p className="description">
+							Ask questions in the forums browsed by various alumnis, and help your friends by answering their questions
+						</p>
+					</Hidden>
+				</Grid>
+				<Grid item md={6}>
+					<Hidden smUp implementation="css">
+						<img src={Img2} className="description-img" alt="Forums Preview"/>
+					</Hidden>
+					<Hidden smDown implementation="css">
+						<p className="description">
+							Ask questions in the forums browsed by various alumnis, and help your friends by answering their questions
+						</p>
+					</Hidden>
+				</Grid>
 				<Grid item md={6}>
 					<p className="description">
 						Get information about your followed universities and people directly on your feed!
@@ -114,21 +117,26 @@ export default function Home(){
 				<Grid item md={6}>
 					<img src={Img3} className="description-img" alt="User Feed Preview"/>
 				</Grid>
-				<Hidden smDown implementation="css">
-					<Grid item md={6}>
-						<img src={Img4} className="description-img" alt="Chat Page Preview"/>
-					</Grid>
-				</Hidden>
 				<Grid item md={6}>
-					<p className="description">
-						Chat with people! Get to know about their experiences or just have a fun time!
-					</p>
+					<Hidden smDown implementation="css">
+						<img src={Img4} className="description-img" alt="Forums Preview"/>
+					</Hidden>
+					<Hidden smUp implementation="css">
+						<p className="description">
+							Chat with people! Get to know about their experiences or just have a fun time!
+						</p>
+					</Hidden>
 				</Grid>
-				<Hidden smUp implementation="css">
-					<Grid item md={6}>
-						<img src={Img4} className="description-img" alt="Chat Page Preview"/>
-					</Grid>
-				</Hidden>
+				<Grid item md={6}>
+					<Hidden smUp implementation="css">
+						<img src={Img4} className="description-img" alt="Forums Preview"/>
+					</Hidden>
+					<Hidden smDown implementation="css">
+						<p className="description">
+							Chat with people! Get to know about their experiences or just have a fun time!
+						</p>
+					</Hidden>
+				</Grid>
 				<Grid item md={6}>
 					<p className="description">
 						Get different resources and share your own to help other fellow students!
@@ -140,6 +148,6 @@ export default function Home(){
 			</Grid>
 			</div>
 			<br/><br/>
-		</React.Fragment>
+		</div>
 	)
 }
