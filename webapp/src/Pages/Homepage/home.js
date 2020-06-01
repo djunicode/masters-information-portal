@@ -1,4 +1,6 @@
 import React from 'react';
+import AOS from 'aos';
+import "aos/dist/aos.css";
 import './homepage.css';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -30,6 +32,17 @@ export default function Home(props){
 		else{
 			setText("Join")
 		}
+		AOS.init({
+			'duration':1500,
+			'mirror':true,
+			'anchorPlacement':'center-bottom'
+		});
+		let scrollRef = 0;
+		window.addEventListener('scroll', function() {
+		  // increase value up to 10, then refresh AOS
+		  scrollRef <= 10 ? scrollRef++ : AOS.refresh();
+		});
+		window.scrollTo(0,0)
 	})
 	return(
 		<div className="homepage-body">
@@ -82,68 +95,68 @@ export default function Home(props){
 			<div align="center">
 			<Grid container alignItems='center' justify="space-evenly">
 				<Grid item md={6}>
-					<p className="description">
+					<p data-aos="fade-right" className="description">
 						Find information about any university. Know what scores you need to get into the university, their average fees and many other details!
 					</p>
 				</Grid>
 				<Grid item md={6}>
-					<img src={Img1} className="description-img" alt="University Preview"/>
+					<img src={Img1} data-aos="zoom-in-left" className="description-img" alt="University Preview"/>
 				</Grid>
 				<Grid item md={6}>
 					<Hidden smDown implementation="css">
-						<img src={Img2} className="description-img" alt="Forums Preview"/>
+						<img src={Img2} data-aos="zoom-in-right" className="description-img" alt="Forums Preview"/>
 					</Hidden>
 					<Hidden smUp implementation="css">
-						<p className="description">
+						<p data-aos="fade-right" className="description">
 							Ask questions in the forums browsed by various alumnis, and help your friends by answering their questions
 						</p>
 					</Hidden>
 				</Grid>
 				<Grid item md={6}>
 					<Hidden smUp implementation="css">
-						<img src={Img2} className="description-img" alt="Forums Preview"/>
+						<img src={Img2} data-aos="zoom-in-right" className="description-img" alt="Forums Preview"/>
 					</Hidden>
 					<Hidden smDown implementation="css">
-						<p className="description">
+						<p data-aos="fade-left" className="description">
 							Ask questions in the forums browsed by various alumnis, and help your friends by answering their questions
 						</p>
 					</Hidden>
 				</Grid>
 				<Grid item md={6}>
-					<p className="description">
-						Get information about your followed universities and people directly on your feed!
+					<p data-aos="fade-right" className="description">
+						Get information about your followed universities, tags and people directly on your feed!
 					</p>
 				</Grid>
 				<Grid item md={6}>
-					<img src={Img3} className="description-img" alt="User Feed Preview"/>
+					<img src={Img3} data-aos="zoom-in-left" className="description-img" alt="User Feed Preview"/>
 				</Grid>
 				<Grid item md={6}>
 					<Hidden smDown implementation="css">
-						<img src={Img4} className="description-img" alt="Forums Preview"/>
+						<img src={Img4} data-aos="zoom-in-right" className="description-img" alt="Forums Preview"/>
 					</Hidden>
 					<Hidden smUp implementation="css">
-						<p className="description">
-							Chat with people! Get to know about their experiences or just have a fun time!
+						<p data-aos="fade-right" className="description">
+							Chat with people! Get to know about their experiences, ask for suggestions or just have a fun time!
 						</p>
 					</Hidden>
 				</Grid>
 				<Grid item md={6}>
 					<Hidden smUp implementation="css">
-						<img src={Img4} className="description-img" alt="Forums Preview"/>
+						<img src={Img4} data-aos="zoom-in-left" className="description-img" alt="Forums Preview"/>
 					</Hidden>
 					<Hidden smDown implementation="css">
-						<p className="description">
-							Chat with people! Get to know about their experiences or just have a fun time!
+						<p data-aos="fade-left" className="description">
+							Chat with people! Get to know about their experiences, ask for suggestions  or just have a fun time!
 						</p>
 					</Hidden>
 				</Grid>
 				<Grid item md={6}>
-					<p className="description">
+					<p data-aos="fade-right" className="description">
 						Get different resources and share your own to help other fellow students!
 					</p>
 				</Grid>
 				<Grid item md={6}>
-					<img src={Img5} className="description-img" alt="Resources Page Preview"/>
+					<img src={Img5} data-aos="zoom-in-left" className="description-img" alt="Resources Page Preview"/>
 				</Grid>
 			</Grid>
 			</div>
