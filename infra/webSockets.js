@@ -83,6 +83,7 @@ function createServer(app) {
       }
 
       socket.join(chatId);
+      socket.leave(socketChatMap[socket]);
       socketChatMap[socket] = chatId;
       console.log('chat msgs', chat.messages);
       socket.emit('msg hist', chat.messages); // Sending in the old messages saved using the chatId in the db
