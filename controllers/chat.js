@@ -50,9 +50,19 @@ exports.getChats = async (req, res) => {
   const userId = req.user._id;
 
   const sentChats = await Chat.find({ sender: userId }).populate('receiver', '-password');
+  const sentChatsArray = sentChats.map((d) => ({
+    ...d.toObject(),
+    receiver: d.receiver.id,
+    user: d.receiver,
+  }));
   const receivedChats = await Chat.find({ receiver: userId }).populate('sender', '-password');
+  const receivedChatsArray = receivedChats.map((d) => ({
+    ...d.toObject(),
+    sender: d.sender.id,
+    user: d.sender,
+  }));
 
-  const chats = [...sentChats, ...receivedChats];
+  const chats = [...sentChatsArray, ...receivedChatsArray];
 
   if (chats.length === 0) {
     // Send 404 but empty chats
