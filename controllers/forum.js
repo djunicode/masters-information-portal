@@ -29,7 +29,7 @@ const _ = require('lodash');
  * @apiSuccess (201) {ObjectID[]} answers - Array of objectIds of Answers
  */
 exports.create = async (req, res) => {
-  const doc = await Forum.create(req.body);
+  const doc = await await Forum.create(req.body);
   if (req.body.isAnswer) {
     const forum = await Forum.findByIdAndUpdate(req.body.parentId, { $push: { answers: doc._id } });
     logger.info(
@@ -66,7 +66,7 @@ exports.getAll = async (req, res) => {
 
   if (queryFilter.slugs) {
     const { slugs } = queryFilter;
-    const tags_id = await Tag.find({ slug: { $in: slugs } }).select({ _id: 1 });
+    const tags_id = await Tag.find({ slug: { $in: slugs } });
     delete queryFilter.slugs;
     queryFilter.tags = { $in: tags_id };
   }
@@ -75,7 +75,7 @@ exports.getAll = async (req, res) => {
     queryFilter = { $text: { $search: search } };
   }
 
-  const docs = await Forum.find(queryFilter);
+  const docs = await Forum.find(queryFilter).populate('tags').exec();
   if (!docs) {
     return res.status(404).json({
       msg: 'No documents found',
@@ -106,7 +106,7 @@ exports.getAll = async (req, res) => {
  */
 exports.getById = async (req, res) => {
   const { id } = req.params;
-  const doc = await Forum.findById(id);
+  const doc = await Forum.findById(id).populate('tags').exec();
   if (!doc) {
     return res.status(404).json({
       msg: 'Not found',
