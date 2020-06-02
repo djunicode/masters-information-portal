@@ -29,7 +29,7 @@ const _ = require('lodash');
  * @apiSuccess (201) {ObjectID[]} answers - Array of objectIds of Answers
  */
 exports.create = async (req, res) => {
-  const doc = await await Forum.create(req.body);
+  const doc = await Forum.create(req.body);
   if (req.body.isAnswer) {
     const forum = await Forum.findByIdAndUpdate(req.body.parentId, { $push: { answers: doc._id } });
     logger.info(
@@ -66,7 +66,7 @@ exports.getAll = async (req, res) => {
 
   if (queryFilter.slugs) {
     const { slugs } = queryFilter;
-    const tags_id = await Tag.find({ slug: { $in: slugs } });
+    const tags_id = await Tag.find({ slug: { $in: slugs } }).select({ _id: 1 });
     delete queryFilter.slugs;
     queryFilter.tags = { $in: tags_id };
   }
