@@ -75,7 +75,7 @@ exports.getAll = async (req, res) => {
     queryFilter = { $text: { $search: search } };
   }
 
-  const docs = await Forum.find(queryFilter).populate('tags').exec();
+  const docs = await Forum.find(queryFilter).populate('tags', '-followers').exec();
   if (!docs) {
     return res.status(404).json({
       msg: 'No documents found',
@@ -106,7 +106,7 @@ exports.getAll = async (req, res) => {
  */
 exports.getById = async (req, res) => {
   const { id } = req.params;
-  const doc = await Forum.findById(id).populate('tags').exec();
+  const doc = await Forum.findById(id).populate('tags', '-followers').exec();
   if (!doc) {
     return res.status(404).json({
       msg: 'Not found',
