@@ -75,7 +75,7 @@ exports.getAll = async (req, res) => {
     queryFilter = { $text: { $search: search } };
   }
 
-  const docs = await Forum.find(queryFilter);
+  const docs = await Forum.find(queryFilter).populate('tags', '-followers').exec();
   if (!docs) {
     return res.status(404).json({
       msg: 'No documents found',
@@ -106,7 +106,7 @@ exports.getAll = async (req, res) => {
  */
 exports.getById = async (req, res) => {
   const { id } = req.params;
-  const doc = await Forum.findById(id);
+  const doc = await Forum.findById(id).populate('tags', '-followers').exec();
   if (!doc) {
     return res.status(404).json({
       msg: 'Not found',
@@ -137,14 +137,14 @@ exports.upvoteById = async (req, res) => {
   }
   //* User has already upvoted it
   if (doc.upvoters.includes(userId)) {
-    return res.status(409).send({
-      msg: 'Cannot upvote more than once.',
-    });
+    await Forum.findByIdAndUpdate(id, { $pull: { upvoters: userId } });
+    logger.info(`Forum Question ${id} removed upvote by ${userId}`);
+    return res.status(201).send({});
   }
   //* User has already downvoted it
   if (doc.downvoters.includes(userId)) {
-    await Forum.findByIdAndUpdate(id, { $pull: { downvoters: userId } });
-    logger.info(`Forum Question ${id} removed downvote by ${userId}`);
+    await Forum.findByIdAndUpdate(id, { $pull: { downvoters: userId },$push: { upvoters: userId } });
+    logger.info(`Forum Question ${id} removed downvote and added upvote by ${userId}`);
     return res.status(200).send({});
   }
 
@@ -183,14 +183,14 @@ exports.downvoteById = async (req, res) => {
     });
   }
   if (doc.downvoters.includes(userId)) {
-    return res.status(409).send({
-      msg: 'Cannot downvote more than once.',
-    });
+    await Forum.findByIdAndUpdate(id, { $pull: { downvoters: userId } });
+    logger.info(`Forum Question ${id} removed downvote by ${userId}`);
+    return res.status(201).send({});
   }
   //* User has already upvoted it
   if (doc.upvoters.includes(userId)) {
-    await Forum.findByIdAndUpdate(id, { $pull: { upvoters: userId } });
-    logger.info(`Forum Question ${id} removed upvote by ${userId}`);
+    await Forum.findByIdAndUpdate(id, { $pull: { upvoters: userId }, $push: { downvoters: userId } });
+    logger.info(`Forum Question ${id} removed upvote and added downvote by ${userId}`);
     return res.status(200).send({});
   }
   await Forum.findByIdAndUpdate(id, { $push: { downvoters: userId } });

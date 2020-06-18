@@ -1,17 +1,29 @@
-  /**
- * SocketIO events
- * authenticate ~ To join open user's chats
- * open chat ~ To send messages and get previous messages of the chat
- * message ~ To message on the chat
- */
-
 const SocketIO = require('socket.io');
 const http = require('http');
-const jwt = require('jsonwebtoken');
 const logger = require('../config/logger');
 const Chat = require('../models/chat');
 const { verifyJwt } = require('./jwt');
-const { createChatNotification}=require('./notifications');
+const { createChatNotification } = require('./notifications');
+
+/**
+ * @apiDefine ChatSockets
+ */
+
+/**
+ * @apigroup ChatSockets
+ * @api {SocketIO} / Chat Socket.io
+ * @apiDescription
+ * You need to send the following events:
+ * 1. authenticate - send JWT token for authentication
+ * 2. open chat - send chat _id for joining a chatroom
+ *
+ * Following events are possible:
+ *
+ * 1. history - sends history of messages
+ * 2. message - sends latest message sent to a chat
+ * 3. status - gives status updates
+ * 4. open chat success - sends the chat object which is openned
+ */
 
 function createServer(app) {
   const server = http.Server(app);
@@ -26,24 +38,18 @@ function createServer(app) {
   io.on('connection', (socket) => {
     logger.info(`Socket ${socket.id} connected`);
 
-    /**
-     * @apiDefine WebSockets
-     */
-
-    /**
-     * @apiGroup WebSockets
-     * @api {WS} /authenticate User Authentication
-     * @apiDescription User Verification using the allotted JWT token during login
-     * Authorized users shall proceed forward to chatting
-     */
     socket.on('authenticate', async (token) => {
       try {
         const decoded = await verifyJwt(token);
-        console.log('dec', decoded);
         socketUserMap[socket] = decoded._id;
-        console.log(socketUserMap[socket]);
+
+        logger.info(`Authenticated ${socket.id}`);
+        socket.emit('status', {
+          code: 200,
+          msg: 'Authenticated',
+        });
       } catch (err) {
-        console.log('error', err);
+        logger.error(err);
         socket.emit('status', {
           code: 401,
           msg: 'User not authenticated',
@@ -52,30 +58,20 @@ function createServer(app) {
       }
     });
 
-    /**
-     * @apiGroup WebSockets
-     * @api {WS} open_chat Joining the user to resp chat room
-     * @apiDescription After authentication based on the unique chat_id exclusively 
-     * provided to a pair of private chat user is searched in the db
-     * If the chat is retrieved user shall successfully enter a room with unique chat_id 
-     * /
-     /** 
-     * @apiGroup WebSockets
-     * @api {WS} msg_hist Providing the old chats 
-     * @apiDescription Once user successfully enters a chat room then the socket shall
-     * send back the prior old chat messages(if any) via this socket call
-     */
     socket.on('open chat', async (chatId) => {
-      console.log(chatId);
       const chat = await Chat.findOne({ _id: chatId });
-      console.log(chat);
+
       if (!chat) {
         return socket.emit('status', {
           code: 400,
           msg: 'Chat not found',
         });
       }
-      if (socketUserMap[socket] != chat.sender && socketUserMap[socket] != chat.receiver) {
+
+      if (
+        socketUserMap[socket] !== chat.sender.toString() &&
+        socketUserMap[socket] !== chat.receiver.toString()
+      ) {
         return socket.emit('status', {
           code: 403,
           msg: 'User not found in the chats',
@@ -83,19 +79,15 @@ function createServer(app) {
       }
 
       socket.join(chatId);
+      socket.leave(socketChatMap[socket]);
       socketChatMap[socket] = chatId;
-      console.log('chat msgs', chat.messages);
-      socket.emit('msg hist', chat.messages); // Sending in the old messages saved using the chatId in the db
+
+      socket.emit('open chat success', chatId);
+
+      return socket.emit('history', chat.messages); // Sending in the old messages saved using the chatId in the db
     });
 
-    /**
-     * @apiGroup WebSockets
-     * @api {WS} message For sending message for live chat
-     * @apiDescription It basically sends the messages sent by user1 to the server to be saved in the db and also
-     * send the same chat msg to user2 to enable live chat
-     */
     socket.on('message', async (message) => {
-      console.log(message);
       // Unauthenticated
       if (!socketUserMap[socket]) {
         socket.emit('status', {
@@ -112,30 +104,32 @@ function createServer(app) {
         });
       }
 
-      // Save message first
-      await Chat.findByIdAndUpdate(socketChatMap[socket], {
-        $push: {
-          messages: {
-            sender: socketUserMap[socket],
-            message,
-          },
-        },
-      }
-      );
-      const chat = await Chat.findById(socketChatMap[socket]);
-      let latestMessage=chat.messages.slice(-1).pop()
+      console.log('Received ', message);
 
-      const notification=createChatNotification(socketUserMap[socket],chat.receiver,socketChatMap[socket]);
+      // Save message first
+      const messageObject = {
+        sender: socketUserMap[socket],
+        message,
+        time: new Date().toISOString(),
+      };
+
+      const chat = await Chat.findByIdAndUpdate(socketChatMap[socket], {
+        $push: {
+          messages: messageObject,
+        },
+      });
+
+      const notification = createChatNotification(
+        socketUserMap[socket],
+        chat.receiver,
+        socketChatMap[socket]
+      );
       logger.created('Notification', notification);
+
       // Send to connected user(s)
-      io.to(socketChatMap[socket]).emit('message', latestMessage);
+      io.to(socketChatMap[socket]).emit('message', messageObject);
     });
-    /**
-     * @apiGroup WebSockets
-     * @api {WS} disconnect Closing the socket connection
-     * @apiDescription On this socket call the socket connection shall be terminated.
-     * basically the array contents are deleted to again enable chat with different user in future.
-     */
+
     socket.on('disconnect', () => {
       // Delete user and chat info from cache table
       delete socketUserMap[socket];

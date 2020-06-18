@@ -1,5 +1,5 @@
 import React,{useEffect,useRef} from 'react';
-import {getTagIdByName,getTags} from '../../Helpers/fetchRequests.js';
+import {getTagIdByName,refreshTags} from '../../Helpers/fetchRequests.js';
 import {checkUniversityValidation,checkTestValidation} from '../../Helpers/validateForm.js'
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -74,7 +74,7 @@ export default function Register() {
     }
     if(!componentDidMount){
       async function fetchData(){
-        var tags = await getTags()
+        var tags = await refreshTags()
         setUniversityNames(tags.universityNames)
         setTagNames(tags.tagNames)
       }
