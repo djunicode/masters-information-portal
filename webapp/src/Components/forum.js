@@ -1,5 +1,7 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { makeStyles, useTheme ,withStyles} from '@material-ui/core/styles';
+import {getUserInfo} from '../Helpers/fetchRequests.js';
+import axios from 'axios';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
@@ -20,7 +22,11 @@ import Tab from '@material-ui/core/Tab';
 import SwipeableViews from 'react-swipeable-views';
 import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
+import Cookies from 'js-cookie';
+import checkLogin from '../Helpers/checkLogin';
 // import ToggleButton from '@material-ui/lab/ToggleButton';
+const token = Cookies.get('jwt');
+let val = "";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -113,7 +119,9 @@ const useStyles = makeStyles(theme => ({
   cardcontent:{
     margin:"5px",
     float:'left',
-    marginTop:"5px"
+    marginTop:"5px",
+    minWidth:"1000px",
+  
   },
   like:{
     textAlign:"left",
@@ -143,27 +151,60 @@ const useStyles = makeStyles(theme => ({
     color: "#123800",
     backgroundColor:"#8cd4af",
     fontWeight:"bold",
-    margin:"5px",
+    marginLeft:"5px",
+    marginTop:"5px",
+    marginRight:"none",
     opacity:"0.9",
     borderRadius:"5px",
     fontSize:"12px",
+    float:"right",
     minWidth:"100px"
   },
 
 }));
 
-function Trending() {
+function Trending(props) {
   const classes=useStyles();
-    function CustomLike(props){
-       const [like, setLike] = useState(props.like);
-      const[bg,setBg]=useState("disabled");
-    const handleLike = e => {
+  const[userid,setUserid]=useState(null);
+  const [data, setData] = useState([])
+  
+  useEffect(() => {
+    
+      async function setDetails(){
+          var storedUserData = await getUserInfo(null,null);
+          try{
+              setUserid(storedUserData.id);
+          }
+          catch(error){
+              console.log(error)
+          }
+      }
+      setDetails();
+    axios.get('/api/forum').then(json => setData(json.data))
+  },[])
+  
 
-      if(like===props.like)
+    function CustomLike(props){
+      const [like, setLike] = useState(props.like);
+      if(props.upvoters.includes(userid)==false)
+      {
+        var x = "disabled";
+      }
+      else
+      {
+        var x="secondary";
+      }
+      const[bg,setBg]=useState(x);
+      const handleLike = e => {
+      axios.post(`/api/forum/${props._id}/upvote`)
+      .then(function(response){
+        console.log("Like Uploaded!")
+      })
+      if( bg == "disabled" )
       {
       const like1 = like +1; 
       setLike(like1);
-      setBg("secondary");      
+      setBg("secondary");
       }
       else
       {
@@ -183,15 +224,26 @@ function Trending() {
       )
     };
      function CustomDislike(props){
-       const [dislike, setDislike] = useState(props.dislike);
-      const[bg1,setBg1]=useState("disabled");
-    const handleDislike = e => {
-
-      if(dislike===props.dislike)
+      const [dislike, setDislike] = useState(props.dislike);
+      if(props.downvoters.includes(userid)==false)
+      {
+        var x = "disabled";
+      }
+      else
+      {
+        var x="secondary";
+      }
+      const[bg1,setBg1]=useState(x);
+      const handleDislike = e => {
+      axios.post(`/api/forum/${props._id}/downvote`)
+      .then(function(response){
+        console.log("DisLike Uploaded!")
+      })
+      if( bg1 == "disabled" )
       {
       const dislike1 = dislike +1; 
       setDislike(dislike1);
-      setBg1("secondary");      
+      setBg1("secondary");
       }
       else
       {
@@ -211,14 +263,20 @@ function Trending() {
     };
   // const [selected, setSelected] = React.useState(false);
   
-  return (
+   const displayForum =() =>
+  {
+    
+     
+    return data.map(forum =>{
+    return(
+      
     <div className={classes.root} align="center"> 
     <Paper className={classes.forumpage} >
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
         <div>
           <Typography className={classes.question} color="initial" align="left" gutterBottom>
-            What is better React or Angular?
+            {forum.title}
           </Typography>
         </div>
         <div>
@@ -227,287 +285,94 @@ function Trending() {
       </div>
         <div className={classes.content}>
         <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      {forum.text}
       </Typography>
       </div>
 
       </CardContent>
       <CardActions disableSpacing>
-      <CustomLike like={7} />
-      <CustomDislike dislike={0} />
+      <CustomLike like={forum.upvoters.length} _id={forum._id} upvoters={forum.upvoters}/>
+      <CustomDislike dislike={forum.downvoters.length} _id={forum._id} downvoters={forum.downvoters} />
       <IconButton >
           <CommentIcon/>
       </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
+      <IconButton style={{marginRight:"auto"}}>
           <ShareIcon />
       </IconButton>
       <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Javascript</Button>
+       {/* <Button disabled className={classes.button1} style={{ color: "#123800",}}>Javascript</Button>
       <Button  disabled className={classes.button1} style={{ color: "#123800",}}>React</Button>
       <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Angular</Button>
       <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Vue</Button>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Material UI</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>{forum.tags.name}</Button>  */}
+      {forum.tags.map(tag => {
+        // <Button  disabled className={classes.button1} style={{ color: "#123800",}}>{tag.name}</Button>
+      return(
+        <Button  disabled className={classes.button1} style={{ color: "#123800",}}>{tag.name}</Button>
+      )
+      })}
       </div>
         </CardActions>
         
     </Card>
     </Paper>
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-          <Typography className={classes.question} color="initial" align="left" gutterBottom>
-            Is django the best backend framework?
-          </Typography>
-        </div>
-        <div>
-      <Avatar className={classes.image} alt="abc"  align="left"/>
-      <Typography className={classes.username}>abc</Typography><br /><br />
-      </div>
-        <div className={classes.content}>
-        <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-      </div>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={25} />
-      <CustomDislike dislike={1} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Django</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Flask</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Node</Button>
-      </div>
-        </CardActions>
-        
-    </Card>
-    </Paper>
-     <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-          <Typography className={classes.question} color="initial" align="left" gutterBottom>
-            Which code editor is best?
-          </Typography>
-        </div>
-        <div>
-      <Avatar className={classes.image} alt="XYZ" align="left"/>
-      <Typography className={classes.username}>XYZ</Typography><br /><br />
-      </div>
-        <div className={classes.content}>
-        <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-      </div>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={101} />
-      <CustomDislike dislike={45} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Sublime</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Vscode</Button>
-      </div>
-        </CardActions>
-        
-    </Card>
-    </Paper>
-
-    <Paper className={classes.forumpage} >
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-          <Typography className={classes.question} color="initial" align="left" gutterBottom>
-            Will ML become an integral part of web development?
-          </Typography>
-        </div>
-        <div>
-      <Avatar className={classes.image} alt="ray"  align="left"/>
-      <Typography className={classes.username}>ray</Typography><br /><br />
-      </div>
-        <div className={classes.content}>
-        <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-      </div>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={90} />
-      <CustomDislike dislike={12} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Machine Learning</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Web Development</Button>
-      </div>
-        </CardActions>
-        
-    </Card>
-    </Paper>
-
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-          <Typography className={classes.question} color="initial" align="left" gutterBottom>
-              Scope of UI/UX?
-          </Typography>
-        </div>
-        <div>
-      <Avatar className={classes.image} alt="jake" align="left"/>
-      <Typography className={classes.username}>jake</Typography><br /><br />
-      </div>
-        <div className={classes.content}>
-        <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-      </div>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={98} />
-      <CustomDislike dislike={25} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>UI/UX</Button>
-   
-      </div>
-        </CardActions>
-        
-    </Card>
-    </Paper>
-   
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-          <Typography className={classes.question} color="initial" align="left" gutterBottom>
-           Which is more important,competitive coding or web development?
-          </Typography>
-        </div>
-        <div>
-      <Avatar className={classes.image} alt="AMY"  align="left"/>
-      <Typography className={classes.username}>AMY</Typography><br /><br />
-      </div>
-        <div className={classes.content}>
-        <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-      </div>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={25} />
-      <CustomDislike dislike={29} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>competitive coding</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Web Development</Button>
-      </div>
-        </CardActions>
-        
-    </Card>
-    </Paper>
-
-     <Paper className={classes.forumpage} >
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-          <Typography className={classes.question} color="initial" align="left" gutterBottom>
-            When will be our exams cancel?
-          </Typography>
-        </div>
-        <div>
-      <Avatar className={classes.image} alt="student" align="left"/>
-      <Typography className={classes.username}>Student</Typography><br /><br />
-      </div>
-        <div className={classes.content}>
-        <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-      </div>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={120} />
-      <CustomDislike dislike={2} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>COVID-19</Button>
-      </div>
-        </CardActions>
-        
-    </Card>
-    </Paper>
-     
-    
     </div>
     
 
-  );
-};
+    )
+  }
+  )}
 
+  return(
 
-const  New=(props)=>{
+    <div>
+    {displayForum()}
+    </div>
+  )
+}
+function New(props) {
   const classes=useStyles();
+  const[userid,setUserid]=useState(null);
   
-  function CustomLike(props){
-       const [like, setLike] = useState(props.like);
-      const[bg,setBg]=useState("disabled");
-    const handleLike = e => {
+  const [data, setData] = useState([])
+  
+  useEffect(() => {
+    
+      async function setDetails(){
+          var storedUserData = await getUserInfo(null,null);
+          try{
+              setUserid(storedUserData.id);
+          }
+          catch(error){
+              console.log(error)
+          }
+      }
+      setDetails();
+    axios.get('/api/forum').then(json => setData(json.data))
+  },[])
+  
 
-      if(like===props.like)
+    function CustomLike(props){
+      const [like, setLike] = useState(props.like);
+      if(props.upvoters.includes(userid)==false)
+      {
+        var x = "disabled";
+      }
+      else
+      {
+        var x="secondary";
+      }
+      const[bg,setBg]=useState(x);
+      const handleLike = e => {
+      axios.post(`/api/forum/${props._id}/upvote`)
+      .then(function(response){
+        console.log("Like Uploaded!")
+      })
+      if( bg == "disabled" )
       {
       const like1 = like +1; 
       setLike(like1);
-      setBg("secondary");      
+      setBg("secondary");
       }
       else
       {
@@ -527,15 +392,26 @@ const  New=(props)=>{
       )
     };
      function CustomDislike(props){
-       const [dislike, setDislike] = useState(props.dislike);
-      const[bg1,setBg1]=useState("disabled");
-    const handleDislike = e => {
-
-      if(dislike===props.dislike)
+      const [dislike, setDislike] = useState(props.dislike);
+      if(props.downvoters.includes(userid)==false)
+      {
+        var x = "disabled";
+      }
+      else
+      {
+        var x="secondary";
+      }
+      const[bg1,setBg1]=useState(x);
+      const handleDislike = e => {
+      axios.post(`/api/forum/${props._id}/downvote`)
+      .then(function(response){
+        console.log("DisLike Uploaded!")
+      })
+      if( bg1 == "disabled" )
       {
       const dislike1 = dislike +1; 
       setDislike(dislike1);
-      setBg1("secondary");      
+      setBg1("secondary");
       }
       else
       {
@@ -548,137 +424,273 @@ const  New=(props)=>{
         <div>
         <IconButton onClick={handleDislike} color={bg1}>
           <ThumbDownIcon />
-         <div className={classes.like}>{dislike}</div>
+          <div className={classes.like}>{dislike}</div>
       </IconButton>
     </div>
       )
     };
-  
   // const [selected, setSelected] = React.useState(false);
   
-  return (
-    <div className={classes.root} align="center">
+   const displayForum =() =>
+  {
+    
+     
+  return data.map(forum =>{if(forum.author)
+      {axios.get(`/api/users/${forum.author}`).then(response => response.json()).then((json) => {
+        val = json.data
+        console.log("data1",val.name)})
+    }
+        else
+        {
+          console.log("no author",forum._id);
+        }
+    return(
+    <div className={classes.root} align="center"> 
+    <Paper className={classes.forumpage} >
+        <Card className={classes.card} variant={"outlined"}>
+      <CardContent className={classes.cardcontent}>
+        <div>
+          <Typography className={classes.question} color="initial" align="left" gutterBottom>
+            {forum.title}
+          </Typography>
+        </div>
+        <div>
+      <Avatar className={classes.image} alt="ABC" align="left"/>
+    <Typography className={classes.username}>{val.name}</Typography><br /><br />
+      </div>
+        <div className={classes.content}>
+        <Typography variant="body1" align="left">
+      {forum.text}
+      </Typography>
+      </div>
+
+      </CardContent>
+      <CardActions disableSpacing>
+      <CustomLike like={forum.upvoters.length} _id={forum._id} upvoters={forum.upvoters}/>
+      <CustomDislike dislike={forum.downvoters.length} _id={forum._id} downvoters={forum.downvoters} />
+      <IconButton >
+          <CommentIcon/>
+      </IconButton>
+      <IconButton style={{marginRight:"auto"}}>
+          <ShareIcon />
+      </IconButton>
+      <div style={{marginLeft:"auto"}}>
+       {/* <Button disabled className={classes.button1} style={{ color: "#123800",}}>Javascript</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>React</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Angular</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Vue</Button>
+      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>{forum.tags.name}</Button>  */}
+      {forum.tags.map(tag => {
+        // <Button  disabled className={classes.button1} style={{ color: "#123800",}}>{tag.name}</Button>
+      return(
+        <Button  disabled className={classes.button1} style={{ color: "#123800",}}>{tag.name}</Button>
+      )
+      })}
+      </div>
+        </CardActions>
         
-    
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-        <Typography color="initial" align="left" className={classes.question} gutterBottom>
-        What is the best frontend language to use in a hackathon?
-        </Typography>
-
-        </div>
-        <div>
-      <Avatar alt="def" className={classes.image}  align="left"  />
-      <Typography className={classes.username}>def</Typography><br /><br />
-      </div>
-        <Typography variant="body2" align="left" >
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={55} />
-      <CustomDislike dislike={2} />
-      <IconButton>
-          <CommentIcon/>
-      </IconButton > 
-      <IconButton  style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>HTML</Button>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>React</Button>
-      
-      </div>
-        </CardActions>
     </Card>
     </Paper>
-
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-        <Typography color="initial" align="left" className={classes.question} gutterBottom>
-        What goes better with react,node or django?
-        </Typography>
-
-        </div>
-        <div>
-      <Avatar alt="DEF" className={classes.image}   align="left"  />
-      <Typography className={classes.username}>DEF</Typography><br /><br />
-      </div>
-        <Typography variant="body2" align="left" >
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={70} />
-      <CustomDislike dislike={19} />
-      <IconButton>
-          <CommentIcon/>
-      </IconButton > 
-      <IconButton  style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Bootstrap</Button>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Android</Button>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>React Native</Button>
-      </div>
-        </CardActions>
-    </Card>
-    </Paper>
-   
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-        <Typography color="initial" align="left" className={classes.question} gutterBottom>
-          Can github be tedious to work on in a hackathon?
-        </Typography>
-
-        </div>
-        <div>
-      <Avatar alt="UVW" className={classes.image}  align="left"  />
-      <Typography className={classes.username}>UVW</Typography><br /><br />
-      </div>
-        <Typography variant="body2" align="left" >
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={27} />
-      <CustomDislike dislike={5} />
-      <IconButton>
-          <CommentIcon/>
-      </IconButton > 
-      <IconButton  style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Github</Button>
-      
-      </div>
-        </CardActions>
-    </Card>
-    </Paper>
-    
-    
     </div>
     
 
-  );
-};
+    )
+  }
+  )}
+
+  return(
+
+    <div>
+    {displayForum()}
+    </div>
+  )
+}
+
+
+// const  New=(props)=>{
+//   const classes=useStyles();
+  
+//   function CustomLike(props){
+//        const [like, setLike] = useState(props.like);
+//       const[bg,setBg]=useState("disabled");
+//     const handleLike = e => {
+
+//       if(like===props.like)
+//       {
+//       const like1 = like +1; 
+//       setLike(like1);
+//       setBg("secondary");      
+//       }
+//       else
+//       {
+//         const like2 = like-1;
+//         setLike(like2);
+//         setBg("disabled");
+//       }
+//     }
+//       return(
+//         <div>
+//         <IconButton onClick={handleLike} color={bg}>
+//           <ThumbUpIcon />
+//           <div className={classes.like}>{like}</div>
+//       </IconButton>
+    
+//     </div>
+//       )
+//     };
+//      function CustomDislike(props){
+//        const [dislike, setDislike] = useState(props.dislike);
+//       const[bg1,setBg1]=useState("disabled");
+//     const handleDislike = e => {
+
+//       if(dislike===props.dislike)
+//       {
+//       const dislike1 = dislike +1; 
+//       setDislike(dislike1);
+//       setBg1("secondary");      
+//       }
+//       else
+//       {
+//         const dislike2 = dislike-1;
+//         setDislike(dislike2);
+//         setBg1("disabled");
+//       }
+//     }
+//       return(
+//         <div>
+//         <IconButton onClick={handleDislike} color={bg1}>
+//           <ThumbDownIcon />
+//          <div className={classes.like}>{dislike}</div>
+//       </IconButton>
+//     </div>
+//       )
+//     };
+  
+//   // const [selected, setSelected] = React.useState(false);
+  
+//   return (
+//     <div className={classes.root} align="center">
+        
+    
+//     <Paper className={classes.forumpage}>
+//         <Card className={classes.card} variant={"outlined"}>
+//       <CardContent className={classes.cardcontent}>
+//         <div>
+//         <Typography color="initial" align="left" className={classes.question} gutterBottom>
+//         What is the best frontend language to use in a hackathon?
+//         </Typography>
+
+//         </div>
+//         <div>
+//       <Avatar alt="def" className={classes.image}  align="left"  />
+//       <Typography className={classes.username}>def</Typography><br /><br />
+//       </div>
+//         <Typography variant="body2" align="left" >
+//         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+//         unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+//         dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+//       </Typography>
+
+//       </CardContent>
+//       <CardActions disableSpacing>
+//       <CustomLike like={55} />
+//       <CustomDislike dislike={2} />
+//       <IconButton>
+//           <CommentIcon/>
+//       </IconButton > 
+//       <IconButton  style={{marginRight:"auto"}}>
+//           <ShareIcon />
+//       </IconButton>
+//       <div style={{marginLeft:"auto"}}>
+//       <Button disabled className={classes.button1} style={{ color: "#123800",}}>HTML</Button>
+//       <Button disabled className={classes.button1} style={{ color: "#123800",}}>React</Button>
+      
+//       </div>
+//         </CardActions>
+//     </Card>
+//     </Paper>
+
+//     <Paper className={classes.forumpage}>
+//         <Card className={classes.card} variant={"outlined"}>
+//       <CardContent className={classes.cardcontent}>
+//         <div>
+//         <Typography color="initial" align="left" className={classes.question} gutterBottom>
+//         What goes better with react,node or django?
+//         </Typography>
+
+//         </div>
+//         <div>
+//       <Avatar alt="DEF" className={classes.image}   align="left"  />
+//       <Typography className={classes.username}>DEF</Typography><br /><br />
+//       </div>
+//         <Typography variant="body2" align="left" >
+//         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+//         unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+//         dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+//       </Typography>
+
+//       </CardContent>
+//       <CardActions disableSpacing>
+//       <CustomLike like={70} />
+//       <CustomDislike dislike={19} />
+//       <IconButton>
+//           <CommentIcon/>
+//       </IconButton > 
+//       <IconButton  style={{marginRight:"auto"}}>
+//           <ShareIcon />
+//       </IconButton>
+//       <div style={{marginLeft:"auto"}}>
+//       <Button disabled className={classes.button1} style={{ color: "#123800",}}>Bootstrap</Button>
+//       <Button disabled className={classes.button1} style={{ color: "#123800",}}>Android</Button>
+//       <Button disabled className={classes.button1} style={{ color: "#123800",}}>React Native</Button>
+//       </div>
+//         </CardActions>
+//     </Card>
+//     </Paper>
+   
+//     <Paper className={classes.forumpage}>
+//         <Card className={classes.card} variant={"outlined"}>
+//       <CardContent className={classes.cardcontent}>
+//         <div>
+//         <Typography color="initial" align="left" className={classes.question} gutterBottom>
+//           Can github be tedious to work on in a hackathon?
+//         </Typography>
+
+//         </div>
+//         <div>
+//       <Avatar alt="UVW" className={classes.image}  align="left"  />
+//       <Typography className={classes.username}>UVW</Typography><br /><br />
+//       </div>
+//         <Typography variant="body2" align="left" >
+//         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
+//         unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
+//         dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+//       </Typography>
+
+//       </CardContent>
+//       <CardActions disableSpacing>
+//       <CustomLike like={27} />
+//       <CustomDislike dislike={5} />
+//       <IconButton>
+//           <CommentIcon/>
+//       </IconButton > 
+//       <IconButton  style={{marginRight:"auto"}}>
+//           <ShareIcon />
+//       </IconButton>
+//       <div style={{marginLeft:"auto"}}>
+//       <Button disabled className={classes.button1} style={{ color: "#123800",}}>Github</Button>
+      
+//       </div>
+//         </CardActions>
+//     </Card>
+//     </Paper>
+    
+    
+//     </div>
+    
+
+//   );
+// };
 
 const  User=(props)=>{
   const classes=useStyles();
@@ -772,7 +784,7 @@ const  User=(props)=>{
           <CommentIcon/>
       </IconButton>
 
-      <IconButton  style={{marginRight:"150px"}}>
+      <IconButton  style={{marginRight:"auto"}}>
           <ShareIcon />
       </IconButton>
       <div style={{marginLeft:"auto"}}>
@@ -811,7 +823,7 @@ const  User=(props)=>{
           <CommentIcon/>
       </IconButton>
 
-      <IconButton  style={{marginRight:"150px"}}>
+      <IconButton  style={{marginRight:"auto"}}>
           <ShareIcon />
       </IconButton>
       <div style={{marginLeft:"auto"}}>
@@ -921,7 +933,7 @@ const  University=(props)=>{
           <CommentIcon/>
       </IconButton>
 
-      <IconButton  style={{marginRight:"150px"}}>
+      <IconButton  style={{marginRight:"auto"}}>
           <ShareIcon />
       </IconButton>
       <div style={{marginLeft:"auto"}}>
@@ -1004,7 +1016,6 @@ export default function Forum() {
 
   return (
     <div className={classes.root} align="center"> 
-    
       <div className={classes.demo1}>
        
           <Grid>
