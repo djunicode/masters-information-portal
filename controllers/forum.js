@@ -63,7 +63,6 @@ exports.create = async (req, res) => {
  */
 exports.getAll = async (req, res) => {
   let queryFilter = req.query;
-
   if (queryFilter.slugs) {
     const { slugs } = queryFilter;
     const tags_id = await Tag.find({ slug: { $in: slugs } }).select({ _id: 1 });
@@ -73,6 +72,18 @@ exports.getAll = async (req, res) => {
   if (queryFilter.search) {
     const { search } = queryFilter;
     queryFilter = { $text: { $search: search } };
+  }
+  if(queryFilter.latest){
+    const {latest} = queryFilter
+    delete queryFilter.latest
+    
+    const docs = await Forum.find(queryFilter).sort({createdAt:-1}).limit(parseInt(latest)).populate('tags', '-followers').exec()
+  if (!docs) {
+    return res.status(404).json({
+      msg: 'No documents found',
+    });
+  }
+  return res.json(docs);
   }
 
   const docs = await Forum.find(queryFilter).populate('tags', '-followers').exec();
