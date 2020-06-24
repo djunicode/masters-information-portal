@@ -1,5 +1,6 @@
 const Chat = require('../models/chat');
 const logger = require('../config/logger');
+const User = require('../models/user');
 
 /**
  * @apiDefine Chat Chat
@@ -29,11 +30,13 @@ const logger = require('../config/logger');
  * }
  */
 exports.create = async (req, res) => {
-  const doc = await Chat.create(req.body);
+  const data = req.body;
+  data.sender = req.user._id;
+
+  const doc = await Chat.create(data);
   logger.created('Chat', doc);
   return res.status(201).json(doc);
 };
-
 
 /**
  * @apiGroup Chat
@@ -42,27 +45,29 @@ exports.create = async (req, res) => {
  * @apiPermission All logged in users with jwt token
  * @apiSuccess (200) {Array} Array of all the chat objects of the user from the db
  */
-exports.getChats=async(req, res) => {
-  const userId = res.locals.user._id;
 
-  const sentChats = await Chat.find({sender:userId});
-  sentChats.forEach(async c => {
-    const profile = await c.receiver.getPublicProfile();
-    c.profile = profile;
-  });
+exports.getChats = async (req, res) => {
+  const userId = req.user._id;
 
-  const receivedChats = await Chat.find({receiver:userId});
-  receivedChats.forEach(async c => {
-    const profile = await c.sender.getPublicProfile();
-    c.profile = profile;
-  });
+  const sentChats = await Chat.find({ sender: userId }).populate('receiver', '-password');
+  const sentChatsArray = sentChats.map((d) => ({
+    ...d.toObject(),
+    receiver: d.receiver.id,
+    user: d.receiver,
+  }));
+  const receivedChats = await Chat.find({ receiver: userId }).populate('sender', '-password');
+  const receivedChatsArray = receivedChats.map((d) => ({
+    ...d.toObject(),
+    sender: d.sender.id,
+    user: d.sender,
+  }));
 
-  const chats = [...sentChats, ...receivedChats];
-  
-  if (chats.length == 0) {
+  const chats = [...sentChatsArray, ...receivedChatsArray];
+
+  if (chats.length === 0) {
     // Send 404 but empty chats
     return res.status(404).send([]);
   }
 
   return res.status(200).send(chats);
-}
+};

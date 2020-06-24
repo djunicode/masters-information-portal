@@ -22,5 +22,6 @@ module.exports = {
     'no-console': 0,
     'prettier/prettier': ['error'],
     'max-len': 0,
+    'no-underscore-dangle': 0,
   }
 };

@@ -13,6 +13,7 @@ import Home from '../../Pages/Homepage/home.js';
 import SearchProfiles from '../profile3';
 import UniversityPage from '../universitypage';
 import QuestionReply from '../QuestionReply';
+import UserProfile from '../ProfileDetail';
 
 function RootRouter(props) {
 	const [homepage,setHomepage] = React.useState(false)
@@ -44,6 +45,7 @@ function RootRouter(props) {
 	        <Route exact path="/search" component={SearchProfiles} />
 	        <Route exact path="/university" component={UniversityPage} />
 	        <Route exact path="/question-reply" component={renderQuestionReply} />
+	        <Route exact path="/:profileID" component={UserProfile} />
 	        <Route component={invalidRoute} />
       	</Switch>
     </Router>
