@@ -1,5 +1,7 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { makeStyles, useTheme ,withStyles} from '@material-ui/core/styles';
+import {getUserInfo} from '../Helpers/fetchRequests.js';
+import axios from 'axios';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
@@ -20,7 +22,8 @@ import Tab from '@material-ui/core/Tab';
 import SwipeableViews from 'react-swipeable-views';
 import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
-// import ToggleButton from '@material-ui/lab/ToggleButton';
+import Cookies from 'js-cookie';
+const token = Cookies.get('jwt');
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -45,9 +48,7 @@ TabPanel.propTypes = {
 };
 const useStyles1 = makeStyles(theme => ({
   root: {
-    // backgroundColor:'#E5E5E5',
     flexGrow:1,
-    // marginTop:0,
     
   },
   input: {
@@ -58,11 +59,10 @@ const useStyles1 = makeStyles(theme => ({
     padding: 10,
   },
   search:{
-      // borderRadius:'25px',
       width:'300px',
       textAlign:"center",
-      // margin:'5px',
       backgroundColor:"#F8F8F8",
+      float:"left",
       display:"flex",
   },
   paper: {
@@ -78,8 +78,6 @@ const useStyles1 = makeStyles(theme => ({
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
-    // maxWidth:1100,
-    // float:'right',
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -96,8 +94,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   forumpage:{
-      // marginTop:'10px',
-      // minHeight:'500px',
+     
       padding:'5px',
       maxWidth:'1000px',
       margin:"15px",
@@ -111,9 +108,9 @@ const useStyles = makeStyles(theme => ({
     margin:'10px',
   },
   cardcontent:{
-    margin:"5px",
     float:'left',
-    marginTop:"5px"
+    minWidth:"1000px",
+  
   },
   like:{
     textAlign:"left",
@@ -125,16 +122,17 @@ const useStyles = makeStyles(theme => ({
 
   },
   question:{
-    marginTop:"5px",
-    fontSize:"23px",
+    fontSize:"24px",
     fontWeight:"bold",
-    fontFamily:"Arial"
+    fontFamily:"Arial",
+    color:"#333333"
   },
   username:{
     float:"left",
+    fontSize:"18px",
     marginLeft:"5px",
     paddingTop:"8px",
-    fontWeight:"bold",
+    color:"#333333"
   },
   image:{
     float:"left",
@@ -143,27 +141,101 @@ const useStyles = makeStyles(theme => ({
     color: "#123800",
     backgroundColor:"#8cd4af",
     fontWeight:"bold",
-    margin:"5px",
+    marginLeft:"5px",
+    marginTop:"5px",
+    marginRight:"none",
     opacity:"0.9",
     borderRadius:"5px",
     fontSize:"12px",
+    float:"right",
     minWidth:"100px"
   },
 
 }));
 
-function Trending() {
+function Recommended(props) {
   const classes=useStyles();
-    function CustomLike(props){
-       const [like, setLike] = useState(props.like);
-      const[bg,setBg]=useState("disabled");
-    const handleLike = e => {
+  const[userid,setUserid]=useState(null);
+  const [data, setData] = useState([])
+  
+  useEffect(() => {
+    
+    async function setDetails(){
+        var storedUserData = await getUserInfo(null,null);
+        try{
+            setUserid(storedUserData.id);
+           }
+        catch(error){
+            console.log(error)
+        }
+    }
+    setDetails();
+    axios.get('/api/forum/recommended',{
+      headers:{
+        Authorization : token
+      }
+    }).then(async(json) => {
+    let mydata = json.data
+    for (let forum of mydata){
+      if(forum.author){
+        const response = await fetch(`/api/users/${forum.author}`,{});
+        const json1 = await response.json();
+        forum.authorName = json1.name;
+        forum.Avatar = json1.avatarUrl;
+      }
+      else{
+        forum.authorName = null
+      }
+    }
+    setData(mydata)
+  })
+},[])
+  
 
-      if(like===props.like)
+function ToggleLike(props){
+  const[like,setLike]=useState(props.like);
+  const[dislike,setDislike]=useState(props.dislike);
+  if(props.upvoters.includes(userid)===false && props.downvoters.includes(userid)===false)
+  {
+    var x ="disabled";
+    var y="disabled";
+  }
+  else if(props.upvoters.includes(userid)===true && props.downvoters.includes(userid)===false)
+  {
+     x = "secondary";
+     y = "disabled";
+  }
+  else if(props.upvoters.includes(userid)===false && props.downvoters.includes(userid)===true)
+  {
+     x = "disabled";
+     y= "secondary";
+  }
+  else
+  {
+    console.log("error");
+
+  }
+  const[bg,setBg]=useState(x);
+  const[bg1,setBg1]=useState(y);
+  const handleLike = e => {
+      axios.post(`/api/forum/${props._id}/upvote`)
+      .then(function(response){
+        console.log("Like Uploaded!")
+      })
+      if( bg === "disabled" )
       {
+        if(bg1 === "secondary")
+          {
+            setBg1("disabled");
+            setDislike(dislike-1);
+          }
+          else
+          {
+            console.log("dislike was already disabled")
+          }
       const like1 = like +1; 
       setLike(like1);
-      setBg("secondary");      
+      setBg("secondary");
       }
       else
       {
@@ -172,770 +244,477 @@ function Trending() {
         setBg("disabled");
       }
     }
-      return(
+    const handleDislike = e => {
+        axios.post(`/api/forum/${props._id}/downvote`)
+        .then(function(response){
+          console.log("DisLike Uploaded!")
+        })
+        if( bg1 === "disabled" )
+        {
+          if(bg === "secondary")
+          {
+            setBg("disabled");
+            setLike(like-1);
+          }
+          else{
+            console.log("bg was already disabled");
+          }
+        const dislike1 = dislike +1; 
+        setDislike(dislike1);
+        setBg1("secondary");
+        }
+        else
+        {
+          const dislike2 = dislike-1;
+          setDislike(dislike2);
+          setBg1("disabled");
+        }
+      }
+ 
+  return(
         <div>
         <IconButton onClick={handleLike} color={bg}>
           <ThumbUpIcon />
           <div className={classes.like}>{like}</div>
       </IconButton>
-    
-    </div>
-      )
-    };
-     function CustomDislike(props){
-       const [dislike, setDislike] = useState(props.dislike);
-      const[bg1,setBg1]=useState("disabled");
-    const handleDislike = e => {
-
-      if(dislike===props.dislike)
-      {
-      const dislike1 = dislike +1; 
-      setDislike(dislike1);
-      setBg1("secondary");      
-      }
-      else
-      {
-        const dislike2 = dislike-1;
-        setDislike(dislike2);
-        setBg1("disabled");
-      }
-    }
-      return(
-        <div>
-        <IconButton onClick={handleDislike} color={bg1}>
+      <IconButton  onClick= {handleDislike} color={bg1}>
           <ThumbDownIcon />
           <div className={classes.like}>{dislike}</div>
       </IconButton>
+    
     </div>
       )
-    };
-  // const [selected, setSelected] = React.useState(false);
+}
+    const displayForum =() =>
+    {
+    return data.map(forum =>{
+      return(
+      <div className={classes.root} align="center"> 
+      <Paper className={classes.forumpage} >
+          <Card className={classes.card} variant={"outlined"}>
+        <CardContent className={classes.cardcontent}>
+          <div>
+            <Typography className={classes.question} color="initial" align="left" gutterBottom>
+              {forum.title}
+            </Typography>
+          </div>
+          <div>
+        <Avatar className={classes.image} alt={forum.authorName} src={forum.Avatar} align="left"/>
+      <Typography className={classes.username}>{forum.authorName}</Typography><br /><br />
+        </div>
+          <div className={classes.content}>
+          <Typography variant="body1" align="left">
+        {forum.text}
+        </Typography>
+        </div>
   
-  return (
+        </CardContent>
+        <CardActions disableSpacing>
+        <ToggleLike like={forum.upvoters.length} dislike={forum.downvoters.length} _id={forum._id} upvoters={forum.upvoters} downvoters={forum.downvoters}/>
+        <IconButton >
+            <CommentIcon/>
+        </IconButton>
+        <IconButton style={{marginRight:"auto"}}>
+            <ShareIcon />
+        </IconButton>
+        <div style={{marginLeft:"auto"}}>
+        {forum.tags.map(tag => {
+        return(
+          <Button  disabled className={classes.button1} style={{ color: "#123800",}}>{tag.name}</Button>
+        )
+        })}
+        </div>
+          </CardActions>
+          
+      </Card>
+      </Paper>
+      </div>
+      )
+    }
+    )}
+
+  return(
+
+    <div>
+    {displayForum()}
+    </div>
+  )
+}
+function Latest(props) {
+  const classes=useStyles();
+  const[userid,setUserid]=useState(null);
+  const [data, setData] = useState([])
+  
+  useEffect(() => {
+    
+    async function setDetails(){
+        var storedUserData = await getUserInfo(null,null);
+        try{
+            setUserid(storedUserData.id);
+            console.log(storedUserData.id);
+           }
+        catch(error){
+            console.log(error)
+        }
+    }
+    setDetails();
+    axios.get('/api/forum?latest=5').then(async(json) => {
+    let mydata = json.data
+    for (let forum of mydata){
+      if(forum.author){
+        const response = await fetch(`/api/users/${forum.author}`,{});
+        const json1 = await response.json();
+        forum.authorName = json1.name;
+        forum.Avatar = json1.avatarUrl;
+      }
+      else{
+        forum.authorName = null
+      }
+    }
+    console.log("test")
+    console.log(mydata)
+    setData(mydata)
+  })
+},[])
+
+  function ToggleLike(props){
+    const[like,setLike]=useState(props.like);
+    const[dislike,setDislike]=useState(props.dislike);
+    if(props.upvoters.includes(userid)===false && props.downvoters.includes(userid)===false)
+    {
+      var x ="disabled";
+      var y="disabled";
+    }
+    else if(props.upvoters.includes(userid)===true && props.downvoters.includes(userid)===false)
+    {
+       x = "secondary";
+       y = "disabled";
+    }
+    else if(props.upvoters.includes(userid)===false && props.downvoters.includes(userid)===true)
+    {
+       x = "disabled";
+       y= "secondary";
+    }
+    else
+    {
+      console.log("error1");
+
+    }
+    const[bg,setBg]=useState(x);
+    const[bg1,setBg1]=useState(y);
+    const handleLike = e => {
+        axios.post(`/api/forum/${props._id}/upvote`)
+        .then(function(response){
+          console.log("Like Uploaded!")
+        })
+        if( bg === "disabled" )
+        {
+          if(bg1 === "secondary")
+            {
+              setBg1("disabled");
+              setDislike(dislike-1);
+            }
+            else
+            {
+              console.log("dislike was already disabled")
+            }
+        const like1 = like +1; 
+        setLike(like1);
+        setBg("secondary");
+        }
+        else
+        {
+          const like2 = like-1;
+          setLike(like2);
+          setBg("disabled");
+        }
+      }
+      const handleDislike = e => {
+          axios.post(`/api/forum/${props._id}/downvote`)
+          .then(function(response){
+            console.log("DisLike Uploaded!")
+          })
+          if( bg1 === "disabled" )
+          {
+            if(bg === "secondary")
+            {
+              setBg("disabled");
+              setLike(like-1);
+            }
+            else{
+              console.log("bg was already disabled");
+            }
+          const dislike1 = dislike +1; 
+          setDislike(dislike1);
+          setBg1("secondary");
+          }
+          else
+          {
+            const dislike2 = dislike-1;
+            setDislike(dislike2);
+            setBg1("disabled");
+          }
+        }
+   
+    return(
+          <div>
+          <IconButton onClick={handleLike} color={bg}>
+            <ThumbUpIcon />
+            <div className={classes.like}>{like}</div>
+        </IconButton>
+        <IconButton  onClick= {handleDislike} color={bg1}>
+            <ThumbDownIcon />
+            <div className={classes.like}>{dislike}</div>
+        </IconButton>
+      
+      </div>
+        )
+  }
+  
+   const displayForum =() =>
+  {
+  return data.map(forum =>{
+    return(
     <div className={classes.root} align="center"> 
     <Paper className={classes.forumpage} >
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
         <div>
           <Typography className={classes.question} color="initial" align="left" gutterBottom>
-            What is better React or Angular?
+            {forum.title}
           </Typography>
         </div>
         <div>
-      <Avatar className={classes.image} alt="ABC" align="left"/>
-      <Typography className={classes.username}>ABC</Typography><br /><br />
+      <Avatar className={classes.image} alt={forum.authorName} src={forum.Avatar} align="left"/>
+    <Typography className={classes.username}>{forum.authorName}</Typography><br /><br />
       </div>
         <div className={classes.content}>
         <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      {forum.text}
       </Typography>
       </div>
 
       </CardContent>
       <CardActions disableSpacing>
-      <CustomLike like={7} />
-      <CustomDislike dislike={0} />
+      <ToggleLike like={forum.upvoters.length} dislike={forum.downvoters.length} _id={forum._id} upvoters={forum.upvoters} downvoters={forum.downvoters}/>
       <IconButton >
           <CommentIcon/>
       </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
+      <IconButton style={{marginRight:"auto"}}>
           <ShareIcon />
       </IconButton>
       <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Javascript</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>React</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Angular</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Vue</Button>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Material UI</Button>
+      {forum.tags.map(tag => {
+      return(
+        <Button  disabled className={classes.button1} style={{ color: "#123800",}}>{tag.name}</Button>
+      )
+      })}
       </div>
         </CardActions>
         
     </Card>
     </Paper>
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-          <Typography className={classes.question} color="initial" align="left" gutterBottom>
-            Is django the best backend framework?
-          </Typography>
-        </div>
-        <div>
-      <Avatar className={classes.image} alt="abc"  align="left"/>
-      <Typography className={classes.username}>abc</Typography><br /><br />
-      </div>
-        <div className={classes.content}>
-        <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-      </div>
+    </div>
+    
 
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={25} />
-      <CustomDislike dislike={1} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Django</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Flask</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Node</Button>
-      </div>
-        </CardActions>
-        
-    </Card>
-    </Paper>
-     <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-          <Typography className={classes.question} color="initial" align="left" gutterBottom>
-            Which code editor is best?
-          </Typography>
-        </div>
-        <div>
-      <Avatar className={classes.image} alt="XYZ" align="left"/>
-      <Typography className={classes.username}>XYZ</Typography><br /><br />
-      </div>
-        <div className={classes.content}>
-        <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-      </div>
+    )
+  }
+  )}
 
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={101} />
-      <CustomDislike dislike={45} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Sublime</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Vscode</Button>
-      </div>
-        </CardActions>
-        
-    </Card>
-    </Paper>
+  return(
 
+    <div>
+    {displayForum()}
+    </div>
+  )
+}
+
+function All(props) {
+  const classes=useStyles();
+  const[userid,setUserid]=useState(null);
+  const [data, setData] = useState([])
+  
+  useEffect(() => {
+    
+    async function setDetails(){
+        var storedUserData = await getUserInfo(null,null);
+        try{
+            setUserid(storedUserData.id);
+           }
+        catch(error){
+            console.log(error)
+        }
+    }
+    setDetails();
+    axios.get('/api/forum').then(async(json) => {
+    let mydata = json.data
+    for (let forum of mydata){
+      if(forum.author){
+        const response = await fetch(`/api/users/${forum.author}`,{});
+        const json1 = await response.json();
+        forum.authorName = json1.name;
+        forum.Avatar = json1.avatarUrl;
+      }
+      else{
+        forum.authorName = null
+      }
+    }
+    console.log("test")
+    console.log(mydata)
+    setData(mydata)
+  })
+},[])
+  
+function ToggleLike(props){
+  const[like,setLike]=useState(props.like);
+  const[dislike,setDislike]=useState(props.dislike);
+  if(props.upvoters.includes(userid)===false && props.downvoters.includes(userid)===false)
+  {
+    var x ="disabled";
+    var y="disabled";
+  }
+  else if(props.upvoters.includes(userid)===true && props.downvoters.includes(userid)===false)
+  {
+     x = "secondary";
+     y = "disabled";
+  }
+  else if(props.upvoters.includes(userid)===false && props.downvoters.includes(userid)===true)
+  {
+     x = "disabled";
+     y= "secondary";
+  }
+  else
+  {
+    console.log("error");
+
+  }
+  const[bg,setBg]=useState(x);
+  const[bg1,setBg1]=useState(y);
+  const handleLike = e => {
+      axios.post(`/api/forum/${props._id}/upvote`)
+      .then(function(response){
+        console.log("Like Uploaded!")
+      })
+      if( bg === "disabled" )
+      {
+        if(bg1 === "secondary")
+          {
+            setBg1("disabled");
+            setDislike(dislike-1);
+          }
+          else
+          {
+            console.log("dislike was already disabled")
+          }
+      const like1 = like +1; 
+      setLike(like1);
+      setBg("secondary");
+      }
+      else
+      {
+        const like2 = like-1;
+        setLike(like2);
+        setBg("disabled");
+      }
+    }
+    const handleDislike = e => {
+        axios.post(`/api/forum/${props._id}/downvote`)
+        .then(function(response){
+          console.log("DisLike Uploaded!")
+        })
+        if( bg1 === "disabled" )
+        {
+          if(bg === "secondary")
+          {
+            setBg("disabled");
+            setLike(like-1);
+          }
+          else{
+            console.log("bg was already disabled");
+          }
+        const dislike1 = dislike +1; 
+        setDislike(dislike1);
+        setBg1("secondary");
+        }
+        else
+        {
+          const dislike2 = dislike-1;
+          setDislike(dislike2);
+          setBg1("disabled");
+        }
+      }
+ 
+  return(
+        <div>
+        <IconButton onClick={handleLike} color={bg}>
+          <ThumbUpIcon />
+          <div className={classes.like}>{like}</div>
+      </IconButton>
+      <IconButton  onClick= {handleDislike} color={bg1}>
+          <ThumbDownIcon />
+          <div className={classes.like}>{dislike}</div>
+      </IconButton>
+    
+    </div>
+      )
+}
+   const displayForum =() =>
+  {
+  return data.map(forum =>{
+    return(
+    <div className={classes.root} align="center"> 
     <Paper className={classes.forumpage} >
         <Card className={classes.card} variant={"outlined"}>
       <CardContent className={classes.cardcontent}>
         <div>
           <Typography className={classes.question} color="initial" align="left" gutterBottom>
-            Will ML become an integral part of web development?
+            {forum.title}
           </Typography>
         </div>
         <div>
-      <Avatar className={classes.image} alt="ray"  align="left"/>
-      <Typography className={classes.username}>ray</Typography><br /><br />
+      <Avatar className={classes.image} alt={forum.authorName} src={forum.Avatar} align="left"/>
+    <Typography className={classes.username}>{forum.authorName}</Typography><br /><br />
       </div>
         <div className={classes.content}>
         <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
+      {forum.text}
       </Typography>
       </div>
 
       </CardContent>
       <CardActions disableSpacing>
-      <CustomLike like={90} />
-      <CustomDislike dislike={12} />
+      <ToggleLike like={forum.upvoters.length} dislike={forum.downvoters.length} _id={forum._id} upvoters={forum.upvoters} downvoters={forum.downvoters}/>
       <IconButton >
           <CommentIcon/>
       </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
+      <IconButton style={{marginRight:"auto"}}>
           <ShareIcon />
       </IconButton>
       <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Machine Learning</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Web Development</Button>
-      </div>
-        </CardActions>
-        
-    </Card>
-    </Paper>
-
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-          <Typography className={classes.question} color="initial" align="left" gutterBottom>
-              Scope of UI/UX?
-          </Typography>
-        </div>
-        <div>
-      <Avatar className={classes.image} alt="jake" align="left"/>
-      <Typography className={classes.username}>jake</Typography><br /><br />
-      </div>
-        <div className={classes.content}>
-        <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-      </div>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={98} />
-      <CustomDislike dislike={25} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>UI/UX</Button>
-   
-      </div>
-        </CardActions>
-        
-    </Card>
-    </Paper>
-   
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-          <Typography className={classes.question} color="initial" align="left" gutterBottom>
-           Which is more important,competitive coding or web development?
-          </Typography>
-        </div>
-        <div>
-      <Avatar className={classes.image} alt="AMY"  align="left"/>
-      <Typography className={classes.username}>AMY</Typography><br /><br />
-      </div>
-        <div className={classes.content}>
-        <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-      </div>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={25} />
-      <CustomDislike dislike={29} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>competitive coding</Button>
-      <Button  disabled className={classes.button1} style={{ color: "#123800",}}>Web Development</Button>
-      </div>
-        </CardActions>
-        
-    </Card>
-    </Paper>
-
-     <Paper className={classes.forumpage} >
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-          <Typography className={classes.question} color="initial" align="left" gutterBottom>
-            When will be our exams cancel?
-          </Typography>
-        </div>
-        <div>
-      <Avatar className={classes.image} alt="student" align="left"/>
-      <Typography className={classes.username}>Student</Typography><br /><br />
-      </div>
-        <div className={classes.content}>
-        <Typography variant="body1" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-      </div>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={120} />
-      <CustomDislike dislike={2} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-      <IconButton style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>COVID-19</Button>
-      </div>
-        </CardActions>
-        
-    </Card>
-    </Paper>
-     
-    
-    </div>
-    
-
-  );
-};
-
-
-const  New=(props)=>{
-  const classes=useStyles();
-  
-  function CustomLike(props){
-       const [like, setLike] = useState(props.like);
-      const[bg,setBg]=useState("disabled");
-    const handleLike = e => {
-
-      if(like===props.like)
-      {
-      const like1 = like +1; 
-      setLike(like1);
-      setBg("secondary");      
-      }
-      else
-      {
-        const like2 = like-1;
-        setLike(like2);
-        setBg("disabled");
-      }
-    }
+      {forum.tags.map(tag => {
       return(
-        <div>
-        <IconButton onClick={handleLike} color={bg}>
-          <ThumbUpIcon />
-          <div className={classes.like}>{like}</div>
-      </IconButton>
-    
-    </div>
+        <Button  disabled className={classes.button1} style={{ color: "#123800",}}>{tag.name}</Button>
       )
-    };
-     function CustomDislike(props){
-       const [dislike, setDislike] = useState(props.dislike);
-      const[bg1,setBg1]=useState("disabled");
-    const handleDislike = e => {
-
-      if(dislike===props.dislike)
-      {
-      const dislike1 = dislike +1; 
-      setDislike(dislike1);
-      setBg1("secondary");      
-      }
-      else
-      {
-        const dislike2 = dislike-1;
-        setDislike(dislike2);
-        setBg1("disabled");
-      }
-    }
-      return(
-        <div>
-        <IconButton onClick={handleDislike} color={bg1}>
-          <ThumbDownIcon />
-         <div className={classes.like}>{dislike}</div>
-      </IconButton>
-    </div>
-      )
-    };
-  
-  // const [selected, setSelected] = React.useState(false);
-  
-  return (
-    <div className={classes.root} align="center">
+      })}
+      </div>
+        </CardActions>
         
-    
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-        <Typography color="initial" align="left" className={classes.question} gutterBottom>
-        What is the best frontend language to use in a hackathon?
-        </Typography>
-
-        </div>
-        <div>
-      <Avatar alt="def" className={classes.image}  align="left"  />
-      <Typography className={classes.username}>def</Typography><br /><br />
-      </div>
-        <Typography variant="body2" align="left" >
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={55} />
-      <CustomDislike dislike={2} />
-      <IconButton>
-          <CommentIcon/>
-      </IconButton > 
-      <IconButton  style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>HTML</Button>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>React</Button>
-      
-      </div>
-        </CardActions>
-    </Card>
-    </Paper>
-
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-        <Typography color="initial" align="left" className={classes.question} gutterBottom>
-        What goes better with react,node or django?
-        </Typography>
-
-        </div>
-        <div>
-      <Avatar alt="DEF" className={classes.image}   align="left"  />
-      <Typography className={classes.username}>DEF</Typography><br /><br />
-      </div>
-        <Typography variant="body2" align="left" >
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={70} />
-      <CustomDislike dislike={19} />
-      <IconButton>
-          <CommentIcon/>
-      </IconButton > 
-      <IconButton  style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Bootstrap</Button>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Android</Button>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>React Native</Button>
-      </div>
-        </CardActions>
-    </Card>
-    </Paper>
-   
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-        <Typography color="initial" align="left" className={classes.question} gutterBottom>
-          Can github be tedious to work on in a hackathon?
-        </Typography>
-
-        </div>
-        <div>
-      <Avatar alt="UVW" className={classes.image}  align="left"  />
-      <Typography className={classes.username}>UVW</Typography><br /><br />
-      </div>
-        <Typography variant="body2" align="left" >
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={27} />
-      <CustomDislike dislike={5} />
-      <IconButton>
-          <CommentIcon/>
-      </IconButton > 
-      <IconButton  style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Github</Button>
-      
-      </div>
-        </CardActions>
-    </Card>
-    </Paper>
-    
-    
-    </div>
-    
-
-  );
-};
-
-const  User=(props)=>{
-  const classes=useStyles();
-    function CustomLike(props){
-       const [like, setLike] = useState(props.like);
-      const[bg,setBg]=useState("disabled");
-    const handleLike = e => {
-
-      if(like===props.like)
-      {
-      const like1 = like +1; 
-      setLike(like1);
-      setBg("secondary");      
-      }
-      else
-      {
-        const like2 = like-1;
-        setLike(like2);
-        setBg("disabled");
-      }
-    }
-      return(
-        <div>
-        <IconButton onClick={handleLike} color={bg}>
-          <ThumbUpIcon />
-          <div className={classes.like}>{like}</div>
-      </IconButton>
-    
-    </div>
-      )
-    };
-     function CustomDislike(props){
-       const [dislike, setDislike] = useState(props.dislike);
-      const[bg1,setBg1]=useState("disabled");
-    const handleDislike = e => {
-
-      if(dislike===props.dislike)
-      {
-      const dislike1 = dislike +1; 
-      setDislike(dislike1);
-      setBg1("secondary");      
-      }
-      else
-      {
-        const dislike2 = dislike-1;
-        setDislike(dislike2);
-        setBg1("disabled");
-      }
-    }
-      return(
-        <div>
-        <IconButton onClick={handleDislike} color={bg1}>
-          <ThumbDownIcon />
-         <div className={classes.like}>{dislike}</div>
-      </IconButton>
-    </div>
-      )
-    };
-  
-  // const [selected, setSelected] = React.useState(false);
-  
-  return (
-    <div className={classes.root} align="center">
-        
-    
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-        <Typography color="initial" align="left"className={classes.question} gutterBottom>
-        Will Iron Man return?
-        </Typography>
-
-        </div>
-        <div>
-      <Avatar  className={classes.image} alt="GHI" align="left"  />
-      <Typography className={classes.username}>GHI</Typography><br /><br />
-      </div>
-
-        <Typography variant="body2" align="left" >
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-
-      </CardContent>
-      <CardActions disableSpacing>
-     <CustomLike like={50} />
-     <CustomDislike dislike={16} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-
-      <IconButton  style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Mark 42</Button>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Stark</Button>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Endgame</Button>
-      </div>
-        </CardActions>
-    </Card>
-    </Paper>
-        <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-        <Typography color="initial" align="left"className={classes.question} gutterBottom>
-          When will nova come in MCU?
-        </Typography>
-
-        </div>
-        <div>
-      <Avatar  className={classes.image} alt="ghi" align="left"  />
-      <Typography className={classes.username}>ghi</Typography><br /><br />
-      </div>
-
-        <Typography variant="body2" align="left" >
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-
-      </CardContent>
-      <CardActions disableSpacing>
-     <CustomLike like={81} />
-     <CustomDislike dislike={52} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-
-      <IconButton  style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>MCU</Button>
-      <Button disabled className={classes.button1} style={{ color: "#123800",}}>Nova</Button>
-      </div>
-        </CardActions>
-    </Card>
-    </Paper>
-   
-    
-    
-    </div>
-    
-
-  );
-};
-const  University=(props)=>{
-  const classes=useStyles();
-  function CustomLike(props){
-       const [like, setLike] = useState(props.like);
-      const[bg,setBg]=useState("disabled");
-    const handleLike = e => {
-
-      if(like===props.like)
-      {
-      const like1 = like +1; 
-      setLike(like1);
-      setBg("secondary");      
-      }
-      else
-      {
-        const like2 = like-1;
-        setLike(like2);
-        setBg("disabled");
-      }
-    }
-      return(
-        <div>
-        <IconButton onClick={handleLike} color={bg}>
-          <ThumbUpIcon />
-          <div className={classes.like}>{like}</div>
-      </IconButton>
-    
-    </div>
-      )
-    };
-     function CustomDislike(props){
-       const [dislike, setDislike] = useState(props.dislike);
-      const[bg1,setBg1]=useState("disabled");
-    const handleDislike = e => {
-
-      if(dislike===props.dislike)
-      {
-      const dislike1 = dislike +1; 
-      setDislike(dislike1);
-      setBg1("secondary");      
-      }
-      else
-      {
-        const dislike2 = dislike-1;
-        setDislike(dislike2);
-        setBg1("disabled");
-      }
-    }
-      return(
-        <div>
-        <IconButton onClick={handleDislike} color={bg1}>
-          <ThumbDownIcon />
-          <div className={classes.like}>{dislike}</div>
-      </IconButton>
-    </div>
-      )
-    };
-  
-  // const [selected, setSelected] = React.useState(false);
-  
-  return (
-    <div className={classes.root} align="center">
-        
-    
-    <Paper className={classes.forumpage}>
-        <Card className={classes.card} variant={"outlined"}>
-      <CardContent className={classes.cardcontent}>
-        <div>
-        <Typography color="initial" align="left" className={classes.question} gutterBottom>
-        Is it that hard to make money?
-        </Typography>
-
-        </div>
-        <div >
-      <Avatar  className={classes.image}  alt="JKL" align="left" />
-      <Typography className={classes.username}>JKL</Typography><br /><br />
-      </div>
-
-        <Typography variant="body2" align="left">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur
-        unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam
-        dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.
-      </Typography>
-
-      </CardContent>
-      <CardActions disableSpacing>
-      <CustomLike like={99} />
-      <CustomDislike dislike={12} />
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
-
-      <IconButton  style={{marginRight:"150px"}}>
-          <ShareIcon />
-      </IconButton>
-      <div style={{marginLeft:"auto"}}>
-      <Button disabled className={classes.button1}style={{ color: "#123800",}}>Python</Button>
-     
-      </div>
-        </CardActions>
     </Card>
     </Paper>
     </div>
     
 
-  );
-};
+    )
+  }
+  )}
+
+  return(
+
+    <div>
+    {displayForum()}
+    </div>
+  )
+}
 // function a11yProps(index) {
 //   return {
 //     id: `full-width-tab-${index}`,
@@ -945,10 +724,11 @@ const  University=(props)=>{
 
 const AntTabs = withStyles({
   root: {
-    borderBottom: '0px solid #123800',
+    borderBottom: '0px solid #124034',
+    marginLeft:"80px"
   },
   indicator: {
-    backgroundColor: '#123800',
+    backgroundColor: '#124034',
   },
 })(Tabs);
 
@@ -957,10 +737,10 @@ const AntTab = withStyles(theme => ({
   root: {
     textTransform: 'none',
     minWidth: 72,
-
+    marginLeft:"20px",
     fontSize:20,
-    marginTop:5,
-    marginRight: theme.spacing(4),
+    marginTop:10,
+    // marginLeft:"100px",
     
     fontFamily: [
       '-apple-system',
@@ -975,15 +755,15 @@ const AntTab = withStyles(theme => ({
       '"Segoe UI Symbol"',
     ].join(','),
     '&:hover': {
-      color: '#123800',
+      color: '#124034',
       opacity: 1,
     },
     '&$selected': {
-      color: '#123800',
+      color: '#124034',
       fontWeight: theme.typography.fontWeightBold,
     },
     '&:focus': {
-      color: '#123800',
+      color: '#124034',
     },
   },
   selected: {},
@@ -1004,13 +784,11 @@ export default function Forum() {
 
   return (
     <div className={classes.root} align="center"> 
-    
-      <div className={classes.demo1}>
-       
-          <Grid>
-          <Grid item xs = {3}></Grid>
-          <Grid item xs = {9}>    
-          <Typography align="left" style={{color:"#123800",fontWeight:"bold",fontSize:"30px",marginLeft:"10px"}}>Feed</Typography>
+    <Grid container spacing={1}> 
+    <Grid item xs={4}>
+          <Typography align="left" style={{color:"#124034",fontWeight:"bold",fontSize:"30px",float:"left",marginLeft:"100px"}}>Feed</Typography>
+    </Grid>
+    <Grid item xs={8}>
           <Paper elevation={0} variant="outlined" component="form" className={classes.search}>
       <InputBase
         className={classes.input}
@@ -1021,30 +799,29 @@ export default function Forum() {
         <SearchIcon />
       </IconButton>
     </Paper>
+    </Grid>
+    <div>
         <AntTabs value={value} onChange={handleChange} aria-label="ant example" >
-          <AntTab className="tabu" label="Trending" />
-          <AntTab className="tabu" label="New" />
-          <AntTab className="tabu" label="User" />
-          <AntTab className="tabu" label="University" />
-        </AntTabs></Grid></Grid>
+          <AntTab className="tabu" label="All" />
+          <AntTab className="tabu" label="Recommended" />
+          <AntTab className="tabu" label="Latest" />
+        </AntTabs>
         <Typography className={classes.padding} />
       </div>
+      </Grid>
       <SwipeableViews
         axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
         index={value}
         onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-        <Trending />
+        <All />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-        <New style={{backgroundColor:'#E5E5E5'}} />
+        <Recommended />
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
-       <User />
-        </TabPanel>
-        <TabPanel value={value} index={3} dir={theme.direction}>
-       <University />
+       <Latest />
         </TabPanel>
       </SwipeableViews>
     </div>
