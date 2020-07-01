@@ -76,7 +76,7 @@ exports.getAll = async (req, res) => {
   if(queryFilter.latest){
     const {latest} = queryFilter
     delete queryFilter.latest
-    
+    queryFilter.isAnswer = false
     const docs = await Forum.find(queryFilter).sort({createdAt:-1}).limit(parseInt(latest)).populate('tags', '-followers').exec()
   if (!docs) {
     return res.status(404).json({
@@ -319,15 +319,17 @@ exports.getRecommended = async (req, res) => {
   })
   const posts = await Forum.find({ 
       tags: { "$in" : query }  ,
-      "createdAt":{$gt:new Date(Date.now() - 48*60*60 * 1000)} 
+      "createdAt":{$gt:new Date(Date.now() - 48*60*60 * 1000)} ,
+      isAnswer : false
   }).limit(25)
 
   //Posts posted in the past 48 hours
   var recentPosts=[]
   if(posts.length<25){
     recentPosts = await Forum.find({ 
-        "createdAt":{$gt:new Date(Date.now() - 48*60*60 * 1000)} 
-     }).limit(25-posts.length)
+        "createdAt":{$gt:new Date(Date.now() - 48*60*60 * 1000)} ,
+        isAnswer : false
+    }).limit(25-posts.length)
   }
   //To remove the duplicate posts if any
   const toSend = _.unionWith(posts,recentPosts,_.isEqual)
