@@ -15,6 +15,7 @@ import SearchProfiles from '../profile3';
 import UniversityPage from '../universitypage';
 import QuestionReply from '../QuestionReply';
 import UserProfile from '../ProfileDetail';
+import Singleforum from '../singleForum';
 
 function RootRouter(props) {
 	const [homepage,setHomepage] = React.useState(false)
@@ -42,8 +43,9 @@ function RootRouter(props) {
 	        <Route exact path="/edit" component={EditProfile} />
 	        <Route exact path="/resources" component={Resources} />
 	        <Route exact path="/forum" component={Forum} />
+		<Route exact path="/single-forum/:id" component={Singleforum}/>
 	        <Route exact path="/chat" component={renderChat} />
-			<Route exact path="/add-forum" component={renderAddForum} />
+		<Route exact path="/add-forum" component={renderAddForum} />
 	        <Route exact path="/add-resource" component={renderAddResource} />
 	        <Route exact path="/search" component={SearchProfiles} />
 	        <Route exact path="/university" component={UniversityPage} />
