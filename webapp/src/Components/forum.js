@@ -2,6 +2,7 @@ import React,{useState,useEffect} from 'react';
 import { makeStyles, useTheme ,withStyles} from '@material-ui/core/styles';
 import {getUserInfo} from '../Helpers/fetchRequests.js';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
@@ -102,7 +103,8 @@ const useStyles = makeStyles(theme => ({
   content:
   {
     textAlign:"left",
-
+    maxWidth:"930px",
+    marginRight:"auto",
   },
   card:{
     margin:'10px',
@@ -110,7 +112,6 @@ const useStyles = makeStyles(theme => ({
   cardcontent:{
     float:'left',
     minWidth:"1000px",
-  
   },
   like:{
     textAlign:"left",
@@ -118,8 +119,6 @@ const useStyles = makeStyles(theme => ({
     fontFamily:"arial",
     fontSize:"18px",
     marginLeft:"5px",
-
-
   },
   question:{
     fontSize:"24px",
@@ -149,6 +148,10 @@ const useStyles = makeStyles(theme => ({
     fontSize:"12px",
     float:"right",
     minWidth:"100px"
+  },
+  link:{
+    textDecoration:"none",
+    color:"black",
   },
 
 }));
@@ -202,13 +205,13 @@ function ToggleLike(props){
   }
   else if(props.upvoters.includes(userid)===true && props.downvoters.includes(userid)===false)
   {
-     x = "secondary";
+     x = "primary";
      y = "disabled";
   }
   else if(props.upvoters.includes(userid)===false && props.downvoters.includes(userid)===true)
   {
      x = "disabled";
-     y= "secondary";
+     y= "primary";
   }
   else
   {
@@ -224,7 +227,7 @@ function ToggleLike(props){
       })
       if( bg === "disabled" )
       {
-        if(bg1 === "secondary")
+        if(bg1 === "primary")
           {
             setBg1("disabled");
             setDislike(dislike-1);
@@ -235,7 +238,7 @@ function ToggleLike(props){
           }
       const like1 = like +1; 
       setLike(like1);
-      setBg("secondary");
+      setBg("primary");
       }
       else
       {
@@ -251,7 +254,7 @@ function ToggleLike(props){
         })
         if( bg1 === "disabled" )
         {
-          if(bg === "secondary")
+          if(bg === "primary")
           {
             setBg("disabled");
             setLike(like-1);
@@ -261,7 +264,7 @@ function ToggleLike(props){
           }
         const dislike1 = dislike +1; 
         setDislike(dislike1);
-        setBg1("secondary");
+        setBg1("primary");
         }
         else
         {
@@ -288,6 +291,8 @@ function ToggleLike(props){
     const displayForum =() =>
     {
     return data.map(forum =>{
+      if (forum.isAnswer==false)
+      {
       return(
       <div className={classes.root} align="center"> 
       <Paper className={classes.forumpage} >
@@ -303,7 +308,7 @@ function ToggleLike(props){
       <Typography className={classes.username}>{forum.authorName}</Typography><br /><br />
         </div>
           <div className={classes.content}>
-          <Typography variant="body1" align="left">
+          <Typography  variant="body1" align="left">
         {forum.text}
         </Typography>
         </div>
@@ -311,9 +316,7 @@ function ToggleLike(props){
         </CardContent>
         <CardActions disableSpacing>
         <ToggleLike like={forum.upvoters.length} dislike={forum.downvoters.length} _id={forum._id} upvoters={forum.upvoters} downvoters={forum.downvoters}/>
-        <IconButton >
-            <CommentIcon/>
-        </IconButton>
+        <Link classes={classes.link} to={`/single-forum/${forum._id}`} style={{ textDecoration: 'none' }}><IconButton><CommentIcon /> <div className={classes.like}>{forum.answers.length}</div></IconButton></Link>
         <IconButton style={{marginRight:"auto"}}>
             <ShareIcon />
         </IconButton>
@@ -330,6 +333,11 @@ function ToggleLike(props){
       </Paper>
       </div>
       )
+      }
+      else
+      {
+        return null
+      }
     }
     )}
 
@@ -358,7 +366,7 @@ function Latest(props) {
         }
     }
     setDetails();
-    axios.get('/api/forum?latest=5').then(async(json) => {
+    axios.get('/api/forum?latest=10').then(async(json) => {
     let mydata = json.data
     for (let forum of mydata){
       if(forum.author){
@@ -387,13 +395,13 @@ function Latest(props) {
     }
     else if(props.upvoters.includes(userid)===true && props.downvoters.includes(userid)===false)
     {
-       x = "secondary";
+       x = "primary";
        y = "disabled";
     }
     else if(props.upvoters.includes(userid)===false && props.downvoters.includes(userid)===true)
     {
        x = "disabled";
-       y= "secondary";
+       y= "primary";
     }
     else
     {
@@ -409,7 +417,7 @@ function Latest(props) {
         })
         if( bg === "disabled" )
         {
-          if(bg1 === "secondary")
+          if(bg1 === "primary")
             {
               setBg1("disabled");
               setDislike(dislike-1);
@@ -420,7 +428,7 @@ function Latest(props) {
             }
         const like1 = like +1; 
         setLike(like1);
-        setBg("secondary");
+        setBg("primary");
         }
         else
         {
@@ -436,7 +444,7 @@ function Latest(props) {
           })
           if( bg1 === "disabled" )
           {
-            if(bg === "secondary")
+            if(bg === "primary")
             {
               setBg("disabled");
               setLike(like-1);
@@ -446,7 +454,7 @@ function Latest(props) {
             }
           const dislike1 = dislike +1; 
           setDislike(dislike1);
-          setBg1("secondary");
+          setBg1("primary");
           }
           else
           {
@@ -474,6 +482,7 @@ function Latest(props) {
    const displayForum =() =>
   {
   return data.map(forum =>{
+    
     return(
     <div className={classes.root} align="center"> 
     <Paper className={classes.forumpage} >
@@ -497,9 +506,7 @@ function Latest(props) {
       </CardContent>
       <CardActions disableSpacing>
       <ToggleLike like={forum.upvoters.length} dislike={forum.downvoters.length} _id={forum._id} upvoters={forum.upvoters} downvoters={forum.downvoters}/>
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
+      <Link classes={classes.link} to={`/single-forum/${forum._id}`} style={{ textDecoration: 'none' }}><IconButton><CommentIcon /> <div className={classes.like}>{forum.answers.length}</div></IconButton></Link>
       <IconButton style={{marginRight:"auto"}}>
           <ShareIcon />
       </IconButton>
@@ -515,8 +522,6 @@ function Latest(props) {
     </Card>
     </Paper>
     </div>
-    
-
     )
   }
   )}
@@ -575,13 +580,13 @@ function ToggleLike(props){
   }
   else if(props.upvoters.includes(userid)===true && props.downvoters.includes(userid)===false)
   {
-     x = "secondary";
+     x = "primary";
      y = "disabled";
   }
   else if(props.upvoters.includes(userid)===false && props.downvoters.includes(userid)===true)
   {
      x = "disabled";
-     y= "secondary";
+     y= "primary";
   }
   else
   {
@@ -597,7 +602,7 @@ function ToggleLike(props){
       })
       if( bg === "disabled" )
       {
-        if(bg1 === "secondary")
+        if(bg1 === "primary")
           {
             setBg1("disabled");
             setDislike(dislike-1);
@@ -608,7 +613,7 @@ function ToggleLike(props){
           }
       const like1 = like +1; 
       setLike(like1);
-      setBg("secondary");
+      setBg("primary");
       }
       else
       {
@@ -624,7 +629,7 @@ function ToggleLike(props){
         })
         if( bg1 === "disabled" )
         {
-          if(bg === "secondary")
+          if(bg === "primary")
           {
             setBg("disabled");
             setLike(like-1);
@@ -634,7 +639,7 @@ function ToggleLike(props){
           }
         const dislike1 = dislike +1; 
         setDislike(dislike1);
-        setBg1("secondary");
+        setBg1("primary");
         }
         else
         {
@@ -661,6 +666,8 @@ function ToggleLike(props){
    const displayForum =() =>
   {
   return data.map(forum =>{
+    if(forum.isAnswer==false)
+    {
     return(
     <div className={classes.root} align="center"> 
     <Paper className={classes.forumpage} >
@@ -684,9 +691,8 @@ function ToggleLike(props){
       </CardContent>
       <CardActions disableSpacing>
       <ToggleLike like={forum.upvoters.length} dislike={forum.downvoters.length} _id={forum._id} upvoters={forum.upvoters} downvoters={forum.downvoters}/>
-      <IconButton >
-          <CommentIcon/>
-      </IconButton>
+          {/* <CommentIcon /> */}
+      <Link classes={classes.link} to={`/single-forum/${forum._id}`} style={{ textDecoration: 'none' }}><IconButton><CommentIcon /> <div className={classes.like}>{forum.answers.length}</div></IconButton></Link>
       <IconButton style={{marginRight:"auto"}}>
           <ShareIcon />
       </IconButton>
@@ -705,6 +711,10 @@ function ToggleLike(props){
     
 
     )
+    }
+    else{
+      return null
+    }
   }
   )}
 
