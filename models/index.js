@@ -3,6 +3,7 @@ const Tag = require('./tag');
 const Forum = require('./forum');
 const Chat = require('./chat');
 const Notification = require('./notification');
+const University = require('./university');
 
 module.exports = {
   User,
@@ -10,4 +11,5 @@ module.exports = {
   Forum,
   Chat,
   Notification,
+  University,
 };
