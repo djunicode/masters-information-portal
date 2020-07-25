@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import {getUserInfo} from '../../Helpers/fetchRequests.js';
 import defaultProfileIcon from '../../assets/images/profile-icon.png';
 import Toolbar from '@material-ui/core/Toolbar';
 import { makeStyles } from '@material-ui/core/styles';
@@ -19,11 +20,11 @@ import EditIcon from '@material-ui/icons/Edit';
 import ForumIcon from '@material-ui/icons/Forum';
 import DescriptionIcon from '@material-ui/icons/Description';
 import PostAddIcon from '@material-ui/icons/PostAdd';
+import AddCommentIcon from '@material-ui/icons/AddComment';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import { NavLink } from 'react-router-dom';
 import Cookies from 'js-cookie';
-const axios = require('axios');
 const useStyles = makeStyles({
     list: {
         width: 250
@@ -67,7 +68,6 @@ function NavBar(props) {
   const [state, setState] = React.useState({
     left: false,
   });
-  const token = Cookies.get('jwt');
   const toggleDrawer = (side, open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
@@ -93,6 +93,12 @@ function NavBar(props) {
             props.setHomepage(false)
         }
     }
+    const logoutUser = () => {
+        Cookies.remove('jwt');
+        props.setLoggedIn(0);
+        Cookies.remove('refreshToken')
+        localStorage.clear()
+    }
     useEffect(()=>{
         checkHomepage();
         window.addEventListener('popstate', (event) => {        //This will ensure that the navbar checks whether current page is homepage or not if user navigates via browser's back button
@@ -101,18 +107,17 @@ function NavBar(props) {
         handleResize();
         window.addEventListener('resize', handleResize);
         if(props.loggedIn){
-            axios.get('api/users/me/', {
-                headers: {
-                  Authorization: token
+            async function setDeatils(){
+                var storedUserData = await getUserInfo(null,null);
+                try{
+                    setUrl(`/api/users/${storedUserData.id}/avatar`);
+                    setName(storedUserData.name);
                 }
-            })
-            .then(function (response) {
-                setUrl(`/api/users/${response.data._id}/avatar`);
-                setName(response.data.name);
-            })
-            .catch(function (error) {
-                console.log("Invalid User");
-            }); 
+                catch(error){
+                    console.log(error)
+                }
+            }
+            setDeatils();
         } 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[props.loggedIn,window.location.pathname,props.homepage])
@@ -234,6 +239,17 @@ function NavBar(props) {
                     <Divider />
                     <NavLink
                         className={classes.link}
+                        to='/add-forum'
+                    >
+                        <ListItem button>
+                            <ListItemIcon>
+                            <AddCommentIcon />
+                            </ListItemIcon>
+                            <Typography>Add Forum</Typography>
+                        </ListItem>
+                    </NavLink>
+                    <NavLink
+                        className={classes.link}
                         to='/add-resource'
                     >
                         <ListItem button>
@@ -247,7 +263,7 @@ function NavBar(props) {
                         className={classes.link}
                         to='/'
                     >
-                        <ListItem button onClick={()=>{Cookies.remove('jwt');props.setLoggedIn(0);Cookies.remove('refreshToken')}}>
+                        <ListItem button onClick={logoutUser}>
                             <ListItemIcon>
                                 <AccountCircleIcon />
                             </ListItemIcon>
@@ -315,7 +331,7 @@ function NavBar(props) {
                                     className={classes.linkHeader}
                                     to='/'
                                 >
-                                    <Button size='large' color='inherit' onClick={()=>{Cookies.remove('jwt');props.setLoggedIn(0);Cookies.remove('refreshToken')}}>
+                                    <Button size='large' color='inherit' onClick={logoutUser}>
                                         Logout
                                     </Button>
                                 </NavLink>

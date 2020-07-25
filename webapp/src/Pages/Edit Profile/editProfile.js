@@ -1,5 +1,5 @@
 import React,{useEffect,useRef} from 'react';
-import {getTagById,getObjectId,getTag,getUserInfo} from '../../Helpers/fetchRequests.js';
+import {getTagIdByName,getTags,getUserInfo} from '../../Helpers/fetchRequests.js';
 import CheckLogin from '../../Helpers/checkLogin.js'
 import {checkUniversityValidation,checkTestValidation} from '../../Helpers/validateForm.js'
 import Button from '@material-ui/core/Button';
@@ -61,6 +61,7 @@ const useStyles = makeStyles(theme => ({
 const filter = createFilterOptions();
 function EditProfile() {
 
+    const classes = useStyles();
 	const [user,setUser] = React.useState({
     	pic: '',
         name: '',
@@ -84,26 +85,36 @@ function EditProfile() {
 	const universityInput = useRef(null);
 	const testInput = useRef(null);
 	const [mounted,setMounted] = React.useState(false);
-	const [universityArr,setUniversityArr]=React.useState([]);
     const [universityNames,setUniversityNames]=React.useState([]);
     const [showWarning2, setShowWarning2] = React.useState(false);
     const [showWarning3, setShowWarning3] = React.useState(false);
-    const [tagArr,setTagArr]=React.useState([]);
     const [tagNames,setTagNames]=React.useState([]);  
-	const[token1,setToken1]=React.useState(null);
+	const [token1,setToken1]=React.useState(null);
+	const[pic,setPic]=React.useState(null)
+    const handleImage = (picture) => {
+    	setPic(picture)
+    }
+    const [showSuccess, setShowSuccess] = React.useState(false);
+    const [showWarning, setShowWarning] = React.useState(false);
+    const handleOpenMsg = () => {
+        setShowSuccess(true);
+    };
+    const handleCloseMsg = () => {
+        setShowSuccess(false);
+    };
+    const departments = ["Computers", "IT", "Mechanical", "Bio-Med", "Production", "Electronics", "EXTC", "Chemical", "Civil", "Aeronautical", "Mining", "Agricultural", "Metallurgical"];
+
 	useEffect(()=>{
 		//Fetch data function definition
 		async function fetchData(){
 			const token = Cookies.get('jwt');
 			setToken1(token)
 			if(!mounted){
-				var tags = await getTag()
-				setUniversityArr(tags.universityArr)
+				var tags = await getTags()
 			   	setUniversityNames(tags.universityNames)
-			   	setTagArr(tags.tagArr)
 			   	setTagNames(tags.tagNames)
 				if(!!token){
-			 		var userInfo = await getUserInfo(token,tags.tagArr,tags.universityArr)
+			 		var userInfo = await getUserInfo(tags.tagArr,tags.universityArr)
 			 		setUser(userInfo)
 					setMounted(true);
 			  	} 
@@ -116,20 +127,6 @@ function EditProfile() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[])
 
-    const[pic,setPic]=React.useState(null)
-    const handleImage = (picture) => {
-    	setPic(picture)
-    }
-    const classes = useStyles();
-    const [showSuccess, setShowSuccess] = React.useState(false);
-    const [showWarning, setShowWarning] = React.useState(false);
-    const handleOpenMsg = () => {
-        setShowSuccess(true);
-    };
-    const handleCloseMsg = () => {
-        setShowSuccess(false);
-    };
-    const departments = ["Computers", "IT", "Mechanical", "Bio-Med", "Production", "Electronics", "EXTC", "Chemical", "Civil", "Aeronautical", "Mining", "Agricultural", "Metallurgical"];
     return (
 		<React.Fragment>
 		  <CheckLogin/>
@@ -151,7 +148,7 @@ function EditProfile() {
 			            email:user.email,
 			            password:'',
 			            password_confirm:'',
-			            university: getTagById(user.university,universityArr),
+			            university: user.university,
 			            department: user.department,
 			            gradDate: user.gradDate,
 			            bio:user.bio,
@@ -183,45 +180,40 @@ function EditProfile() {
 			            return errors;
 			          }}
 			          onSubmit={async (values, { setSubmitting }) => {
-			          	if (values.addDomain===''){
+			          	setTimeout(() => {			//Doesnt work without setTimeout
+			          		setSubmitting(true)			//Disables the submit button
+				        }, 1);
+				        setTimeout(() => {
+			          		setSubmitting(false)		//After 3 seconds, the submit button will no longer be disabled.
+				        }, 3000);
+			          	if (values.addDomain===''){		//Add Domain value pushed
 			          		var testVal = checkTestValidation(values);
-				              if(!testVal){
+				              if(!testVal){			//Test Timeline Validation Failed
 				                setShowWarning2(true);
 				                window.scrollTo({top:testInput.current.offsetTop-50, behavior: 'smooth'})
 				              }
-				              else{
+				              else{		//Test Timeline Validated
 				                var universityVal = checkUniversityValidation(values);
-				                if(!universityVal){
+				                if(!universityVal){		//University Applications Validated
 				                  setShowWarning3(true);
 				                  window.scrollTo({top:universityInput.current.offsetTop-50, behavior: 'smooth'})
 				                }
 				                else{
 				          			var domains = [];
 						          	user.pic=pic;
-						            user.email=values.email;
-						            user.university=values.university;
-						            user.department=values.department;
-						            user.gradDate=values.gradDate;
-						            user.bio=values.bio;
-						            user.tests=values.tests;
-						            user.facebook=values.facebook;
-						            user.twitter=values.twitter;
-						            user.linkedIn=values.linkedIn;
-						            user.github=values.github;
-						            user.uniApplied=values.uniApplied;
 						            user.accepts=[];
 						            user.rejects=[];
 						            const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
 						            const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
-						            user.university= await getObjectId(universityNames,universityArr,user.university,true);
+						            const university =await getTagIdByName(values.university,true);
 						            accepts.forEach(async (item,index)=>
-						              user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
+						              user.accepts.push( getTagIdByName(item.name,true))
 						            )
 						            rejects.forEach(async (item,index)=>
-						              user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
+						              user.rejects[index]= getTagIdByName(item.name,true)
 						            )
 						            values.domain.forEach(async (item,index)=>
-						              domains[index]=await getObjectId(tagNames,tagArr,item,false)
+						              domains[index]= getTagIdByName(item,false)
 						            )
 						            if(!!user.pic){
 						           	 	const formData = new FormData();
@@ -236,17 +228,17 @@ function EditProfile() {
 					          			})
 							        }
 			            			axios.put('/api/users/me', {
-								      email: user.email,
-								      graduationDate: user.gradDate,
-								      currentSchool: user.university,
-								      department: user.department,
-								      bio: user.bio,
+								      email: values.email,
+								      graduationDate: values.gradDate,
+								      currentSchool: university,
+								      department: values.department,
+								      bio: values.bio,
 								      domains: domains,
-								      testTimeline: user.tests,
-								      linkedinUrl: user.linkedIn,
-								      githubUrl: user.github,
-								      facebookUrl: user.facebook,
-								      twitterUrl: user.twitter,
+								      testTimeline: values.tests,
+								      linkedinUrl: values.linkedIn,
+								      githubUrl: values.github,
+								      facebookUrl: values.facebook,
+								      twitterUrl: values.twitter,
 								      accepts: user.accepts,
 								      rejects: user.rejects
 								    },
@@ -255,6 +247,8 @@ function EditProfile() {
 			              			  }})
 								    .then(function (response) {
 						           	  handleOpenMsg();
+						           	  console.log(response)
+						           	  localStorage.setItem('userDetails',JSON.stringify(response.data))
 								    })
 								    .catch(function (error) {
 								      console.log("Failed! An error occured. Please try again later");
@@ -262,7 +256,7 @@ function EditProfile() {
 								}
 							}
 						}
-						else{
+						else{		//Domain Name not pushed
 							setShowWarning(true)
 							console.log(domainInput)
 							window.scrollTo({top:domainInput.current.offsetTop-50, behavior: 'smooth'})
@@ -296,7 +290,7 @@ function EditProfile() {
 		          onClose={()=>setShowWarning2(false)}
 		        >
 		          <Alert variant="filled" severity="warning">
-		            Fill all test timeline fields completely or remove unfilled ones.
+		            Fill all test timeline fields completely or remove unfilled and duplicate entries.
 		          </Alert>
 		        </Snackbar>
 		        <Snackbar 
@@ -305,7 +299,7 @@ function EditProfile() {
 		          onClose={()=>{setShowWarning3(false)}}
 		        >
 		          <Alert variant="filled" severity="warning">
-		            Fill all University Names or remove unfilled ones.
+		            Fill all University Names or remove unfilled and duplicate entries.
 		          </Alert>
 		        </Snackbar>
 	            <Grid container className={classes.container}>
@@ -363,6 +357,7 @@ function EditProfile() {
               disableClearable
               inputValue={!!values.university?values.university:''}
               name="university"
+              style={{marginTop:'-5px'}}
               onChange={(e, value) => {
                 setFieldValue("university", value)
               }}
@@ -699,6 +694,7 @@ function EditProfile() {
                         disableClearable
                         inputValue={!!value.name?value.name:''}
                         name={`uniApplied.${index}.name`}
+              			style={{marginTop:'-8px'}}
                         onChange={(e, value) => {
                           setFieldValue(`uniApplied.${index}.name`, value)
                         }}

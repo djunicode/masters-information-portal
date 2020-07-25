@@ -1,5 +1,5 @@
 import React,{useEffect,useRef} from 'react';
-import {getObjectId,getTag} from '../../Helpers/fetchRequests.js';
+import {getTagIdByName,refreshTags} from '../../Helpers/fetchRequests.js';
 import {checkUniversityValidation,checkTestValidation} from '../../Helpers/validateForm.js'
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -66,29 +66,22 @@ export default function Register() {
   const universityInput = useRef(null)
   const [componentDidMount]=React.useState(0);
   const [redirect,setRedirect]=React.useState(false);
-  const [universityArr,setUniversityArr]=React.useState([]);
   const [universityNames,setUniversityNames]=React.useState([]);
-  const [tagArr,setTagArr]=React.useState([]);
   const [tagNames,setTagNames]=React.useState([]);  
   useEffect(()=>{
+    if(!!Cookies.get('jwt')){
+      setRedirect(true);
+    }
     if(!componentDidMount){
       async function fetchData(){
-        var tags = await getTag()
-        setUniversityArr(tags.universityArr)
+        var tags = await refreshTags()
         setUniversityNames(tags.universityNames)
-        setTagArr(tags.tagArr)
         setTagNames(tags.tagNames)
       }
       fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[componentDidMount])
- // eslint-disable-next-line
-  React.useEffect(()=>{
-    if(!!Cookies.get('jwt')){
-      setRedirect(true);
-    }
-  })
 
   const submitAxios = () => {
     axios.post('/api/users/register', {
@@ -489,15 +482,15 @@ export default function Register() {
                   user.uniApplied=values.uniApplied;
                   const accepts = values.uniApplied.filter(uni => uni.status==="Accepted");
                   const rejects = values.uniApplied.filter(uni => uni.status==="Rejected");
-                  user.university= await getObjectId(universityNames,universityArr,user.university,true);
+                  user.university=await getTagIdByName(user.university,true);
                   accepts.forEach(async (item,index)=>
-                    user.accepts[index]=await getObjectId(universityNames,universityArr,item.name,true)
+                    user.accepts[index]=await getTagIdByName(item.name,true)
                   )
                   rejects.forEach(async (item,index)=>
-                    user.rejects[index]=await getObjectId(universityNames,universityArr,item.name,true)
+                    user.rejects[index]=await getTagIdByName(item.name,true)
                   )
                   values.domain.forEach(async (item,index)=>
-                    user.domain[index]=await getObjectId(tagNames,tagArr,item,false)
+                    user.domain[index]=await getTagIdByName(item,false)
                   )
                   submitAxios();  //Submit function for signup
                 }
@@ -535,7 +528,7 @@ export default function Register() {
           onClose={handleCloseWarnMsg2}
         >
           <Alert variant="filled" severity="warning">
-            Fill all test timeline fields completely or remove unfilled ones.
+            Fill all test timeline fields completely or remove unfilled and duplicate entries.
           </Alert>
         </Snackbar>
         <Snackbar 
@@ -544,7 +537,7 @@ export default function Register() {
           onClose={()=>{setShowWarning3(false)}}
         >
           <Alert variant="filled" severity="warning">
-            Fill all University Names or remove unfilled ones.
+            Fill all University Names or remove unfilled and duplicate entries.
           </Alert>
         </Snackbar>
         <Grid container className={classes.container}>

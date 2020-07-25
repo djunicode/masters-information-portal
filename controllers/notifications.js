@@ -1,8 +1,8 @@
-const notifications=require('../models/notification');
+const notifications = require('../models/notification');
 
 /**
  * @apiDefine Notification Notification
- * Developed by Heth 
+ * Developed by Heth
  */
 
 /**
@@ -18,63 +18,58 @@ const notifications=require('../models/notification');
  * @apiSuccess (200) {Boolean} read parameter
  * @apiSuccess (200) {objectId} The model object id eg.'Forum' or 'Chat'
  * @apiSuccess (200) {String} the two types of notifications eg. 'Forum' or 'chat'
- *  
+ *
  */
-exports.getNotifications=async(req,res)=>{
-    const userId = res.locals.user._id;
-    const docList=await notifications.find({toUser:userId}).populate('eventId');
-    res.status(200).send(docList); 
-}
-
-
+exports.getNotifications = async (req, res) => {
+  const userId = res.locals.user._id;
+  const docList = await notifications.find({ toUser: userId }).populate('eventId');
+  res.status(200).send(docList);
+};
 
 /**
  * @apiGroup Notification
  * @api {POST} /api/notifications/read/ Marks all unread notification as read
  * @apiDescription Marks all unread notification as read
  * @apiPermission All logged in users with jwt token
- * @apiSuccess (200) {Boolean} Turns all user notification of user as read 
- *  
+ * @apiSuccess (200) {Boolean} Turns all user notification of user as read
+ *
  */
-exports.readAll=async(req,res)=>{
-    const userId=res.locals.user._id;
-    const docList=await notifications.update({toUser:userId},{$set:{read:true}});
-    res.send(docList)
-}
+exports.readAll = async (req, res) => {
+  const userId = res.locals.user._id;
+  const docList = await notifications.update({ toUser: userId }, { $set: { read: true } });
+  res.send(docList);
+};
 
 /**
  * @apiGroup Notification
  * @api {POST} /api/notifications/:id/read Mark particular notification as read
  * @apiDescription Marks notification Boolean as read using the notification id
  * @apiPermission All logged in users with jwt token
- * @aapiParam {objectId} Object id of the notification 
+ * @apiParam {objectId} Object id of the notification
  * @apiSuccess (200) {Boolean} Turns Boolean to true for the notification that is read by the user
- *  
+ *
  */
-exports.readOne=async(req,res)=>{
-    const id=req.params.id;
-    const doc=await notifications.findByIdAndUpdate(id,{$set:{read:true}});
-    res.status(200).send(doc)
-}
-
+exports.readOne = async (req, res) => {
+  const { id } = req.params;
+  const doc = await notifications.findByIdAndUpdate(id, { $set: { read: true } });
+  res.status(200).send(doc);
+};
 
 /**
  * @apiGroup Notification
- * @api {DELETE} /api/notifications/ Deletes all user notifications 
- * @apiDescription Delete all user notifications 
+ * @api {DELETE} /api/notifications/ Deletes all user notifications
+ * @apiDescription Delete all user notifications
  * @apiPermission All logged in users with jwt token
  * @apiSuccess (200) {Object} Deletes all notifications from the database
- *  
+ *
  */
-exports.deleteAll=async(req,res)=>{
-    const userId = res.locals.user._id;
-    const docList=await notifications.remove({toUser:userId})
-    res.send(docList)
-    
-}
+exports.deleteAll = async (req, res) => {
+  const userId = res.locals.user._id;
+  const docList = await notifications.remove({ toUser: userId });
+  res.send(docList);
+};
 
-
-// DELETE /:id - Delete a single notification with its id 
+// DELETE /:id - Delete a single notification with its id
 /**
  * @apiGroup Notification
  * @api {DELETE} /api/notifications/:id Delete notification using id of the notification
@@ -82,10 +77,10 @@ exports.deleteAll=async(req,res)=>{
  * @apiPermission All logged in users with jwt token
  * @apiParam {objectId} objectId of the particular notification viewed
  * @apiSuccess (200) {Object} Deletes notification based on its object Id
- *  
+ *
  */
-exports.deleteOne=async(req,res)=>{
-    const id=req.params.id;
-    const doc=await notifications.findByIdAndDelete(id);
-    res.send(doc)
-}
+exports.deleteOne = async (req, res) => {
+  const { id } = req.params;
+  const doc = await notifications.findByIdAndDelete(id);
+  res.send(doc);
+};
