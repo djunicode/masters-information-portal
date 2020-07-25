@@ -184,6 +184,7 @@ function NavBar(props) {
                             </ListItem>
                         </NavLink>
                         <Divider />
+                                
                         <NavLink
                             className={classes.link}
                             to='/profile'
