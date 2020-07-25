@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import { Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -49,10 +50,10 @@ export default function AddResources(props) {
           <hr className={classes.width} />
           <br />
           <Grid container spacing={1}>
-            <Grid alignItems="center" classes={classes.width} item xs={6}>
+            <Grid alignItems="center" classes={classes.width} item md={6} sm={12}>
               <h2>Details</h2>
             </Grid>
-            <Grid classes={classes.width} item xs={6}>
+            <Grid classes={classes.width} item md={6} sm={12}>
               <form className={classes.root} noValidate autoComplete="off">
                 <TextField
                   className={classes.textField}
@@ -98,9 +99,11 @@ export default function AddResources(props) {
                   </IconButton>
                 </label>
                 <br />
-                <Button type="submit" variant="contained" className={classes.button}>
-                  Add
-                </Button>
+                <Link to="/resources" style={{ textDecoration: 'none' }}>
+                  <Button type="submit" variant="contained" className={classes.button}>
+                    Add
+                  </Button>
+                </Link>
               </form>
             </Grid>
           </Grid>

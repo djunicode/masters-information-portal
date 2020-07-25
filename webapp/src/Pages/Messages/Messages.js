@@ -4,7 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import MoodIcon from '@material-ui/icons/Mood';
 import IconButton from '@material-ui/core/IconButton';
-import img from './Profile.png';
+import img from '../../Components/Profile.png';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
 import InputBase from '@material-ui/core/InputBase';
 import SendIcon from '@material-ui/icons/Send';
