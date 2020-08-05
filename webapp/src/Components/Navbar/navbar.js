@@ -14,7 +14,6 @@ import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import SearchSharpIcon from '@material-ui/icons/SearchSharp';
 import ChatIcon from '@material-ui/icons/Chat';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import EditIcon from '@material-ui/icons/Edit';
@@ -172,19 +171,6 @@ function NavBar(props) {
                     </React.Fragment>
                     :
                     <React.Fragment>
-                    <NavLink
-                            className={classes.link}
-                            to='/search'
-                        >
-                            <ListItem button>
-                                <ListItemIcon>
-                                    <SearchSharpIcon />
-                                </ListItemIcon>
-                                <Typography>Search</Typography>
-                            </ListItem>
-                        </NavLink>
-                        <Divider />
-                                
                         <NavLink
                             className={classes.link}
                             to='/profile'
