@@ -9,12 +9,12 @@ import Resources from '../resources';
 import Messages from '../../Pages/Messages/Messages';
 import AddResource from '../../Pages/AddResource/AddResources';
 import AddForum from '../AddForum';
-import FullWidthTabs from '../profpage3';
+import FullWidthTabs from '../../Pages/Profile Pages/ProfilePage';
 import Home from '../../Pages/Homepage/home.js';
-import SearchProfiles from '../profile3';
-import UniversityPage from '../universitypage';
+import SearchProfiles from '../../Pages/Search Page/SearchPage';
+import UniversityPage from '../../Pages/University Page/UniversityPage';
 import QuestionReply from '../QuestionReply';
-import UserProfile from '../ProfileDetail';
+import UserProfile from '../../Pages/Profile Pages/ProfileDetail';
 import Singleforum from '../singleForum';
 
 function RootRouter(props) {
@@ -48,7 +48,7 @@ function RootRouter(props) {
         <Route exact path="/add-forum" component={renderAddForum} />
         <Route exact path="/add-resource" component={renderAddResource} />
         <Route exact path="/search" component={SearchProfiles} />
-        <Route exact path="/university" component={UniversityPage} />
+         <Route exact path="/university/:uniName" component={UniversityPage} />
         <Route exact path="/question-reply" component={renderQuestionReply} />
         <Route exact path="/:profileID" component={UserProfile} />
         <Route component={invalidRoute} />
