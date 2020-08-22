@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     },
     box: {
         marginLeft: '10vw',
-        marginRight: '10vw',
+        marginRight: '13vw',
         marginTop: 10
     },
     container: {
