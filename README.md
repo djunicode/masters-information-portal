@@ -47,7 +47,15 @@
 
 #### Frontend
 
-- React 16.6+
+- HTML5
+- CSS3
+- ReactJs                 (16.6+)
+- Material-UI             (4.9.0)
+- ES6 JavaScript
+- formik                  (2.1.3)
+- aos                     (2.3.4)
+- axios                   (0.19.2)
+
 
 ## Features
 
@@ -74,6 +82,67 @@ One can follow various tags , and the person can get recommendations based on th
 
 ## Screenshots
 
+#### Homepage:
+
+![Homepage](/screenshots/home.png)
+
+
+#### Login:
+
+![Login](/screenshots/login.png)
+
+
+#### Signup:
+
+![Signup](/screenshots/signup1.png)
+
+![Signup](/screenshots/signup2.png)
+
+
+#### Edit Profile:
+
+![Edit Profile](/screenshots/editProfile.png)
+
+
+#### Profile Page:
+
+![Profile Page](/screenshots/profile1.png)
+
+![Profile Page](/screenshots/profile2.png)
+
+
+#### Search Pages:
+
+![Search](/screenshots/search1.png)
+
+![Search](/screenshots/search2.png)
+
+
+#### University Page:
+
+![University](/screenshots/university.png)
+
+#### Forum Pages:
+
+![Forum](/screenshots/forum1.png)
+
+![Forum](/screenshots/forum2.png)
+
+![Forum](/screenshots/forum3.png)
+
+
+#### Chat:
+
+![Chat](/screenshots/chat.png)
+
+#### Add Resource:
+
+![Add Resource](/screenshots/resources.png)
+
+
+#### Question Reply:
+
+![Question Reply](/screenshots/reply.png)
 
 
 ## Team
@@ -86,6 +155,10 @@ One can follow various tags , and the person can get recommendations based on th
 <li>Naman Dangi</li>
 <li>Yash Chachad</li>
 <li>Yashodhan Joshi</li>
+<li>Nimit Vasavat</li>
+<li>Himanshu Sanklecha</li>
+<li>Siddharth Salvi</li>
+<li>Yatharth Vyas</li>
 </ul>
 
 #### Mentors
@@ -93,6 +166,8 @@ One can follow various tags , and the person can get recommendations based on th
 <ul>
 <li>Siddharth Sanghvi</li>
 <li>Vikrant Gajria</li>
+<li>Aayush Shah</li>
+<li>Shail Shah</li>
 </ul>
 
 ## Build Instructions
