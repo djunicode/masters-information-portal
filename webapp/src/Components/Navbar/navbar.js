@@ -20,6 +20,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import ForumIcon from '@material-ui/icons/Forum';
 import DescriptionIcon from '@material-ui/icons/Description';
 import PostAddIcon from '@material-ui/icons/PostAdd';
+import AddCommentIcon from '@material-ui/icons/AddComment';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import { NavLink } from 'react-router-dom';
@@ -236,6 +237,17 @@ function NavBar(props) {
                 {props.loggedIn?
                 <React.Fragment>
                     <Divider />
+                    <NavLink
+                        className={classes.link}
+                        to='/add-forum'
+                    >
+                        <ListItem button>
+                            <ListItemIcon>
+                            <AddCommentIcon />
+                            </ListItemIcon>
+                            <Typography>Add Forum</Typography>
+                        </ListItem>
+                    </NavLink>
                     <NavLink
                         className={classes.link}
                         to='/add-resource'
