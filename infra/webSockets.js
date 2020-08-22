@@ -41,7 +41,7 @@ function createServer(app) {
     socket.on('authenticate', async (token) => {
       try {
         const decoded = await verifyJwt(token);
-        socketUserMap[socket] = decoded._id;
+        socketUserMap[socket.id] = decoded._id;
 
         logger.info(`Authenticated ${socket.id}`);
         socket.emit('status', {
@@ -69,8 +69,8 @@ function createServer(app) {
       }
 
       if (
-        socketUserMap[socket] !== chat.sender.toString() &&
-        socketUserMap[socket] !== chat.receiver.toString()
+        socketUserMap[socket.id] !== chat.sender.toString() &&
+        socketUserMap[socket.id] !== chat.receiver.toString()
       ) {
         return socket.emit('status', {
           code: 403,
@@ -79,8 +79,8 @@ function createServer(app) {
       }
 
       socket.join(chatId);
-      socket.leave(socketChatMap[socket]);
-      socketChatMap[socket] = chatId;
+      socket.leave(socketChatMap[socket.id]);
+      socketChatMap[socket.id] = chatId;
 
       socket.emit('open chat success', chatId);
 
@@ -89,7 +89,7 @@ function createServer(app) {
 
     socket.on('message', async (message) => {
       // Unauthenticated
-      if (!socketUserMap[socket]) {
+      if (!socketUserMap[socket.id]) {
         socket.emit('status', {
           code: 403,
           msg: 'User not authenticated',
@@ -97,7 +97,7 @@ function createServer(app) {
       }
 
       // No chat openned
-      if (!socketChatMap[socket]) {
+      if (!socketChatMap[socket.id]) {
         socket.emit('status', {
           code: 400,
           msg: 'No chat openned',
@@ -108,32 +108,32 @@ function createServer(app) {
 
       // Save message first
       const messageObject = {
-        sender: socketUserMap[socket],
+        sender: socketUserMap[socket.id],
         message,
         time: new Date().toISOString(),
       };
 
-      const chat = await Chat.findByIdAndUpdate(socketChatMap[socket], {
+      const chat = await Chat.findByIdAndUpdate(socketChatMap[socket.id], {
         $push: {
           messages: messageObject,
         },
       });
 
       const notification = createChatNotification(
-        socketUserMap[socket],
+        socketUserMap[socket.id],
         chat.receiver,
-        socketChatMap[socket]
+        socketChatMap[socket.id]
       );
       logger.created('Notification', notification);
 
       // Send to connected user(s)
-      io.to(socketChatMap[socket]).emit('message', messageObject);
+      io.to(socketChatMap[socket.id]).emit('message', messageObject);
     });
 
     socket.on('disconnect', () => {
       // Delete user and chat info from cache table
-      delete socketUserMap[socket];
-      delete socketChatMap[socket];
+      delete socketUserMap[socket.id];
+      delete socketChatMap[socket.id];
     });
   });
 
