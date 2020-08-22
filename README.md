@@ -16,12 +16,12 @@
 ├── middleware/             -> Contains custom middlewares for authentication, file upload etc.
 ├── models/                 -> Contains DB models
 ├── routes/                 -> Files exporting respective routers connecting routes to function in controllers
-├── test/                   -> contains Chai and Mocha tests for routes
+├── test/                   -> Contains Chai and Mocha tests for routes
 ├── webapp/                 -> Contains Frontend React pages
 ├── .env.development        -> .env file for development
 ├── .eslintignore           -> Contains files and routes to be ignored by linter
 ├── .eslintrc.js            -> eslint configuration file
-├──.gitignore               -> Contains files and paths to be ignored by git
+├── .gitignore              -> Contains files and paths to be ignored by git
 ├── .prettierrc             -> Prettier configuration file
 ├── apidoc.json             -> ApiDoc configuration file
 ├── app.js                  -> Sets up express app with routers, middlewares etc and exports it
@@ -61,7 +61,7 @@
 
 #### Sign Up and Authentication
 
-One can Sign up as either MS perusing Senior or BE perusing junior. For Seniors, it takes name, email, field of interests, colleges applied for and college studying in, other profile links, etc.
+One can Sign up as either MS pursuing Senior or BE pursuing junior. For Seniors, it takes name, email, field of interests, colleges applied for and college studying in, other profile links, etc.
 
 #### Chats
 
