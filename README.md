@@ -15,7 +15,7 @@
 ├── middleware/             -> Contains custom middlewares for authentication, file upload etc.
 ├── models/                 -> Contains DB models
 ├── routes/                 -> Files exporting respective routers connecting routes to function in controllers
-├── test/                   -> contains Chai and Mocha tests for routes
+├── test/                   -> Contains Chai and Mocha tests for routes
 ├── webapp/                 -> Contains Frontend React pages
 ├── .env.development        -> .env file for development
 ├── app.js                  -> Sets up express app with routers, middlewares etc and exports it
@@ -37,13 +37,21 @@
 
 #### Frontend
 
-- React 16.6+
+- HTML5
+- CSS3
+- ReactJs                 (16.6+)
+- Material-UI             (4.9.0)
+- ES6 JavaScript
+- formik                  (2.1.3)
+- aos                     (2.3.4)
+- axios                   (0.19.2)
+
 
 ## Features
 
 #### Sign Up and Authentication
 
-One can Sign up as either MS perusing Senior or BE perusing junior. For Seniors, it takes name, email, field of interests, colleges applied for and college studying in, other profile links, etc.
+One can Sign up as either MS pursuing Senior or BE pursuing junior. For Seniors, it takes name, email, field of interests, colleges applied for and college studying in, other profile links, etc.
 
 #### Chats
 
@@ -64,6 +72,67 @@ One can follow various tags , and the person can get recommendations based on th
 
 ## Screenshots
 
+#### Homepage:
+
+![Homepage](/screenshots/home.png)
+
+
+#### Login:
+
+![Login](/screenshots/login.png)
+
+
+#### Signup:
+
+![Signup](/screenshots/signup1.png)
+
+![Signup](/screenshots/signup2.png)
+
+
+#### Edit Profile:
+
+![Edit Profile](/screenshots/editProfile.png)
+
+
+#### Profile Page:
+
+![Profile Page](/screenshots/profile1.png)
+
+![Profile Page](/screenshots/profile2.png)
+
+
+#### Search Pages:
+
+![Search](/screenshots/search1.png)
+
+![Search](/screenshots/search2.png)
+
+
+#### University Page:
+
+![University](/screenshots/university.png)
+
+#### Forum Pages:
+
+![Forum](/screenshots/forum1.png)
+
+![Forum](/screenshots/forum2.png)
+
+![Forum](/screenshots/forum3.png)
+
+
+#### Chat:
+
+![Chat](/screenshots/chat.png)
+
+#### Add Resource:
+
+![Add Resource](/screenshots/resources.png)
+
+
+#### Question Reply:
+
+![Question Reply](/screenshots/reply.png)
 
 
 ## Team
@@ -76,11 +145,10 @@ One can follow various tags , and the person can get recommendations based on th
 <li>Naman Dangi</li>
 <li>Yash Chachad</li>
 <li>Yashodhan Joshi</li>
-<li>Yatharth Vyas</li>
-<li>Siddharth Salvi</li>
+<li>Nimit Vasavat</li>
 <li>Himanshu Sanklecha</li>
-<li>Nimit Vasavant</li>
-<li>Punit Lodha</li>
+<li>Siddharth Salvi</li>
+<li>Yatharth Vyas</li>
 </ul>
 
 #### Mentors
