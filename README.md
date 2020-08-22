@@ -39,26 +39,11 @@
 #### Backend
 
 - NodeJs                (12.18.3 LTS +)
-- apidoc                (0.20.1)
-- bcryptjs              (2.4.3)
-- body-parser           (1.19.0)
-- chalk                 (4.0.0)
-- cors                  (2.8.5)
-- dotenv                (8.2.0)
 - express               (4.17.1)
-- express-async-handler (1.1.4)
-- express-rate-limit    (5.1.1)
-- helmet                (3.22.0)
-- jsdoc                 (3.6.3)
-- jsonwebtoken          (8.5.1)
-- lodash                (4.17.15)
 - mongoose              (5.8.10)
-- morgan                (1.9.1)
 - multer                (1.4.2)
-- path                  (0.12.7)
 - socket.io             (2.3.0)
-- validator             (12.2.0)
-- winston               (3.2.1)
+
 
 #### Frontend
 
