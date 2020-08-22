@@ -48,15 +48,12 @@ const UniSchema = new mongoose.Schema({
   ],
   avg_gre: {
     type: Number,
-    default: NaN,
   },
   avg_lang: {
     type: Number,
-    default: NaN,
   },
   fees: {
     type: Number,
-    default: NaN,
   },
 });
 
