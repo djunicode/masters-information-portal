@@ -6,10 +6,9 @@
 
 ```
 .
-├── README.md
 ├── .github/                -> CI/CD Workflow hooks of github
 ├── config/                 -> Configuration settings of various middlewares used like DB, Loggers, etc
-├── constants               -> Values of various constant strings used in notifications etc.
+├── constants/              -> Values of various constant strings used in notifications etc.
 ├── controllers/            -> Contains request handling functions of all routes in respective files
 ├── docs/                   -> Contains generated docs after build scripts
 ├── infra/                  -> Contains reusable functions related to encryption,authentication etc.
@@ -19,30 +18,21 @@
 ├── test/                   -> Contains Chai and Mocha tests for routes
 ├── webapp/                 -> Contains Frontend React pages
 ├── .env.development        -> .env file for development
-├── .eslintignore           -> Contains files and routes to be ignored by linter
-├── .eslintrc.js            -> eslint configuration file
-├── .gitignore              -> Contains files and paths to be ignored by git
-├── .prettierrc             -> Prettier configuration file
-├── apidoc.json             -> ApiDoc configuration file
 ├── app.js                  -> Sets up express app with routers, middlewares etc and exports it
 ├── build.sh                -> Shell script for building fonrtend and backend
-├── heroku-deployment.md    -> Contains small guide for deploying on heroku
 ├── index.js                -> Connects to DB and starts the server, file to be run for starting the app
-├── jsdoc.json              -> JsDoc configuration file
-├── package.json            -> Npm package.json file
-├── package0lock.json       -> Npm package-lock file
-└── README.md               -> This file
+└── package.json            -> Npm package.json file
 ```
 
 ## Technology Stack
 
 #### Backend
 
-- NodeJs                (12.18.3 LTS +)
-- express               (4.17.1)
-- mongoose              (5.8.10)
-- multer                (1.4.2)
-- socket.io             (2.3.0)
+- Node.js v12.18.3
+- Express.js v4.17.1
+- Mongoose v5.8.10
+- Multer v1.4.2
+- Socket.io v2.3.0
 
 
 #### Frontend
@@ -164,10 +154,10 @@ One can follow various tags , and the person can get recommendations based on th
 #### Mentors
 
 <ul>
-<li>Siddharth Sanghvi</li>
+<li>Siddharth Sanghavi</li>
 <li>Vikrant Gajria</li>
-<li>Aayush Shah</li>
 <li>Shail Shah</li>
+<li>Ayush Shah</li>
 </ul>
 
 ## Build Instructions
