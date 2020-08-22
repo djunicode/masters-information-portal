@@ -47,19 +47,13 @@ const UniSchema = new mongoose.Schema({
     },
   ],
   avg_gre: {
-    type: Number
-    
-    
+    type: Number,
   },
   avg_lang: {
-    type: Number
-    
-    
+    type: Number,
   },
   fees: {
-    type: Number
-   
-   
+    type: Number,
   },
 });
 
