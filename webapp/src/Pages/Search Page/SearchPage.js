@@ -1,20 +1,17 @@
-import React,{useState} from 'react';
-import './mystyles.css';
+import React from 'react';
+import '../Profile Pages/mystyles.css';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
 import { makeStyles, useTheme, withStyles} from '@material-ui/core/styles';
-import ScreenShareTwoToneIcon from '@material-ui/icons/ScreenShareTwoTone';
+
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Avatar from '@material-ui/core/Avatar';
-import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
-import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import TextField from '@material-ui/core/TextField';
 import Cookies from 'js-cookie';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -44,7 +41,7 @@ TabPanel.propTypes = {
   index: PropTypes.any.isRequired,
   value: PropTypes.any.isRequired,
 };
-
+/*
 function Ques() {
   const questions = [
       {
@@ -164,7 +161,7 @@ return(
 )
   
 }
-
+*/
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor:'#E5E5E5',
@@ -254,9 +251,7 @@ const [loaded, setLoaded] = React.useState(false);
  const handleChange1 = event => {
     setSearchTerm(event.target.value);
   };
-  const handleChange2 = event => {
-    setSearchTerm1(event.target.value);
-  };
+  
  React.useEffect(() => {
 
 if(!loaded){
@@ -273,10 +268,11 @@ if(!loaded){
               setPeople(response.data);
               
               
+              
       
               })
               .catch(function (error) {
-                console.log("Invalid Bro Sid");
+                console.log("Invalid Request");
               });
 
                 var tags = {universityArr:[],universityNames:[],tagArr:[],tagNames:[]};
@@ -296,7 +292,7 @@ if(!loaded){
   setLoaded(true);  
               })
               .catch(function (error) {
-                console.log("Not working");
+                console.log("Invalid Request");
               });
               
   
@@ -304,11 +300,11 @@ if(!loaded){
 
 }
     const results = people.filter((person) =>
-      person.name.toLowerCase().includes(searchTerm) 
+      person.name.toLowerCase().includes(searchTerm.toLowerCase()) 
     );
     setSearchResults(results);
   const results1 = universityNames.filter((univ) =>
-      univ.toLowerCase().includes(searchTerm1) 
+      univ.toLowerCase().includes(searchTerm.toLowerCase()) 
     );
     setSearchResults1(results1);
   
@@ -334,9 +330,8 @@ if(!loaded){
             
             <Grid item xs={4}></Grid>
             <Grid  item xs={5}>
-            <TextField value={searchTerm} onChange={handleChange1} id="outlined-basic" label="Search Name" variant="outlined" />
-            <TextField value={searchTerm1} onChange={handleChange2} id="outlined-basic" label="Search Univ" variant="outlined" />
-        
+            <TextField value={searchTerm} onChange={handleChange1} id="outlined-basic" label="Search" variant="outlined" />
+            
             </Grid>
             <Grid className='icons' item xs={3}>
             </Grid>
@@ -346,6 +341,7 @@ if(!loaded){
             <Grid item xs={1}></Grid>
             <Grid  item xs={5}>
             <p className = "search">Search Results</p>
+            <br />
             
             </Grid>
             <Grid className='icons' item xs={3}>
@@ -363,7 +359,7 @@ if(!loaded){
         <AntTabs value={value} onChange={handleChange} aria-label="ant example">
           <AntTab className="tabu" label="User" />
           <AntTab className="tabu" label="University" />
-          <AntTab className="tabu" label="Posts" />
+          
         </AntTabs></Grid></Grid>
         <Typography className={classes.padding} />
       </div>
@@ -389,20 +385,21 @@ if(!loaded){
     alignItems="center">
         
             
-            <Grid item xs={2}> <Avatar className="imagenew1" /> </Grid>
-            <Grid  item xs={8}>
-        <p className="personname3">{item.name}</p>
+            <Grid item xs = {1}></Grid>
+            <Grid  item xs={9}>
+             
+            <div>
+             <Avatar className="imagenew1" />
+        <p className="personname3"><a href = {`/${item._id}`} target="_blank" rel = "noopener noreferrer">{item.name}</a></p>
+   </div>
         <p className="persontitle4">{item.department}</p>
-        <p className="persondesc4">{item.bio}</p>
-            <br/>
-            <br />
+  
+         <p className="persondesc4">{item.bio}</p>
+                    <br/>
+            
             </Grid>
-            <Grid className='icons' item xs={2}>
-            <a href = {`/${item._id}`} target="_blank"><Button variant="outlined" style={{
-        
-        color: "#2CE89A",borderColor:"#2CE89A"
-            }} className="buttonprof">View Profile</Button></a>
-                </Grid>
+            <Grid item xs = {2}>
+            </Grid>
         </Grid>
 
     <br />
@@ -431,14 +428,10 @@ if(!loaded){
             <Grid item xs = {1}></Grid>
             <Grid item xs={1}></Grid>
             <Grid  item xs={7}>
-        <p className="personname4">{item}</p>
+        <p className="personname4"><a href={`/university/${item}`} target="_blank" rel = "noopener noreferrer">{item}</a></p>
            </Grid>
             <Grid className='icons' item xs={2}>
-            <a href="/university" target="_blank"><Button variant="outlined" style={{
-        
-        color: "#2CE89A",borderColor:"#2CE89A"
-            }} className="buttonprof1">View Profile</Button></a>
-                </Grid>
+                          </Grid>
         </Grid>
 
     <br />
@@ -450,10 +443,7 @@ if(!loaded){
       </Grid>
      )):<div><Grid container spacing = {3}><Grid item xs = {5}></Grid><Grid item xs = {3}><CircularProgress /></Grid><Grid item xs = {4}></Grid></Grid></div>}
         </TabPanel>
-        <TabPanel value={value} index={2} dir={theme.direction}>
-      
-       <Ques/>
-        </TabPanel>
+
       </SwipeableViews>
 
 
