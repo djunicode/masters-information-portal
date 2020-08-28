@@ -2,20 +2,20 @@ import React from 'react';
 import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import Login from '../../Pages/Login and Sign-up/login';
 import Register from '../../Pages/Login and Sign-up/register';
-import Forum from '../forum';
+import Forum from '../../Pages/Forum/forum';
 import NavBar from '../Navbar/navbar';
 import EditProfile from '../../Pages/Edit Profile/editProfile';
 import Resources from '../resources';
 import Messages from '../../Pages/Messages/Messages';
 import AddResource from '../../Pages/AddResource/AddResources';
-import AddForum from '../AddForum';
+import AddForum from '../../Pages/Forum/AddForum';
 import FullWidthTabs from '../../Pages/Profile Pages/ProfilePage';
 import Home from '../../Pages/Homepage/home.js';
 import SearchProfiles from '../../Pages/Search Page/SearchPage';
 import UniversityPage from '../../Pages/University Page/UniversityPage';
 import QuestionReply from '../QuestionReply';
 import UserProfile from '../../Pages/Profile Pages/ProfileDetail';
-import Singleforum from '../singleForum';
+import Singleforum from '../../Pages/Forum/singleForum';
 
 function RootRouter(props) {
   const [homepage, setHomepage] = React.useState(false);
