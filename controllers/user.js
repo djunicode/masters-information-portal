@@ -1,9 +1,13 @@
 const User = require('../models/user');
 const { comparePassword } = require('../infra/encryption');
 const { createJwt, createRefreshToken } = require('../infra/jwt');
+const redis = require('redis');
 
 const tokenList = {};
 
+const REDIS_PORT = process.env.PORT || 6379;
+
+const client = redis.createClient(REDIS_PORT);
 /**
  * @apiDefine User User
  * Developed by Yash
@@ -88,6 +92,8 @@ exports.login = async (req, res) => {
   const refreshToken = await createRefreshToken({ _id: user.id });
   tokenList[refreshToken] = { id: user.id, refreshToken };
   const userObject = user.getPublicProfile();
+  client.setex(user.name, 3600, JSON.stringify(user));
+
   return res.send({ userObject, token, refreshToken });
 };
 
