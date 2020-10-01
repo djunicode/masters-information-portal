@@ -4,6 +4,7 @@ const { authRequired, hasRoles } = require('../middleware/auth');
 const { upload } = require('../middleware/multer');
 const controller = require('../controllers/user');
 const roles = require('../constants/roles');
+const { cache } = require('../middleware/cache')
 
 const router = Router();
 
@@ -17,7 +18,7 @@ router.post(
   asyncHandler(controller.uploadProfilePhoto)
 );
 router.get('/', authRequired, asyncHandler(controller.getUsers));
-router.get('/me', authRequired, asyncHandler(controller.getProfile));
+router.get('/me', authRequired, cache, asyncHandler(controller.getProfile));
 router.get('/:id', asyncHandler(controller.getById));
 router.get('/:id/avatar', asyncHandler(controller.getProfilePhoto));
 router.put('/me', authRequired, asyncHandler(controller.updateProfile));
