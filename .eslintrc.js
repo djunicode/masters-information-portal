@@ -6,6 +6,10 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
+    'prettier',
+  ],
+  plugins: [
+    'prettier'
   ],
   globals: {
     Atomics: 'readonly',
@@ -16,5 +20,8 @@ module.exports = {
   },
   rules: {
     'no-console': 0,
-  },
+    'prettier/prettier': ['error'],
+    'max-len': 0,
+    'no-underscore-dangle': 0,
+  }
 };
